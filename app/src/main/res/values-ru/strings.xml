@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">FinanceApp</string>
+
+    <string name="nav_dashboard">Главная</string>
+    <string name="nav_transactions">Транзакции</string>
+    <string name="nav_budgets">Бюджеты</string>
+    <string name="nav_analytics">Аналитика</string>
+    <string name="nav_settings">Настройки</string>
+
+    <string name="onb_welcome_title">Добро пожаловать в FinanceApp</string>
+    <string name="onb_welcome_subtitle">Учитывайте доходы и расходы легко.</string>
+    <string name="onb_language">Язык</string>
+    <string name="onb_currency_title">Базовая валюта</string>
+    <string name="onb_currency_subtitle">Выберите основную валюту и задайте курсы.</string>
+    <string name="onb_rate_usd">Рублей за 1 USD</string>
+    <string name="onb_rate_eur">Рублей за 1 EUR</string>
+    <string name="onb_security_title">Безопасность</string>
+    <string name="onb_security_subtitle">Защитите приложение PIN-кодом.</string>
+    <string name="onb_enable_biometric">Включить биометрию</string>
+    <string name="action_skip">Пропустить</string>
+    <string name="action_next">Далее</string>
+    <string name="action_done">Готово</string>
+
+    <string name="lock_enter_pin">Введите PIN</string>
+    <string name="lock_wrong_pin">Неверный PIN</string>
+    <string name="lock_locked_seconds">Заблокировано. Повтор через %1$d с</string>
+    <string name="lock_use_biometric">Биометрия</string>
+
+    <string name="dash_balance">Общий баланс</string>
+    <string name="dash_income">Доходы</string>
+    <string name="dash_expense">Расходы</string>
+    <string name="dash_last7">Последние 7 дней</string>
+    <string name="dash_recent">Последние транзакции</string>
+    <string name="dash_see_all">Все транзакции</string>
+    <string name="dash_add_expense">Расход</string>
+    <string name="dash_add_income">Доход</string>
+    <string name="dash_empty">Добавьте первую транзакцию</string>
+
+    <string name="tx_title">Транзакции</string>
+    <string name="tx_search">Поиск</string>
+    <string name="tx_filter_all">Все</string>
+    <string name="tx_filter_income">Доходы</string>
+    <string name="tx_filter_expense">Расходы</string>
+    <string name="tx_today">Сегодня</string>
+    <string name="tx_yesterday">Вчера</string>
+    <string name="tx_empty">Нет транзакций за выбранный период</string>
+    <string name="tx_deleted">Транзакция удалена</string>
+    <string name="tx_copied">Транзакция скопирована</string>
+    <string name="tx_all_categories">Все категории</string>
+    <string name="action_undo">Отменить</string>
+    <string name="action_edit">Изменить</string>
+    <string name="action_duplicate">Дублировать</string>
+    <string name="action_delete">Удалить</string>
+
+    <string name="form_new_tx">Новая транзакция</string>
+    <string name="form_edit_tx">Изменить транзакцию</string>
+    <string name="form_amount">Сумма</string>
+    <string name="form_note">Заметка</string>
+    <string name="form_category">Категория</string>
+    <string name="form_date">Дата</string>
+    <string name="form_recurring">Повторяющаяся</string>
+    <string name="form_interval_daily">Ежедневно</string>
+    <string name="form_interval_weekly">Еженедельно</string>
+    <string name="form_interval_monthly">Ежемесячно</string>
+    <string name="form_interval_yearly">Ежегодно</string>
+    <string name="form_auto_add">Добавлять автоматически</string>
+    <string name="action_save">Сохранить</string>
+    <string name="action_cancel">Отмена</string>
+
+    <string name="set_appearance">Внешний вид</string>
+    <string name="set_theme">Тема</string>
+    <string name="set_theme_system">Системная</string>
+    <string name="set_theme_light">Светлая</string>
+    <string name="set_theme_dark">Тёмная</string>
+    <string name="set_scheme">Цветовая схема</string>
+    <string name="set_scheme_purple">Фиолетовая</string>
+    <string name="set_scheme_orange">Оранжевая</string>
+    <string name="set_language">Язык</string>
+    <string name="set_finance">Финансы</string>
+    <string name="set_base_currency">Базовая валюта</string>
+    <string name="set_security">Безопасность</string>
+    <string name="set_change_pin">Изменить PIN</string>
+    <string name="set_biometric">Биометрия</string>
+
+    <string name="ph_budgets">Контролируйте расходы с помощью бюджетов</string>
+    <string name="ph_analytics">Здесь появится ваша статистика</string>
+
+    <string name="cat_food">Еда и продукты</string>
+    <string name="cat_transport">Транспорт</string>
+    <string name="cat_health">Здоровье</string>
+    <string name="cat_entertainment">Развлечения</string>
+    <string name="cat_clothing">Одежда</string>
+    <string name="cat_communication">Связь</string>
+    <string name="cat_utilities">Коммунальные</string>
+    <string name="cat_education">Образование</string>
+    <string name="cat_travel">Путешествия</string>
+    <string name="cat_other">Другое</string>
+    <string name="cat_salary">Зарплата</string>
+    <string name="cat_freelance">Фриланс</string>
+    <string name="cat_investments">Инвестиции</string>
+    <string name="cat_gifts">Подарки</string>
+</resources>

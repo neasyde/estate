@@ -1,4 +1,112 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">FinanceApp</string>
+
+    <!-- nav -->
+    <string name="nav_dashboard">Dashboard</string>
+    <string name="nav_transactions">Transactions</string>
+    <string name="nav_budgets">Budgets</string>
+    <string name="nav_analytics">Analytics</string>
+    <string name="nav_settings">Settings</string>
+
+    <!-- onboarding -->
+    <string name="onb_welcome_title">Welcome to FinanceApp</string>
+    <string name="onb_welcome_subtitle">Track income and expenses, simply.</string>
+    <string name="onb_language">Language</string>
+    <string name="onb_currency_title">Base currency</string>
+    <string name="onb_currency_subtitle">Pick your main currency and set rates.</string>
+    <string name="onb_rate_usd">RUB per 1 USD</string>
+    <string name="onb_rate_eur">RUB per 1 EUR</string>
+    <string name="onb_security_title">Security</string>
+    <string name="onb_security_subtitle">Protect the app with a PIN.</string>
+    <string name="onb_enable_biometric">Enable biometrics</string>
+    <string name="action_skip">Skip</string>
+    <string name="action_next">Next</string>
+    <string name="action_done">Done</string>
+
+    <!-- lock -->
+    <string name="lock_enter_pin">Enter PIN</string>
+    <string name="lock_wrong_pin">Wrong PIN</string>
+    <string name="lock_locked_seconds">Locked. Try again in %1$d s</string>
+    <string name="lock_use_biometric">Use biometrics</string>
+
+    <!-- dashboard -->
+    <string name="dash_balance">Total balance</string>
+    <string name="dash_income">Income</string>
+    <string name="dash_expense">Expense</string>
+    <string name="dash_last7">Last 7 days</string>
+    <string name="dash_recent">Recent transactions</string>
+    <string name="dash_see_all">All transactions</string>
+    <string name="dash_add_expense">Expense</string>
+    <string name="dash_add_income">Income</string>
+    <string name="dash_empty">Add your first transaction</string>
+
+    <!-- transactions -->
+    <string name="tx_title">Transactions</string>
+    <string name="tx_search">Search</string>
+    <string name="tx_filter_all">All</string>
+    <string name="tx_filter_income">Income</string>
+    <string name="tx_filter_expense">Expense</string>
+    <string name="tx_today">Today</string>
+    <string name="tx_yesterday">Yesterday</string>
+    <string name="tx_empty">No transactions for the selected period</string>
+    <string name="tx_deleted">Transaction deleted</string>
+    <string name="tx_copied">Transaction copied</string>
+    <string name="tx_all_categories">All categories</string>
+    <string name="action_undo">Undo</string>
+    <string name="action_edit">Edit</string>
+    <string name="action_duplicate">Duplicate</string>
+    <string name="action_delete">Delete</string>
+
+    <!-- add/edit -->
+    <string name="form_new_tx">New transaction</string>
+    <string name="form_edit_tx">Edit transaction</string>
+    <string name="form_amount">Amount</string>
+    <string name="form_note">Note</string>
+    <string name="form_category">Category</string>
+    <string name="form_date">Date</string>
+    <string name="form_recurring">Recurring</string>
+    <string name="form_interval_daily">Daily</string>
+    <string name="form_interval_weekly">Weekly</string>
+    <string name="form_interval_monthly">Monthly</string>
+    <string name="form_interval_yearly">Yearly</string>
+    <string name="form_auto_add">Add automatically</string>
+    <string name="action_save">Save</string>
+    <string name="action_cancel">Cancel</string>
+
+    <!-- settings -->
+    <string name="set_appearance">Appearance</string>
+    <string name="set_theme">Theme</string>
+    <string name="set_theme_system">System</string>
+    <string name="set_theme_light">Light</string>
+    <string name="set_theme_dark">Dark</string>
+    <string name="set_scheme">Color scheme</string>
+    <string name="set_scheme_purple">Purple</string>
+    <string name="set_scheme_orange">Orange</string>
+    <string name="set_language">Language</string>
+    <string name="set_finance">Finance</string>
+    <string name="set_base_currency">Base currency</string>
+    <string name="set_security">Security</string>
+    <string name="set_change_pin">Change PIN</string>
+    <string name="set_biometric">Biometrics</string>
+
+    <!-- placeholders -->
+    <string name="ph_budgets">Control spending with budgets</string>
+    <string name="ph_analytics">Your statistics will appear here</string>
+
+    <!-- categories -->
+    <string name="cat_food">Food &amp; groceries</string>
+    <string name="cat_transport">Transport</string>
+    <string name="cat_health">Health</string>
+    <string name="cat_entertainment">Entertainment</string>
+    <string name="cat_clothing">Clothing</string>
+    <string name="cat_communication">Communication</string>
+    <string name="cat_utilities">Utilities</string>
+    <string name="cat_education">Education</string>
+    <string name="cat_travel">Travel</string>
+    <string name="cat_other">Other</string>
+    <string name="cat_salary">Salary</string>
+    <string name="cat_freelance">Freelance</string>
+    <string name="cat_investments">Investments</string>
+    <string name="cat_gifts">Gifts</string>
 </resources>
