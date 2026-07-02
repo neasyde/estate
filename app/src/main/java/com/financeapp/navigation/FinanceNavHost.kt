@@ -1,9 +1,10 @@
 package com.financeapp.navigation
 
-import androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -29,16 +30,16 @@ fun FinanceNavHost(
     settings: AppSettings?,
     modifier: Modifier = Modifier,
 ) {
-    val spec = tween<Float>(Motion.Long, easing = Motion.Emphasized)
-    val slideSpec = tween<androidx.compose.ui.unit.IntOffset>(Motion.Long, easing = Motion.Emphasized)
+    val enter = tween<Float>(Motion.Medium, easing = Motion.Emphasized)
+    val exit = tween<Float>(Motion.Short, easing = Motion.Emphasized)
     NavHost(
         navController = navController,
         startDestination = Routes.SPLASH,
         modifier = modifier,
-        enterTransition = { slideIntoContainer(SlideDirection.Start, slideSpec) + fadeIn(spec) },
-        exitTransition = { slideOutOfContainer(SlideDirection.Start, slideSpec) + fadeOut(spec) },
-        popEnterTransition = { slideIntoContainer(SlideDirection.End, slideSpec) + fadeIn(spec) },
-        popExitTransition = { slideOutOfContainer(SlideDirection.End, slideSpec) + fadeOut(spec) },
+        enterTransition = { fadeIn(enter) + scaleIn(initialScale = 0.98f, animationSpec = enter) },
+        exitTransition = { fadeOut(exit) },
+        popEnterTransition = { fadeIn(enter) },
+        popExitTransition = { fadeOut(exit) + scaleOut(targetScale = 0.98f, animationSpec = exit) },
     ) {
         composable(Routes.SPLASH) {
             SplashScreen(settings = settings) { dest ->

@@ -36,10 +36,11 @@ class MainActivity : AppCompatActivity() {
                     bottomBar = {
                         if (currentRoute in Routes.bottomBarRoutes) {
                             BottomBar(currentRoute) { route ->
-                                nav.navigate(route) {
-                                    popUpTo(Routes.DASHBOARD) { saveState = true }
-                                    launchSingleTop = true
-                                    restoreState = true
+                                if (route != currentRoute) {
+                                    nav.navigate(route) {
+                                        popUpTo(Routes.DASHBOARD) { inclusive = false }
+                                        launchSingleTop = true
+                                    }
                                 }
                             }
                         }
