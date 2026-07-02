@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -21,7 +22,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
-import androidx.compose.material3.Surface
 import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
@@ -44,6 +44,7 @@ import com.financeapp.R
 import com.financeapp.core.domain.model.TransactionType
 import com.financeapp.core.domain.model.TransactionWithCategory
 import com.financeapp.core.ui.components.EmptyState
+import com.financeapp.core.ui.components.SoftCard
 import com.financeapp.core.ui.components.TransactionRow
 import com.financeapp.core.ui.icons.materialIcon
 import com.financeapp.core.ui.theme.ExpenseRed
@@ -185,19 +186,19 @@ private fun SwipeRow(
             val align = if (dismissState.dismissDirection == SwipeToDismissBoxValue.EndToStart) Alignment.CenterEnd else Alignment.CenterStart
             val icon = if (dismissState.dismissDirection == SwipeToDismissBoxValue.EndToStart) "delete" else "content_copy"
             Box(
-                Modifier.fillMaxSize().padding(horizontal = 12.dp, vertical = 4.dp)
-                    .clip(MaterialTheme.shapes.medium).background(color).padding(horizontal = 24.dp),
+                Modifier.fillMaxSize().padding(horizontal = 12.dp, vertical = 5.dp)
+                    .clip(MaterialTheme.shapes.large).background(color).padding(horizontal = 24.dp),
                 contentAlignment = align,
             ) {
                 Icon(materialIcon(icon), contentDescription = null, tint = Color.White)
             }
         },
     ) {
-        Surface(
-            modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
-            shape = MaterialTheme.shapes.medium,
-            color = MaterialTheme.colorScheme.surface,
-            tonalElevation = 1.dp,
+        SoftCard(
+            modifier = Modifier.padding(horizontal = 12.dp, vertical = 5.dp),
+            shape = MaterialTheme.shapes.large,
+            elevation = 6.dp,
+            contentPadding = PaddingValues(0.dp),
         ) {
             TransactionRow(item = item, onClick = onClick)
         }

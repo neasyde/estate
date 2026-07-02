@@ -3,10 +3,7 @@ package com.financeapp.feature.budgets
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
-import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -14,14 +11,13 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -39,6 +35,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -46,17 +43,17 @@ import com.financeapp.R
 import com.financeapp.core.domain.model.Budget
 import com.financeapp.core.domain.model.BudgetPeriod
 import com.financeapp.core.domain.model.BudgetProgress
-import com.financeapp.core.ui.anim.pressScale
 import com.financeapp.core.ui.anim.reducedMotion
 import com.financeapp.core.ui.categoryDisplayName
 import com.financeapp.core.ui.components.CategoryIcon
 import com.financeapp.core.ui.components.EmptyState
 import com.financeapp.core.ui.components.Eyebrow
-import com.financeapp.core.ui.components.Hairline
+import com.financeapp.core.ui.components.SoftCard
 import com.financeapp.core.ui.icons.materialIcon
 import com.financeapp.core.ui.theme.BudgetAmber
 import com.financeapp.core.ui.theme.ExpenseRed
 import com.financeapp.core.ui.theme.IncomeGreen
+import com.financeapp.core.ui.theme.PillShape
 import com.financeapp.core.utils.CurrencyFormatter
 import kotlin.math.roundToInt
 
@@ -104,16 +101,12 @@ private fun BudgetCard(bp: BudgetProgress, onEdit: () -> Unit, onDelete: () -> U
         bp.fraction >= 0.8 -> BudgetAmber
         else -> IncomeGreen
     }
-    val interaction = remember { MutableInteractionSource() }
-    Card(
-        modifier = Modifier.fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 6.dp)
-            .pressScale(interaction)
-            .clickable(interactionSource = interaction, indication = LocalIndication.current, onClick = onEdit),
-        shape = MaterialTheme.shapes.large,
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+    SoftCard(
+        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 6.dp),
+        onClick = onEdit,
+        elevation = 9.dp,
+        contentPadding = PaddingValues(horizontal = 20.dp, vertical = 16.dp),
     ) {
-        Column(Modifier.padding(horizontal = 20.dp, vertical = 16.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             CategoryIcon(bp.category)
             Spacer(Modifier.width(12.dp))
@@ -124,11 +117,17 @@ private fun BudgetCard(bp: BudgetProgress, onEdit: () -> Unit, onDelete: () -> U
                 )
                 Eyebrow(periodLabel(bp.budget.period))
             }
-            Text(
-                text = "${(bp.fraction * 100).roundToInt()}%",
-                style = MaterialTheme.typography.titleMedium,
-                color = barColor,
-            )
+            Box(
+                Modifier.clip(PillShape).background(barColor.copy(alpha = 0.14f))
+                    .padding(horizontal = 12.dp, vertical = 5.dp),
+            ) {
+                Text(
+                    text = "${(bp.fraction * 100).roundToInt()}%",
+                    style = MaterialTheme.typography.labelLarge,
+                    color = barColor,
+                    fontWeight = FontWeight.SemiBold,
+                )
+            }
             IconButton(onClick = onDelete) {
                 Icon(materialIcon("delete"), contentDescription = stringResource(R.string.action_delete), tint = MaterialTheme.colorScheme.onSurfaceVariant)
             }
@@ -152,7 +151,6 @@ private fun BudgetCard(bp: BudgetProgress, onEdit: () -> Unit, onDelete: () -> U
                 Spacer(Modifier.width(6.dp))
                 Text(stringResource(R.string.budget_over), style = MaterialTheme.typography.labelMedium, color = ExpenseRed)
             }
-        }
         }
     }
 }

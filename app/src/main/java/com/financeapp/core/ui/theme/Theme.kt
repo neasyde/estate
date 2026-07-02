@@ -6,7 +6,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.platform.LocalView
@@ -18,12 +20,21 @@ private class Accent(
     val primary: Color,
     val secondary: Color,
     val tertiary: Color,
+    val gradientStart: Color,
+    val gradientEnd: Color,
     val containerLight: Color,
     val containerDark: Color,
 )
 
-private val purple = Accent(PurplePrimary, PurpleSecondary, PurpleTertiary, PurpleContainerLight, PurpleContainerDark)
-private val orange = Accent(OrangePrimary, OrangeSecondary, OrangeTertiary, OrangeContainerLight, OrangeContainerDark)
+private val purple = Accent(PurplePrimary, PurpleSecondary, PurpleTertiary, PurpleGradStart, PurpleGradEnd, PurpleContainerLight, PurpleContainerDark)
+private val orange = Accent(OrangePrimary, OrangeSecondary, OrangeTertiary, OrangeGradStart, OrangeGradEnd, OrangeContainerLight, OrangeContainerDark)
+
+/** Accent colours exposed to composables that draw gradients / coloured depth (Soft Depth). */
+data class AccentColors(val primary: Color, val gradientStart: Color, val gradientEnd: Color)
+
+val LocalAccentColors = staticCompositionLocalOf {
+    AccentColors(PurplePrimary, PurpleGradStart, PurpleGradEnd)
+}
 
 private fun lightScheme(a: Accent) = lightColorScheme(
     primary = a.primary, onPrimary = Color.White,
@@ -75,5 +86,8 @@ fun FinanceTheme(
         }
     }
 
-    MaterialTheme(colorScheme = scheme, typography = AppTypography, shapes = AppShapes, content = content)
+    val accentColors = AccentColors(accent.primary, accent.gradientStart, accent.gradientEnd)
+    CompositionLocalProvider(LocalAccentColors provides accentColors) {
+        MaterialTheme(colorScheme = scheme, typography = AppTypography, shapes = AppShapes, content = content)
+    }
 }

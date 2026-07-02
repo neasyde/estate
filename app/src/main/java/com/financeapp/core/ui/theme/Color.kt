@@ -2,39 +2,46 @@ package com.financeapp.core.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-val PurplePrimary = Color(0xFF7C3AED)
-val PurpleSecondary = Color(0xFF9F67F8)
-val PurpleTertiary = Color(0xFFE879F9)
+// --- Accent identities: vivid, ownable, gradient-ready (deliberately NOT default Material) ---
+// Purple: electric periwinkle → violet.
+val PurplePrimary = Color(0xFF7C5CFF)
+val PurpleSecondary = Color(0xFF9B7BFF)
+val PurpleTertiary = Color(0xFFB06BFF)
+val PurpleGradStart = Color(0xFF7C5CFF)
+val PurpleGradEnd = Color(0xFFB16CFF)
 
-val OrangePrimary = Color(0xFFEA580C)
-val OrangeSecondary = Color(0xFFF97316)
-val OrangeTertiary = Color(0xFFFBBF24)
+// Orange: warm coral → amber.
+val OrangePrimary = Color(0xFFFF6A3D)
+val OrangeSecondary = Color(0xFFFF854D)
+val OrangeTertiary = Color(0xFFFFA23D)
+val OrangeGradStart = Color(0xFFFF6A3D)
+val OrangeGradEnd = Color(0xFFFFA23D)
 
-// Semantic financial colors (data semantics, not Material surfaces).
-val IncomeGreen = Color(0xFF2E9E5B)
-val ExpenseRed = Color(0xFFE5484D)
-val BudgetAmber = Color(0xFFE0A21B)
+// Semantic financial colors — fresh 2026 data-viz hues.
+val IncomeGreen = Color(0xFF12B76A)
+val ExpenseRed = Color(0xFFF04438)
+val BudgetAmber = Color(0xFFF79009)
 
-// Editorial neutral surfaces — cool near-white / near-black (deliberately NOT cream).
-val PaperLight = Color(0xFFFCFCFD)
+// Soft Depth neutrals: cool & airy (light) / deep blue-black (dark).
+val PaperLight = Color(0xFFF5F6FA)
 val SurfaceLight = Color(0xFFFFFFFF)
-val SurfaceVariantLight = Color(0xFFF3F2F6)
-val InkLight = Color(0xFF16151A)
-val InkMutedLight = Color(0xFF6E6C78)
-val LineLight = Color(0xFFE6E4EC)
+val SurfaceVariantLight = Color(0xFFEEF0F6)
+val InkLight = Color(0xFF15161B)
+val InkMutedLight = Color(0xFF6B6F7B)
+val LineLight = Color(0xFFE7E9F0)
 
-val PaperDark = Color(0xFF101014)
-val SurfaceDark = Color(0xFF17171C)
-val SurfaceVariantDark = Color(0xFF1F1F26)
-val InkDark = Color(0xFFF4F3F7)
-val InkMutedDark = Color(0xFF9C99A8)
-val LineDark = Color(0xFF26252E)
+val PaperDark = Color(0xFF0B0C10)
+val SurfaceDark = Color(0xFF16181F)
+val SurfaceVariantDark = Color(0xFF1E212A)
+val InkDark = Color(0xFFF2F3F7)
+val InkMutedDark = Color(0xFF9BA0AE)
+val LineDark = Color(0xFF262932)
 
 // Subtle accent container tints per scheme.
-val PurpleContainerLight = Color(0xFFF1EBFF)
-val PurpleContainerDark = Color(0xFF221A36)
-val OrangeContainerLight = Color(0xFFFFEDE1)
-val OrangeContainerDark = Color(0xFF2A1B10)
+val PurpleContainerLight = Color(0xFFEDE9FE)
+val PurpleContainerDark = Color(0xFF241E3D)
+val OrangeContainerLight = Color(0xFFFFE9E0)
+val OrangeContainerDark = Color(0xFF33200F)
 
 // 16-color palette offered for custom categories.
 val CategoryPalette = listOf(

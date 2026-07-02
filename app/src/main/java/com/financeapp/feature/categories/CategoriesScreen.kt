@@ -4,6 +4,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -16,7 +17,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
@@ -39,7 +39,7 @@ import com.financeapp.core.domain.model.CategoryType
 import com.financeapp.core.ui.categoryDisplayName
 import com.financeapp.core.ui.components.CategoryIcon
 import com.financeapp.core.ui.components.Eyebrow
-import com.financeapp.core.ui.components.Hairline
+import com.financeapp.core.ui.components.SoftCard
 import com.financeapp.core.ui.icons.materialIcon
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -83,10 +83,11 @@ fun CategoriesScreen(onBack: () -> Unit, vm: CategoriesViewModel = hiltViewModel
                 contentPadding = androidx.compose.foundation.layout.PaddingValues(vertical = 8.dp),
             ) {
                 items(cats, key = { it.id }) { c ->
-                    Surface(
-                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
-                        shape = MaterialTheme.shapes.medium,
-                        tonalElevation = 1.dp,
+                    SoftCard(
+                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 5.dp),
+                        shape = MaterialTheme.shapes.large,
+                        elevation = 5.dp,
+                        contentPadding = PaddingValues(0.dp),
                     ) {
                         CategoryManageRow(
                             category = c,

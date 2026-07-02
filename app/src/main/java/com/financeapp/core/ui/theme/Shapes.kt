@@ -9,9 +9,12 @@ import androidx.compose.ui.unit.dp
  * Drives Card (medium), TextField (extraSmall), Chip (small), BottomSheet (extraLarge), etc.
  */
 val AppShapes = Shapes(
-    extraSmall = RoundedCornerShape(12.dp),
-    small = RoundedCornerShape(16.dp),
-    medium = RoundedCornerShape(22.dp),
-    large = RoundedCornerShape(28.dp),
-    extraLarge = RoundedCornerShape(32.dp),
+    extraSmall = RoundedCornerShape(14.dp),
+    small = RoundedCornerShape(18.dp),
+    medium = RoundedCornerShape(24.dp),
+    large = RoundedCornerShape(30.dp),
+    extraLarge = RoundedCornerShape(36.dp),
 )
+
+/** Fully-rounded stadium shape for pills, chips and stat capsules. */
+val PillShape = RoundedCornerShape(percent = 50)

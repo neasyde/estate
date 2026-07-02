@@ -14,11 +14,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -34,6 +31,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -46,14 +44,17 @@ import com.financeapp.core.domain.model.TransactionType
 import com.financeapp.core.ui.anim.Motion
 import com.financeapp.core.ui.anim.animatedCountUp
 import com.financeapp.core.ui.anim.reducedMotion
-import com.financeapp.core.ui.components.AmountText
 import com.financeapp.core.ui.components.EmptyState
 import com.financeapp.core.ui.components.Eyebrow
-import com.financeapp.core.ui.components.Hairline
+import com.financeapp.core.ui.components.SoftCard
+import com.financeapp.core.ui.components.StatPill
 import com.financeapp.core.ui.components.TransactionRow
+import com.financeapp.core.ui.components.accentBrush
+import com.financeapp.core.ui.components.softShadow
 import com.financeapp.core.ui.icons.materialIcon
 import com.financeapp.core.ui.theme.ExpenseRed
 import com.financeapp.core.ui.theme.IncomeGreen
+import com.financeapp.core.ui.theme.LocalAccentColors
 import com.financeapp.core.utils.CurrencyFormatter
 import com.financeapp.feature.transactions.AddEditTransactionSheet
 import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
@@ -134,59 +135,61 @@ private fun Masthead(
     hidden: Boolean,
     onToggle: () -> Unit,
 ) {
-    Card(
-        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-        shape = MaterialTheme.shapes.extraLarge,
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
+    val accent = LocalAccentColors.current.primary
+    val onHero = Color.White
+    Column(
+        Modifier.fillMaxWidth().padding(horizontal = 16.dp)
+            .softShadow(MaterialTheme.shapes.extraLarge, accent, 20.dp)
+            .clip(MaterialTheme.shapes.extraLarge)
+            .background(accentBrush())
+            .padding(horizontal = 24.dp, vertical = 24.dp),
     ) {
-        Column(Modifier.padding(horizontal = 22.dp, vertical = 22.dp)) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Eyebrow(stringResource(R.string.dash_balance))
-                Spacer(Modifier.weight(1f))
-                IconButton(onClick = onToggle) {
-                    Icon(
-                        materialIcon(if (hidden) "visibility_off" else "visibility"),
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                }
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Eyebrow(stringResource(R.string.dash_balance), color = onHero.copy(alpha = 0.75f))
+            Spacer(Modifier.weight(1f))
+            IconButton(onClick = onToggle) {
+                Icon(
+                    materialIcon(if (hidden) "visibility_off" else "visibility"),
+                    contentDescription = null,
+                    tint = onHero,
+                )
             }
-            val animated = animatedCountUp(balance)
-            Text(
-                text = if (hidden) "••••••" else CurrencyFormatter.format(animated, currency),
-                style = MaterialTheme.typography.displayLarge,
-                color = MaterialTheme.colorScheme.onSurface,
+        }
+        val animated = animatedCountUp(balance)
+        Text(
+            text = if (hidden) "••••••" else CurrencyFormatter.format(animated, currency),
+            style = MaterialTheme.typography.displayLarge,
+            color = onHero,
+        )
+        Spacer(Modifier.height(20.dp))
+        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+            StatPill(
+                icon = "arrow_upward",
+                label = stringResource(R.string.dash_income),
+                value = CurrencyFormatter.format(income, currency),
+                contentColor = onHero,
+                containerColor = onHero.copy(alpha = 0.16f),
+                modifier = Modifier.weight(1f),
             )
-            Spacer(Modifier.height(20.dp))
-            Hairline()
-            Spacer(Modifier.height(16.dp))
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Column(Modifier.weight(1f)) {
-                    Eyebrow(stringResource(R.string.dash_income))
-                    Spacer(Modifier.height(4.dp))
-                    AmountText(income, currency, income = true, style = MaterialTheme.typography.titleMedium)
-                }
-                Box(Modifier.width(1.dp).height(40.dp).background(MaterialTheme.colorScheme.outline))
-                Column(Modifier.weight(1f).padding(start = 20.dp)) {
-                    Eyebrow(stringResource(R.string.dash_expense))
-                    Spacer(Modifier.height(4.dp))
-                    AmountText(expense, currency, income = false, style = MaterialTheme.typography.titleMedium)
-                }
-            }
+            StatPill(
+                icon = "arrow_downward",
+                label = stringResource(R.string.dash_expense),
+                value = CurrencyFormatter.format(expense, currency),
+                contentColor = onHero,
+                containerColor = onHero.copy(alpha = 0.16f),
+                modifier = Modifier.weight(1f),
+            )
         }
     }
 }
 
 @Composable
 private fun SectionCard(content: @Composable androidx.compose.foundation.layout.ColumnScope.() -> Unit) {
-    Card(
+    SoftCard(
         modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-        shape = MaterialTheme.shapes.large,
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
-    ) {
-        Column(Modifier.padding(vertical = 16.dp), content = content)
-    }
+        elevation = 8.dp,
+        content = content,
+    )
 }
 
 @Composable

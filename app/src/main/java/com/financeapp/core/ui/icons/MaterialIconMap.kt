@@ -4,6 +4,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBalance
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowDownward
+import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material.icons.filled.Bolt
 import androidx.compose.material.icons.filled.Brush
@@ -93,6 +95,8 @@ fun materialIcon(name: String): ImageVector = when (name) {
     "notifications" -> Icons.Filled.Notifications
     "close" -> Icons.Filled.Close
     "arrow_back" -> Icons.Filled.ArrowBack
+    "arrow_upward" -> Icons.Filled.ArrowUpward
+    "arrow_downward" -> Icons.Filled.ArrowDownward
     "wallet" -> Icons.Filled.Wallet
     "warning" -> Icons.Filled.Warning
     "fastfood" -> Icons.Filled.Fastfood
