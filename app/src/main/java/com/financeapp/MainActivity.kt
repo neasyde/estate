@@ -1,20 +1,52 @@
 package com.financeapp
 
 import android.os.Bundle
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
+import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
+import com.financeapp.core.domain.model.AppSettings
+import com.financeapp.core.ui.theme.FinanceTheme
+import com.financeapp.navigation.BottomBar
+import com.financeapp.navigation.FinanceNavHost
+import com.financeapp.navigation.Routes
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class MainActivity : ComponentActivity() {
+class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            MaterialTheme {
-                Surface { Text("FinanceApp") }
+            val vm: AppRootViewModel = hiltViewModel()
+            val settings by vm.settings.collectAsStateWithLifecycle()
+            val effective = settings ?: AppSettings()
+
+            FinanceTheme(themeMode = effective.themeMode, colorScheme = effective.colorScheme) {
+                val nav = rememberNavController()
+                val backStack by nav.currentBackStackEntryAsState()
+                val currentRoute = backStack?.destination?.route
+
+                Scaffold(
+                    bottomBar = {
+                        if (currentRoute in Routes.bottomBarRoutes) {
+                            BottomBar(currentRoute) { route ->
+                                nav.navigate(route) {
+                                    popUpTo(Routes.DASHBOARD) { saveState = true }
+                                    launchSingleTop = true
+                                    restoreState = true
+                                }
+                            }
+                        }
+                    },
+                ) { padding ->
+                    FinanceNavHost(nav, settings, Modifier.padding(padding))
+                }
             }
         }
     }
