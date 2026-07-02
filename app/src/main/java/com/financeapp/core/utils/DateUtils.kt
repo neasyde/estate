@@ -22,6 +22,13 @@ object DateUtils {
     fun startOfMonth(millis: Long, zone: ZoneId = ZoneId.systemDefault()): Long =
         date(millis, zone).withDayOfMonth(1).atStartOfDay(zone).toInstant().toEpochMilli()
 
+    fun startOfWeek(millis: Long, zone: ZoneId = ZoneId.systemDefault()): Long =
+        date(millis, zone).with(java.time.temporal.TemporalAdjusters.previousOrSame(java.time.DayOfWeek.MONDAY))
+            .atStartOfDay(zone).toInstant().toEpochMilli()
+
+    fun startOfYear(millis: Long, zone: ZoneId = ZoneId.systemDefault()): Long =
+        date(millis, zone).withDayOfYear(1).atStartOfDay(zone).toInstant().toEpochMilli()
+
     fun lastNDayStarts(nowMillis: Long, n: Int, zone: ZoneId = ZoneId.systemDefault()): List<Long> {
         val today = date(nowMillis, zone)
         return (n - 1 downTo 0).map {

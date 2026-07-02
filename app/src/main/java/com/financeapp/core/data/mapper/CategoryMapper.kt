@@ -11,6 +11,7 @@ fun CategoryEntity.toDomain() = Category(
     color = color,
     type = CategoryType.valueOf(type),
     isCustom = isCustom,
+    isHidden = isHidden,
 )
 
 fun Category.toEntity() = CategoryEntity(
@@ -20,4 +21,5 @@ fun Category.toEntity() = CategoryEntity(
     color = color,
     type = type.name,
     isCustom = isCustom,
+    isHidden = isHidden,
 )

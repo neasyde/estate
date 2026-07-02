@@ -11,4 +11,5 @@ data class CategoryEntity(
     val color: Int,
     val type: String,
     val isCustom: Boolean = false,
+    val isHidden: Boolean = false,
 )

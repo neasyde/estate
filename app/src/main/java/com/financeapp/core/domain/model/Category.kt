@@ -7,4 +7,5 @@ data class Category(
     val color: Int,
     val type: CategoryType,
     val isCustom: Boolean = false,
+    val isHidden: Boolean = false,
 )

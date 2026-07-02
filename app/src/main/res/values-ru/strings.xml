@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">FinanceApp</string>
+    <string name="app_name">estate</string>
+    <string name="brand_tagline">Личные финансы</string>
 
     <string name="nav_dashboard">Главная</string>
     <string name="nav_transactions">Транзакции</string>
@@ -85,6 +86,32 @@
 
     <string name="ph_budgets">Контролируйте расходы с помощью бюджетов</string>
     <string name="ph_analytics">Здесь появится ваша статистика</string>
+
+    <!-- budgets -->
+    <string name="budget_new">Новый бюджет</string>
+    <string name="budget_edit">Изменить бюджет</string>
+    <string name="budget_limit">Лимит</string>
+    <string name="budget_period">Период</string>
+    <string name="budget_over">Превышен</string>
+    <string name="budget_period_weekly">Неделя</string>
+    <string name="budget_period_monthly">Месяц</string>
+    <string name="budget_period_yearly">Год</string>
+
+    <!-- categories management -->
+    <string name="cat_manage_title">Категории</string>
+    <string name="cat_tab_expense">Расходы</string>
+    <string name="cat_tab_income">Доходы</string>
+    <string name="cat_new">Новая категория</string>
+    <string name="cat_edit">Изменить категорию</string>
+    <string name="cat_field_name">Название</string>
+    <string name="cat_field_icon">Иконка</string>
+    <string name="cat_field_color">Цвет</string>
+    <string name="cat_field_type">Тип</string>
+    <string name="cat_type_expense">Расход</string>
+    <string name="cat_type_income">Доход</string>
+    <string name="cat_type_both">Оба</string>
+    <string name="cat_badge_system">Системная</string>
+    <string name="cat_search_icon">Поиск иконки</string>
 
     <string name="cat_food">Еда и продукты</string>
     <string name="cat_transport">Транспорт</string>

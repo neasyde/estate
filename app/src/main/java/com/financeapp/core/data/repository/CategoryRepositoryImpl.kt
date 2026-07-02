@@ -19,9 +19,14 @@ class CategoryRepositoryImpl @Inject constructor(
     override fun observeByType(type: CategoryType): Flow<List<Category>> =
         dao.observeByType(type.name).map { l -> l.map { it.toDomain() } }
 
+    override fun observeManagedByType(type: CategoryType): Flow<List<Category>> =
+        dao.observeManagedByType(type.name).map { l -> l.map { it.toDomain() } }
+
     override suspend fun getById(id: Long): Category? = dao.getById(id)?.toDomain()
 
     override suspend fun upsert(c: Category): Long = dao.upsert(c.toEntity())
+
+    override suspend fun setHidden(id: Long, hidden: Boolean) = dao.setHidden(id, hidden)
 
     override suspend fun delete(id: Long) = dao.delete(id)
 }

@@ -9,6 +9,7 @@ object Routes {
     const val BUDGETS = "budgets"
     const val ANALYTICS = "analytics"
     const val SETTINGS = "settings"
+    const val CATEGORIES = "categories"
 
     val bottomBarRoutes = setOf(DASHBOARD, TRANSACTIONS, BUDGETS, ANALYTICS, SETTINGS)
 }

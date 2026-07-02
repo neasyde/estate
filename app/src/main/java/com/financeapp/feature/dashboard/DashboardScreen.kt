@@ -1,8 +1,10 @@
 package com.financeapp.feature.dashboard
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.slideInVertically
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,10 +14,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -40,9 +41,13 @@ import com.financeapp.R
 import com.financeapp.core.domain.model.Currency
 import com.financeapp.core.domain.model.DayAmount
 import com.financeapp.core.domain.model.TransactionType
+import com.financeapp.core.ui.anim.Motion
 import com.financeapp.core.ui.anim.animatedCountUp
+import com.financeapp.core.ui.anim.reducedMotion
 import com.financeapp.core.ui.components.AmountText
 import com.financeapp.core.ui.components.EmptyState
+import com.financeapp.core.ui.components.Eyebrow
+import com.financeapp.core.ui.components.Hairline
 import com.financeapp.core.ui.components.TransactionRow
 import com.financeapp.core.ui.icons.materialIcon
 import com.financeapp.core.ui.theme.ExpenseRed
@@ -70,33 +75,31 @@ fun DashboardScreen(
     var fabExpanded by remember { mutableStateOf(false) }
 
     Box(Modifier.fillMaxSize()) {
-        Column(
-            Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp),
-        ) {
-            BalanceCard(data.balanceBase, baseCurrency, hidden, vm::toggleBalanceHidden)
-            Spacer(Modifier.height(16.dp))
-            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                MoneyColumn(stringResource(R.string.dash_income), data.monthIncomeBase, baseCurrency, true, Modifier.weight(1f))
-                MoneyColumn(stringResource(R.string.dash_expense), data.monthExpenseBase, baseCurrency, false, Modifier.weight(1f))
-            }
+        Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
+            Masthead(data.balanceBase, data.monthIncomeBase, data.monthExpenseBase, baseCurrency, hidden, vm::toggleBalanceHidden)
+
+            Spacer(Modifier.height(24.dp))
+            Eyebrow(stringResource(R.string.dash_last7), modifier = Modifier.padding(horizontal = 20.dp))
+            Spacer(Modifier.height(12.dp))
+            Last7Chart(data.last7Days, Modifier.padding(horizontal = 20.dp))
+
+            Spacer(Modifier.height(28.dp))
+            Hairline(Modifier.padding(horizontal = 20.dp))
             Spacer(Modifier.height(20.dp))
-            Text(stringResource(R.string.dash_last7), style = MaterialTheme.typography.titleSmall)
+            Eyebrow(stringResource(R.string.dash_recent), modifier = Modifier.padding(horizontal = 20.dp))
             Spacer(Modifier.height(8.dp))
-            Last7Chart(data.last7Days)
-            Spacer(Modifier.height(20.dp))
-            Text(stringResource(R.string.dash_recent), style = MaterialTheme.typography.titleMedium)
-            Spacer(Modifier.height(8.dp))
+
             if (data.recent.isEmpty()) {
                 EmptyState(iconName = "wallet", title = stringResource(R.string.dash_empty))
             } else {
                 data.recent.forEachIndexed { i, item ->
                     Staggered(i) { TransactionRow(item) }
                 }
-                TextButton(onClick = onSeeAll, modifier = Modifier.fillMaxWidth()) {
+                TextButton(onClick = onSeeAll, modifier = Modifier.fillMaxWidth().padding(top = 4.dp)) {
                     Text(stringResource(R.string.dash_see_all))
                 }
             }
-            Spacer(Modifier.height(80.dp))
+            Spacer(Modifier.height(96.dp))
         }
 
         ExpandableFab(
@@ -104,7 +107,7 @@ fun DashboardScreen(
             onToggle = { fabExpanded = !fabExpanded },
             onExpense = { presetType = TransactionType.EXPENSE; sheetOpen = true; fabExpanded = false },
             onIncome = { presetType = TransactionType.INCOME; sheetOpen = true; fabExpanded = false },
-            modifier = Modifier.align(Alignment.BottomEnd).padding(16.dp),
+            modifier = Modifier.align(Alignment.BottomEnd).padding(20.dp),
         )
     }
 
@@ -119,50 +122,53 @@ fun DashboardScreen(
 }
 
 @Composable
-private fun BalanceCard(balance: Double, currency: Currency, hidden: Boolean, onToggle: () -> Unit) {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
-    ) {
-        Column(Modifier.padding(20.dp)) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(
-                    stringResource(R.string.dash_balance),
-                    style = MaterialTheme.typography.labelLarge,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+private fun Masthead(
+    balance: Double,
+    income: Double,
+    expense: Double,
+    currency: Currency,
+    hidden: Boolean,
+    onToggle: () -> Unit,
+) {
+    Column(Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 24.dp)) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Eyebrow(stringResource(R.string.dash_balance))
+            Spacer(Modifier.weight(1f))
+            IconButton(onClick = onToggle) {
+                Icon(
+                    materialIcon(if (hidden) "visibility_off" else "visibility"),
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
-                Spacer(Modifier.weight(1f))
-                IconButton(onClick = onToggle) {
-                    Icon(
-                        materialIcon(if (hidden) "visibility_off" else "visibility"),
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                    )
-                }
             }
-            val animated = animatedCountUp(balance)
-            Text(
-                text = if (hidden) "••••••" else CurrencyFormatter.format(animated, currency),
-                style = MaterialTheme.typography.headlineLarge,
-                color = MaterialTheme.colorScheme.onPrimaryContainer,
-            )
+        }
+        val animated = animatedCountUp(balance)
+        Text(
+            text = if (hidden) "••••••" else CurrencyFormatter.format(animated, currency),
+            style = MaterialTheme.typography.displayLarge,
+            color = MaterialTheme.colorScheme.onBackground,
+        )
+        Spacer(Modifier.height(20.dp))
+        Hairline()
+        Spacer(Modifier.height(16.dp))
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Column(Modifier.weight(1f)) {
+                Eyebrow(stringResource(R.string.dash_income))
+                Spacer(Modifier.height(4.dp))
+                AmountText(income, currency, income = true, style = MaterialTheme.typography.titleMedium)
+            }
+            Box(Modifier.width(1.dp).height(40.dp).background(MaterialTheme.colorScheme.outline))
+            Column(Modifier.weight(1f).padding(start = 20.dp)) {
+                Eyebrow(stringResource(R.string.dash_expense))
+                Spacer(Modifier.height(4.dp))
+                AmountText(expense, currency, income = false, style = MaterialTheme.typography.titleMedium)
+            }
         }
     }
 }
 
 @Composable
-private fun MoneyColumn(label: String, amount: Double, currency: Currency, income: Boolean, modifier: Modifier) {
-    Card(modifier = modifier) {
-        Column(Modifier.padding(16.dp)) {
-            Text(label, style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
-            Spacer(Modifier.height(4.dp))
-            AmountText(amount, currency, income, style = MaterialTheme.typography.titleMedium)
-        }
-    }
-}
-
-@Composable
-private fun Last7Chart(days: List<DayAmount>) {
+private fun Last7Chart(days: List<DayAmount>, modifier: Modifier = Modifier) {
     if (days.isEmpty()) return
     val entries = days.mapIndexed { i, d -> entryOf(i.toFloat(), d.expenseBase.toFloat()) }
     val producer = remember(entries) { ChartEntryModelProducer(entries) }
@@ -171,18 +177,23 @@ private fun Last7Chart(days: List<DayAmount>) {
         chartModelProducer = producer,
         startAxis = rememberStartAxis(),
         bottomAxis = rememberBottomAxis(),
-        modifier = Modifier.fillMaxWidth().height(160.dp),
+        modifier = modifier.fillMaxWidth().height(150.dp),
     )
 }
 
 @Composable
 private fun Staggered(index: Int, content: @Composable () -> Unit) {
+    val reduced = reducedMotion()
     var visible by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
-        delay(index * 60L)
+        if (!reduced) delay(index * Motion.StaggerStep.toLong())
         visible = true
     }
-    AnimatedVisibility(visible, enter = fadeIn() + slideInVertically { it / 2 }) { content() }
+    AnimatedVisibility(
+        visible = visible,
+        enter = fadeIn(tween(Motion.Medium, easing = Motion.Emphasized)) +
+            slideInVertically(tween(Motion.Medium, easing = Motion.Emphasized)) { it / 3 },
+    ) { content() }
 }
 
 @Composable
@@ -194,7 +205,11 @@ private fun ExpandableFab(
     modifier: Modifier = Modifier,
 ) {
     Column(modifier, horizontalAlignment = Alignment.End) {
-        AnimatedVisibility(expanded) {
+        AnimatedVisibility(
+            visible = expanded,
+            enter = fadeIn(tween(Motion.Short, easing = Motion.Emphasized)) +
+                slideInVertically(tween(Motion.Short, easing = Motion.Emphasized)) { it / 2 },
+        ) {
             Column(horizontalAlignment = Alignment.End) {
                 ExtendedFloatingActionButton(
                     text = { Text(stringResource(R.string.dash_add_income)) },

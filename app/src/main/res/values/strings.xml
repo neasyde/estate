@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">FinanceApp</string>
+    <string name="app_name">estate</string>
+    <string name="brand_tagline">Personal finance</string>
 
     <!-- nav -->
     <string name="nav_dashboard">Dashboard</string>
@@ -93,6 +94,32 @@
     <!-- placeholders -->
     <string name="ph_budgets">Control spending with budgets</string>
     <string name="ph_analytics">Your statistics will appear here</string>
+
+    <!-- budgets -->
+    <string name="budget_new">New budget</string>
+    <string name="budget_edit">Edit budget</string>
+    <string name="budget_limit">Limit</string>
+    <string name="budget_period">Period</string>
+    <string name="budget_over">Over budget</string>
+    <string name="budget_period_weekly">Weekly</string>
+    <string name="budget_period_monthly">Monthly</string>
+    <string name="budget_period_yearly">Yearly</string>
+
+    <!-- categories management -->
+    <string name="cat_manage_title">Categories</string>
+    <string name="cat_tab_expense">Expenses</string>
+    <string name="cat_tab_income">Income</string>
+    <string name="cat_new">New category</string>
+    <string name="cat_edit">Edit category</string>
+    <string name="cat_field_name">Name</string>
+    <string name="cat_field_icon">Icon</string>
+    <string name="cat_field_color">Color</string>
+    <string name="cat_field_type">Type</string>
+    <string name="cat_type_expense">Expense</string>
+    <string name="cat_type_income">Income</string>
+    <string name="cat_type_both">Both</string>
+    <string name="cat_badge_system">System</string>
+    <string name="cat_search_icon">Search icon</string>
 
     <!-- categories -->
     <string name="cat_food">Food &amp; groceries</string>

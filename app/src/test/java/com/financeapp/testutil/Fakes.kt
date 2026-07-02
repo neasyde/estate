@@ -9,6 +9,8 @@ import com.financeapp.core.domain.model.Currency
 import com.financeapp.core.domain.model.IntervalType
 import com.financeapp.core.domain.model.ThemeMode
 import com.financeapp.core.domain.model.Transaction
+import com.financeapp.core.domain.model.Budget
+import com.financeapp.core.domain.repository.BudgetRepository
 import com.financeapp.core.domain.repository.CategoryRepository
 import com.financeapp.core.domain.repository.RecurringRuleRepository
 import com.financeapp.core.domain.repository.SettingsRepository
@@ -58,9 +60,12 @@ class FakeTransactionRepository(
 class FakeCategoryRepository(private val cats: List<Category> = emptyList()) : CategoryRepository {
     override fun observeAll(): Flow<List<Category>> = flowOf(cats)
     override fun observeByType(type: CategoryType): Flow<List<Category>> =
+        flowOf(cats.filter { (it.type == type || it.type == CategoryType.BOTH) && !it.isHidden })
+    override fun observeManagedByType(type: CategoryType): Flow<List<Category>> =
         flowOf(cats.filter { it.type == type || it.type == CategoryType.BOTH })
     override suspend fun getById(id: Long): Category? = cats.find { it.id == id }
     override suspend fun upsert(c: Category): Long = c.id
+    override suspend fun setHidden(id: Long, hidden: Boolean) {}
     override suspend fun delete(id: Long) {}
 }
 
@@ -70,4 +75,10 @@ class FakeRecurringRuleRepository : RecurringRuleRepository {
         added.add(templateJson)
         return added.size.toLong()
     }
+}
+
+class FakeBudgetRepository(private val budgets: List<Budget> = emptyList()) : BudgetRepository {
+    override fun observeAll(): kotlinx.coroutines.flow.Flow<List<Budget>> = flowOf(budgets)
+    override suspend fun upsert(b: Budget): Long = b.id
+    override suspend fun delete(id: Long) {}
 }

@@ -52,7 +52,7 @@ import com.financeapp.core.ui.theme.PurplePrimary
 import com.financeapp.core.utils.LocaleManager
 
 @Composable
-fun SettingsScreen(vm: SettingsViewModel = hiltViewModel()) {
+fun SettingsScreen(onManageCategories: () -> Unit, vm: SettingsViewModel = hiltViewModel()) {
     val settings by vm.settings.collectAsStateWithLifecycle()
     var showPinDialog by remember { mutableStateOf(false) }
 
@@ -102,6 +102,12 @@ fun SettingsScreen(vm: SettingsViewModel = hiltViewModel()) {
             Text(stringResource(R.string.set_biometric))
             Spacer(Modifier.weight(1f))
             Switch(checked = settings.biometricEnabled, onCheckedChange = { vm.setBiometric(it) })
+        }
+
+        SectionDivider()
+        SectionTitle(stringResource(R.string.cat_manage_title))
+        OutlinedButton(onClick = onManageCategories, modifier = Modifier.fillMaxWidth()) {
+            Text(stringResource(R.string.cat_manage_title))
         }
         Spacer(Modifier.height(24.dp))
     }

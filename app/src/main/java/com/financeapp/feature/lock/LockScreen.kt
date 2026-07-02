@@ -39,6 +39,7 @@ import androidx.fragment.app.FragmentActivity
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.financeapp.R
+import com.financeapp.core.ui.components.Eyebrow
 import com.financeapp.core.ui.components.PinDots
 import com.financeapp.core.ui.icons.materialIcon
 import com.financeapp.core.utils.rememberHaptics
@@ -96,16 +97,13 @@ fun LockScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
         ) {
-            Box(
-                Modifier.size(88.dp).clip(CircleShape),
-                contentAlignment = Alignment.Center,
-            ) {
-                Icon(materialIcon("wallet"), null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(72.dp))
-            }
-            Spacer(Modifier.height(12.dp))
-            Text(stringResource(R.string.app_name), style = MaterialTheme.typography.titleLarge)
-            Spacer(Modifier.height(8.dp))
-            Text(stringResource(R.string.lock_enter_pin), color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text(
+                text = stringResource(R.string.app_name),
+                style = MaterialTheme.typography.displayMedium,
+                color = MaterialTheme.colorScheme.onSurface,
+            )
+            Spacer(Modifier.height(16.dp))
+            Eyebrow(stringResource(R.string.lock_enter_pin))
             Spacer(Modifier.height(32.dp))
             PinDots(
                 filled = state.entered.length,
