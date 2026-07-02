@@ -1,9 +1,11 @@
 package com.financeapp.core.data.di
 
 import com.financeapp.core.data.repository.CategoryRepositoryImpl
+import com.financeapp.core.data.repository.RecurringRuleRepositoryImpl
 import com.financeapp.core.data.repository.SettingsRepositoryImpl
 import com.financeapp.core.data.repository.TransactionRepositoryImpl
 import com.financeapp.core.domain.repository.CategoryRepository
+import com.financeapp.core.domain.repository.RecurringRuleRepository
 import com.financeapp.core.domain.repository.SettingsRepository
 import com.financeapp.core.domain.repository.TransactionRepository
 import dagger.Binds
@@ -23,4 +25,7 @@ abstract class RepositoryModule {
 
     @Binds @Singleton
     abstract fun categories(impl: CategoryRepositoryImpl): CategoryRepository
+
+    @Binds @Singleton
+    abstract fun recurringRules(impl: RecurringRuleRepositoryImpl): RecurringRuleRepository
 }
