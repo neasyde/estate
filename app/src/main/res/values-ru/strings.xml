@@ -150,4 +150,15 @@
     <string name="rem_empty">Пока нет напоминаний</string>
     <string name="rem_channel_name">Напоминания</string>
     <string name="rem_channel_desc">Напоминания о платежах и счетах</string>
+
+    <string name="set_data">Данные</string>
+    <string name="set_backup">Экспорт (резервная копия)</string>
+    <string name="set_restore">Восстановить из копии</string>
+    <string name="restore_confirm_title">Восстановить данные?</string>
+    <string name="restore_confirm_msg">Все текущие данные будут заменены копией. Отменить нельзя.</string>
+    <string name="backup_ok">Копия сохранена</string>
+    <string name="backup_fail">Не удалось сохранить копию</string>
+    <string name="restore_ok">Данные восстановлены</string>
+    <string name="restore_fail">Не удалось прочитать файл копии</string>
+    <string name="action_ok">OK</string>
 </resources>

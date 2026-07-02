@@ -25,6 +25,7 @@ import androidx.compose.material.icons.rounded.CreditCard
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.DirectionsBus
 import androidx.compose.material.icons.rounded.DirectionsCar
+import androidx.compose.material.icons.rounded.Download
 import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.material.icons.rounded.Fastfood
 import androidx.compose.material.icons.rounded.Favorite
@@ -57,6 +58,7 @@ import androidx.compose.material.icons.rounded.SportsEsports
 import androidx.compose.material.icons.rounded.SportsSoccer
 import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material.icons.rounded.Train
+import androidx.compose.material.icons.rounded.Upload
 import androidx.compose.material.icons.rounded.Visibility
 import androidx.compose.material.icons.rounded.VisibilityOff
 import androidx.compose.material.icons.rounded.Wallet
@@ -96,6 +98,8 @@ fun materialIcon(name: String): ImageVector = when (name) {
     "notifications" -> Icons.Rounded.Notifications
     "close" -> Icons.Rounded.Close
     "chevron_right" -> Icons.Rounded.ChevronRight
+    "download" -> Icons.Rounded.Download
+    "upload" -> Icons.Rounded.Upload
     "arrow_back" -> Icons.AutoMirrored.Rounded.ArrowBack
     "arrow_upward" -> Icons.Rounded.ArrowUpward
     "arrow_downward" -> Icons.Rounded.ArrowDownward

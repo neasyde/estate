@@ -159,4 +159,15 @@
     <string name="rem_empty">No reminders yet</string>
     <string name="rem_channel_name">Reminders</string>
     <string name="rem_channel_desc">Payment and bill reminders</string>
+
+    <string name="set_data">Data</string>
+    <string name="set_backup">Export backup</string>
+    <string name="set_restore">Restore from backup</string>
+    <string name="restore_confirm_title">Restore data?</string>
+    <string name="restore_confirm_msg">This replaces all current data with the backup. This can\'t be undone.</string>
+    <string name="backup_ok">Backup saved</string>
+    <string name="backup_fail">Couldn\'t save backup</string>
+    <string name="restore_ok">Data restored</string>
+    <string name="restore_fail">Couldn\'t read that backup file</string>
+    <string name="action_ok">OK</string>
 </resources>

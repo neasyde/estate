@@ -1,5 +1,7 @@
 package com.financeapp.feature.settings
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -71,7 +73,15 @@ fun SettingsScreen(
     vm: SettingsViewModel = hiltViewModel(),
 ) {
     val settings by vm.settings.collectAsStateWithLifecycle()
+    val backupEvent by vm.backupEvent.collectAsStateWithLifecycle()
     var showPinDialog by remember { mutableStateOf(false) }
+    var showRestoreConfirm by remember { mutableStateOf(false) }
+    val exportLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.CreateDocument("application/json"),
+    ) { uri -> uri?.let(vm::exportBackup) }
+    val importLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.OpenDocument(),
+    ) { uri -> uri?.let(vm::importBackup) }
 
     Column(
         Modifier.fillMaxWidth().verticalScroll(rememberScrollState()).padding(horizontal = 16.dp),
@@ -167,11 +177,56 @@ fun SettingsScreen(
                 ActionRow("notifications", stringResource(R.string.rem_title), onClick = onManageReminders)
             }
         }
+        GroupGap()
+
+        Reveal(5) {
+            SettingsGroup(stringResource(R.string.set_data)) {
+                ActionRow("download", stringResource(R.string.set_backup)) {
+                    exportLauncher.launch("estate-backup.json")
+                }
+                ActionRow("upload", stringResource(R.string.set_restore)) {
+                    showRestoreConfirm = true
+                }
+            }
+        }
         Spacer(Modifier.height(28.dp))
     }
 
     if (showPinDialog) {
         ChangePinDialog(onDismiss = { showPinDialog = false }, onConfirm = { vm.changePin(it); showPinDialog = false })
+    }
+
+    if (showRestoreConfirm) {
+        AlertDialog(
+            onDismissRequest = { showRestoreConfirm = false },
+            title = { Text(stringResource(R.string.restore_confirm_title)) },
+            text = { Text(stringResource(R.string.restore_confirm_msg)) },
+            confirmButton = {
+                TextButton(onClick = {
+                    showRestoreConfirm = false
+                    importLauncher.launch(arrayOf("application/json"))
+                }) { Text(stringResource(R.string.set_restore)) }
+            },
+            dismissButton = {
+                TextButton(onClick = { showRestoreConfirm = false }) { Text(stringResource(R.string.action_cancel)) }
+            },
+        )
+    }
+
+    backupEvent?.let { event ->
+        val message = when (event) {
+            BackupEvent.EXPORT_OK -> stringResource(R.string.backup_ok)
+            BackupEvent.EXPORT_FAIL -> stringResource(R.string.backup_fail)
+            BackupEvent.IMPORT_OK -> stringResource(R.string.restore_ok)
+            BackupEvent.IMPORT_FAIL -> stringResource(R.string.restore_fail)
+        }
+        AlertDialog(
+            onDismissRequest = { vm.clearBackupEvent() },
+            confirmButton = {
+                TextButton(onClick = { vm.clearBackupEvent() }) { Text(stringResource(R.string.action_ok)) }
+            },
+            text = { Text(message) },
+        )
     }
 }
 
