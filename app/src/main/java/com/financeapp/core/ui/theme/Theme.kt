@@ -1,6 +1,7 @@
 package com.financeapp.core.ui.theme
 
 import android.app.Activity
+import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
@@ -11,6 +12,7 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 import com.financeapp.core.domain.model.ColorScheme as AppColorScheme
@@ -79,10 +81,19 @@ fun FinanceTheme(
 
     val view = LocalView.current
     if (!view.isInEditMode) {
+        val lightBars = scheme.background.luminance() > 0.5f
+        val barColor = scheme.background.toArgb()
         SideEffect {
             val window = (view.context as? Activity)?.window ?: return@SideEffect
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars =
-                scheme.background.luminance() > 0.5f
+            // Status bar and system navigation bar match the app background in both themes.
+            window.statusBarColor = barColor
+            window.navigationBarColor = barColor
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                window.isNavigationBarContrastEnforced = false
+            }
+            val controller = WindowCompat.getInsetsController(window, view)
+            controller.isAppearanceLightStatusBars = lightBars
+            controller.isAppearanceLightNavigationBars = lightBars
         }
     }
 

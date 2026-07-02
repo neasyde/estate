@@ -86,7 +86,7 @@ fun CategoriesScreen(onBack: () -> Unit, vm: CategoriesViewModel = hiltViewModel
                     SoftCard(
                         modifier = Modifier.padding(horizontal = 12.dp, vertical = 5.dp),
                         shape = MaterialTheme.shapes.large,
-                        elevation = 5.dp,
+                        elevation = 0.dp,
                         contentPadding = PaddingValues(0.dp),
                     ) {
                         CategoryManageRow(

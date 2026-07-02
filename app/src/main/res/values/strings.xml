@@ -136,4 +136,13 @@
     <string name="cat_freelance">Freelance</string>
     <string name="cat_investments">Investments</string>
     <string name="cat_gifts">Gifts</string>
+
+    <string name="an_by_category">Spending by category</string>
+    <string name="an_trend">Income vs expense</string>
+    <string name="an_period_month">Month</string>
+    <string name="an_period_year">Year</string>
+    <string name="an_period_all">All</string>
+    <string name="an_net">Net</string>
+    <string name="an_spent">Spent</string>
+    <string name="an_empty">No data to analyse yet</string>
 </resources>

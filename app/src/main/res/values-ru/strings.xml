@@ -127,4 +127,13 @@
     <string name="cat_freelance">Фриланс</string>
     <string name="cat_investments">Инвестиции</string>
     <string name="cat_gifts">Подарки</string>
+
+    <string name="an_by_category">Расходы по категориям</string>
+    <string name="an_trend">Доходы и расходы</string>
+    <string name="an_period_month">Месяц</string>
+    <string name="an_period_year">Год</string>
+    <string name="an_period_all">Всё</string>
+    <string name="an_net">Итого</string>
+    <string name="an_spent">Потрачено</string>
+    <string name="an_empty">Пока нет данных для аналитики</string>
 </resources>

@@ -36,6 +36,19 @@ object DateUtils {
         }
     }
 
+    fun startOfNextMonth(millis: Long, zone: ZoneId = ZoneId.systemDefault()): Long =
+        date(millis, zone).withDayOfMonth(1).plusMonths(1).atStartOfDay(zone).toInstant().toEpochMilli()
+
+    fun lastNMonthStarts(nowMillis: Long, n: Int, zone: ZoneId = ZoneId.systemDefault()): List<Long> {
+        val firstOfThisMonth = date(nowMillis, zone).withDayOfMonth(1)
+        return (n - 1 downTo 0).map {
+            firstOfThisMonth.minusMonths(it.toLong()).atStartOfDay(zone).toInstant().toEpochMilli()
+        }
+    }
+
+    fun monthLabel(monthStart: Long, zone: ZoneId = ZoneId.systemDefault()): String =
+        date(monthStart, zone).format(DateTimeFormatter.ofPattern("LLL", Locale.getDefault()))
+
     fun dayLabel(dayStart: Long, nowMillis: Long, zone: ZoneId = ZoneId.systemDefault()): DayLabel {
         val d = date(dayStart, zone)
         val today = date(nowMillis, zone)

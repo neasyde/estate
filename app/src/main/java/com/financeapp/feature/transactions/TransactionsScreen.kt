@@ -197,7 +197,7 @@ private fun SwipeRow(
         SoftCard(
             modifier = Modifier.padding(horizontal = 12.dp, vertical = 5.dp),
             shape = MaterialTheme.shapes.large,
-            elevation = 6.dp,
+            elevation = 0.dp,
             contentPadding = PaddingValues(0.dp),
         ) {
             TransactionRow(item = item, onClick = onClick)

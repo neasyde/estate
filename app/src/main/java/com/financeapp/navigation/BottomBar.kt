@@ -28,7 +28,7 @@ private val bottomItems = listOf(
 fun BottomBar(currentRoute: String?, onNavigate: (String) -> Unit) {
     val haptics = rememberHaptics()
     NavigationBar(
-        containerColor = MaterialTheme.colorScheme.surface,
+        containerColor = MaterialTheme.colorScheme.background,
         tonalElevation = 0.dp,
     ) {
         bottomItems.forEach { item ->

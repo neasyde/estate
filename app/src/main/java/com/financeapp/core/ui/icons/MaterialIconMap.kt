@@ -1,134 +1,136 @@
 package com.financeapp.core.ui.icons
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountBalance
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowDownward
-import androidx.compose.material.icons.filled.ArrowUpward
-import androidx.compose.material.icons.filled.BarChart
-import androidx.compose.material.icons.filled.Bolt
-import androidx.compose.material.icons.filled.Brush
-import androidx.compose.material.icons.filled.Build
-import androidx.compose.material.icons.filled.Cake
-import androidx.compose.material.icons.filled.CardGiftcard
-import androidx.compose.material.icons.filled.Celebration
-import androidx.compose.material.icons.filled.Checkroom
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Computer
-import androidx.compose.material.icons.filled.ContentCopy
-import androidx.compose.material.icons.filled.CreditCard
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.DirectionsBus
-import androidx.compose.material.icons.filled.DirectionsCar
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Fastfood
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.Fingerprint
-import androidx.compose.material.icons.filled.FitnessCenter
-import androidx.compose.material.icons.filled.Flight
-import androidx.compose.material.icons.filled.Headphones
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Laptop
-import androidx.compose.material.icons.filled.LocalBar
-import androidx.compose.material.icons.filled.LocalCafe
-import androidx.compose.material.icons.filled.LocalGasStation
-import androidx.compose.material.icons.filled.LocalHospital
-import androidx.compose.material.icons.filled.MedicalServices
-import androidx.compose.material.icons.filled.MenuBook
-import androidx.compose.material.icons.filled.MoreHoriz
-import androidx.compose.material.icons.filled.Movie
-import androidx.compose.material.icons.filled.MusicNote
-import androidx.compose.material.icons.filled.Notifications
-import androidx.compose.material.icons.filled.Park
-import androidx.compose.material.icons.filled.Pets
-import androidx.compose.material.icons.filled.Phone
-import androidx.compose.material.icons.filled.ReceiptLong
-import androidx.compose.material.icons.filled.Redeem
-import androidx.compose.material.icons.filled.Restaurant
-import androidx.compose.material.icons.filled.Savings
-import androidx.compose.material.icons.filled.School
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.Spa
-import androidx.compose.material.icons.filled.SportsEsports
-import androidx.compose.material.icons.filled.SportsSoccer
-import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.icons.filled.Train
-import androidx.compose.material.icons.filled.TrendingUp
-import androidx.compose.material.icons.filled.Visibility
-import androidx.compose.material.icons.filled.VisibilityOff
-import androidx.compose.material.icons.filled.Wallet
-import androidx.compose.material.icons.filled.Warning
-import androidx.compose.material.icons.filled.WaterDrop
-import androidx.compose.material.icons.filled.Wifi
-import androidx.compose.material.icons.filled.Work
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
+import androidx.compose.material.icons.automirrored.rounded.MenuBook
+import androidx.compose.material.icons.automirrored.rounded.ReceiptLong
+import androidx.compose.material.icons.automirrored.rounded.TrendingUp
+import androidx.compose.material.icons.rounded.AccountBalance
+import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material.icons.rounded.ArrowDownward
+import androidx.compose.material.icons.rounded.ArrowUpward
+import androidx.compose.material.icons.rounded.BarChart
+import androidx.compose.material.icons.rounded.Bolt
+import androidx.compose.material.icons.rounded.Brush
+import androidx.compose.material.icons.rounded.Build
+import androidx.compose.material.icons.rounded.Cake
+import androidx.compose.material.icons.rounded.CardGiftcard
+import androidx.compose.material.icons.rounded.Celebration
+import androidx.compose.material.icons.rounded.Checkroom
+import androidx.compose.material.icons.rounded.ChevronRight
+import androidx.compose.material.icons.rounded.Close
+import androidx.compose.material.icons.rounded.Computer
+import androidx.compose.material.icons.rounded.ContentCopy
+import androidx.compose.material.icons.rounded.CreditCard
+import androidx.compose.material.icons.rounded.Delete
+import androidx.compose.material.icons.rounded.DirectionsBus
+import androidx.compose.material.icons.rounded.DirectionsCar
+import androidx.compose.material.icons.rounded.Edit
+import androidx.compose.material.icons.rounded.Fastfood
+import androidx.compose.material.icons.rounded.Favorite
+import androidx.compose.material.icons.rounded.Fingerprint
+import androidx.compose.material.icons.rounded.FitnessCenter
+import androidx.compose.material.icons.rounded.Flight
+import androidx.compose.material.icons.rounded.Headphones
+import androidx.compose.material.icons.rounded.Home
+import androidx.compose.material.icons.rounded.Laptop
+import androidx.compose.material.icons.rounded.LocalBar
+import androidx.compose.material.icons.rounded.LocalCafe
+import androidx.compose.material.icons.rounded.LocalGasStation
+import androidx.compose.material.icons.rounded.LocalHospital
+import androidx.compose.material.icons.rounded.MedicalServices
+import androidx.compose.material.icons.rounded.MoreHoriz
+import androidx.compose.material.icons.rounded.Movie
+import androidx.compose.material.icons.rounded.MusicNote
+import androidx.compose.material.icons.rounded.Notifications
+import androidx.compose.material.icons.rounded.Park
+import androidx.compose.material.icons.rounded.Pets
+import androidx.compose.material.icons.rounded.Phone
+import androidx.compose.material.icons.rounded.Redeem
+import androidx.compose.material.icons.rounded.Restaurant
+import androidx.compose.material.icons.rounded.Savings
+import androidx.compose.material.icons.rounded.School
+import androidx.compose.material.icons.rounded.Search
+import androidx.compose.material.icons.rounded.Settings
+import androidx.compose.material.icons.rounded.Spa
+import androidx.compose.material.icons.rounded.SportsEsports
+import androidx.compose.material.icons.rounded.SportsSoccer
+import androidx.compose.material.icons.rounded.Star
+import androidx.compose.material.icons.rounded.Train
+import androidx.compose.material.icons.rounded.Visibility
+import androidx.compose.material.icons.rounded.VisibilityOff
+import androidx.compose.material.icons.rounded.Wallet
+import androidx.compose.material.icons.rounded.Warning
+import androidx.compose.material.icons.rounded.WaterDrop
+import androidx.compose.material.icons.rounded.Wifi
+import androidx.compose.material.icons.rounded.Work
 import androidx.compose.ui.graphics.vector.ImageVector
 
-/** Maps a stored Material icon name to an [ImageVector]; unknown names fall back to more_horiz. */
+/** Maps a stored Material icon name to a rounded [ImageVector]; unknown names fall back to more_horiz. */
 fun materialIcon(name: String): ImageVector = when (name) {
-    "restaurant" -> Icons.Filled.Restaurant
-    "directions_car" -> Icons.Filled.DirectionsCar
-    "medical_services" -> Icons.Filled.MedicalServices
-    "sports_esports" -> Icons.Filled.SportsEsports
-    "checkroom" -> Icons.Filled.Checkroom
-    "phone" -> Icons.Filled.Phone
-    "home" -> Icons.Filled.Home
-    "school" -> Icons.Filled.School
-    "flight" -> Icons.Filled.Flight
-    "work" -> Icons.Filled.Work
-    "laptop" -> Icons.Filled.Laptop
-    "trending_up" -> Icons.Filled.TrendingUp
-    "card_giftcard" -> Icons.Filled.CardGiftcard
-    "receipt_long" -> Icons.Filled.ReceiptLong
-    "savings" -> Icons.Filled.Savings
-    "bar_chart" -> Icons.Filled.BarChart
-    "settings" -> Icons.Filled.Settings
-    "visibility" -> Icons.Filled.Visibility
-    "visibility_off" -> Icons.Filled.VisibilityOff
-    "add" -> Icons.Filled.Add
-    "fingerprint" -> Icons.Filled.Fingerprint
-    "delete" -> Icons.Filled.Delete
-    "edit" -> Icons.Filled.Edit
-    "content_copy" -> Icons.Filled.ContentCopy
-    "search" -> Icons.Filled.Search
-    "notifications" -> Icons.Filled.Notifications
-    "close" -> Icons.Filled.Close
-    "arrow_back" -> Icons.Filled.ArrowBack
-    "arrow_upward" -> Icons.Filled.ArrowUpward
-    "arrow_downward" -> Icons.Filled.ArrowDownward
-    "wallet" -> Icons.Filled.Wallet
-    "warning" -> Icons.Filled.Warning
-    "fastfood" -> Icons.Filled.Fastfood
-    "local_cafe" -> Icons.Filled.LocalCafe
-    "local_bar" -> Icons.Filled.LocalBar
-    "fitness_center" -> Icons.Filled.FitnessCenter
-    "pets" -> Icons.Filled.Pets
-    "movie" -> Icons.Filled.Movie
-    "music_note" -> Icons.Filled.MusicNote
-    "local_gas_station" -> Icons.Filled.LocalGasStation
-    "bolt" -> Icons.Filled.Bolt
-    "wifi" -> Icons.Filled.Wifi
-    "credit_card" -> Icons.Filled.CreditCard
-    "account_balance" -> Icons.Filled.AccountBalance
-    "redeem" -> Icons.Filled.Redeem
-    "celebration" -> Icons.Filled.Celebration
-    "spa" -> Icons.Filled.Spa
-    "park" -> Icons.Filled.Park
-    "directions_bus" -> Icons.Filled.DirectionsBus
-    "train" -> Icons.Filled.Train
-    "local_hospital" -> Icons.Filled.LocalHospital
-    "menu_book" -> Icons.Filled.MenuBook
-    "sports_soccer" -> Icons.Filled.SportsSoccer
-    "brush" -> Icons.Filled.Brush
-    "build" -> Icons.Filled.Build
-    "cake" -> Icons.Filled.Cake
-    "computer" -> Icons.Filled.Computer
-    "headphones" -> Icons.Filled.Headphones
-    "favorite" -> Icons.Filled.Favorite
-    "star" -> Icons.Filled.Star
-    "water_drop" -> Icons.Filled.WaterDrop
-    else -> Icons.Filled.MoreHoriz
+    "restaurant" -> Icons.Rounded.Restaurant
+    "directions_car" -> Icons.Rounded.DirectionsCar
+    "medical_services" -> Icons.Rounded.MedicalServices
+    "sports_esports" -> Icons.Rounded.SportsEsports
+    "checkroom" -> Icons.Rounded.Checkroom
+    "phone" -> Icons.Rounded.Phone
+    "home" -> Icons.Rounded.Home
+    "school" -> Icons.Rounded.School
+    "flight" -> Icons.Rounded.Flight
+    "work" -> Icons.Rounded.Work
+    "laptop" -> Icons.Rounded.Laptop
+    "trending_up" -> Icons.AutoMirrored.Rounded.TrendingUp
+    "card_giftcard" -> Icons.Rounded.CardGiftcard
+    "receipt_long" -> Icons.AutoMirrored.Rounded.ReceiptLong
+    "savings" -> Icons.Rounded.Savings
+    "bar_chart" -> Icons.Rounded.BarChart
+    "settings" -> Icons.Rounded.Settings
+    "visibility" -> Icons.Rounded.Visibility
+    "visibility_off" -> Icons.Rounded.VisibilityOff
+    "add" -> Icons.Rounded.Add
+    "fingerprint" -> Icons.Rounded.Fingerprint
+    "delete" -> Icons.Rounded.Delete
+    "edit" -> Icons.Rounded.Edit
+    "content_copy" -> Icons.Rounded.ContentCopy
+    "search" -> Icons.Rounded.Search
+    "notifications" -> Icons.Rounded.Notifications
+    "close" -> Icons.Rounded.Close
+    "chevron_right" -> Icons.Rounded.ChevronRight
+    "arrow_back" -> Icons.AutoMirrored.Rounded.ArrowBack
+    "arrow_upward" -> Icons.Rounded.ArrowUpward
+    "arrow_downward" -> Icons.Rounded.ArrowDownward
+    "wallet" -> Icons.Rounded.Wallet
+    "warning" -> Icons.Rounded.Warning
+    "fastfood" -> Icons.Rounded.Fastfood
+    "local_cafe" -> Icons.Rounded.LocalCafe
+    "local_bar" -> Icons.Rounded.LocalBar
+    "fitness_center" -> Icons.Rounded.FitnessCenter
+    "pets" -> Icons.Rounded.Pets
+    "movie" -> Icons.Rounded.Movie
+    "music_note" -> Icons.Rounded.MusicNote
+    "local_gas_station" -> Icons.Rounded.LocalGasStation
+    "bolt" -> Icons.Rounded.Bolt
+    "wifi" -> Icons.Rounded.Wifi
+    "credit_card" -> Icons.Rounded.CreditCard
+    "account_balance" -> Icons.Rounded.AccountBalance
+    "redeem" -> Icons.Rounded.Redeem
+    "celebration" -> Icons.Rounded.Celebration
+    "spa" -> Icons.Rounded.Spa
+    "park" -> Icons.Rounded.Park
+    "directions_bus" -> Icons.Rounded.DirectionsBus
+    "train" -> Icons.Rounded.Train
+    "local_hospital" -> Icons.Rounded.LocalHospital
+    "menu_book" -> Icons.AutoMirrored.Rounded.MenuBook
+    "sports_soccer" -> Icons.Rounded.SportsSoccer
+    "brush" -> Icons.Rounded.Brush
+    "build" -> Icons.Rounded.Build
+    "cake" -> Icons.Rounded.Cake
+    "computer" -> Icons.Rounded.Computer
+    "headphones" -> Icons.Rounded.Headphones
+    "favorite" -> Icons.Rounded.Favorite
+    "star" -> Icons.Rounded.Star
+    "water_drop" -> Icons.Rounded.WaterDrop
+    else -> Icons.Rounded.MoreHoriz
 }
 
 /** Icon names offered in the category icon picker. */

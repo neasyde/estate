@@ -7,19 +7,17 @@ import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.financeapp.R
 import com.financeapp.core.domain.model.AppSettings
 import com.financeapp.core.ui.anim.Motion
+import com.financeapp.feature.analytics.AnalyticsScreen
 import com.financeapp.feature.budgets.BudgetsScreen
 import com.financeapp.feature.categories.CategoriesScreen
 import com.financeapp.feature.dashboard.DashboardScreen
 import com.financeapp.feature.lock.LockScreen
 import com.financeapp.feature.onboarding.OnboardingScreen
-import com.financeapp.feature.placeholder.PlaceholderScreen
 import com.financeapp.feature.settings.SettingsScreen
 import com.financeapp.feature.splash.SplashScreen
 import com.financeapp.feature.transactions.TransactionsScreen
@@ -63,7 +61,7 @@ fun FinanceNavHost(
         }
         composable(Routes.TRANSACTIONS) { TransactionsScreen() }
         composable(Routes.BUDGETS) { BudgetsScreen() }
-        composable(Routes.ANALYTICS) { PlaceholderScreen("bar_chart", stringResource(R.string.ph_analytics)) }
+        composable(Routes.ANALYTICS) { AnalyticsScreen() }
         composable(Routes.SETTINGS) {
             SettingsScreen(onManageCategories = { navController.navigate(Routes.CATEGORIES) })
         }
