@@ -65,7 +65,11 @@ import com.financeapp.core.utils.LocaleManager
 import kotlinx.coroutines.delay
 
 @Composable
-fun SettingsScreen(onManageCategories: () -> Unit, vm: SettingsViewModel = hiltViewModel()) {
+fun SettingsScreen(
+    onManageCategories: () -> Unit,
+    onManageReminders: () -> Unit,
+    vm: SettingsViewModel = hiltViewModel(),
+) {
     val settings by vm.settings.collectAsStateWithLifecycle()
     var showPinDialog by remember { mutableStateOf(false) }
 
@@ -160,6 +164,7 @@ fun SettingsScreen(onManageCategories: () -> Unit, vm: SettingsViewModel = hiltV
         Reveal(4) {
             SettingsGroup(stringResource(R.string.cat_manage_title)) {
                 ActionRow("edit", stringResource(R.string.cat_manage_title), onClick = onManageCategories)
+                ActionRow("notifications", stringResource(R.string.rem_title), onClick = onManageReminders)
             }
         }
         Spacer(Modifier.height(28.dp))

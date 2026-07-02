@@ -136,4 +136,18 @@
     <string name="an_net">Итого</string>
     <string name="an_spent">Потрачено</string>
     <string name="an_empty">Пока нет данных для аналитики</string>
+
+    <string name="rem_title">Напоминания</string>
+    <string name="rem_new">Новое напоминание</string>
+    <string name="rem_field_title">Название</string>
+    <string name="rem_amount_optional">Сумма (необязательно)</string>
+    <string name="rem_due_date">Дата</string>
+    <string name="rem_notify_before">Напомнить за</string>
+    <string name="rem_on_day">В день</string>
+    <string name="rem_days_abbrev">%1$d дн</string>
+    <string name="rem_repeat">Повтор</string>
+    <string name="rem_repeat_none">Нет</string>
+    <string name="rem_empty">Пока нет напоминаний</string>
+    <string name="rem_channel_name">Напоминания</string>
+    <string name="rem_channel_desc">Напоминания о платежах и счетах</string>
 </resources>

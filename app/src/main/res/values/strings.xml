@@ -145,4 +145,18 @@
     <string name="an_net">Net</string>
     <string name="an_spent">Spent</string>
     <string name="an_empty">No data to analyse yet</string>
+
+    <string name="rem_title">Reminders</string>
+    <string name="rem_new">New reminder</string>
+    <string name="rem_field_title">Title</string>
+    <string name="rem_amount_optional">Amount (optional)</string>
+    <string name="rem_due_date">Due date</string>
+    <string name="rem_notify_before">Notify before</string>
+    <string name="rem_on_day">On day</string>
+    <string name="rem_days_abbrev">%1$d d</string>
+    <string name="rem_repeat">Repeat</string>
+    <string name="rem_repeat_none">None</string>
+    <string name="rem_empty">No reminders yet</string>
+    <string name="rem_channel_name">Reminders</string>
+    <string name="rem_channel_desc">Payment and bill reminders</string>
 </resources>

@@ -18,6 +18,7 @@ import com.financeapp.feature.categories.CategoriesScreen
 import com.financeapp.feature.dashboard.DashboardScreen
 import com.financeapp.feature.lock.LockScreen
 import com.financeapp.feature.onboarding.OnboardingScreen
+import com.financeapp.feature.reminders.RemindersScreen
 import com.financeapp.feature.settings.SettingsScreen
 import com.financeapp.feature.splash.SplashScreen
 import com.financeapp.feature.transactions.TransactionsScreen
@@ -63,10 +64,16 @@ fun FinanceNavHost(
         composable(Routes.BUDGETS) { BudgetsScreen() }
         composable(Routes.ANALYTICS) { AnalyticsScreen() }
         composable(Routes.SETTINGS) {
-            SettingsScreen(onManageCategories = { navController.navigate(Routes.CATEGORIES) })
+            SettingsScreen(
+                onManageCategories = { navController.navigate(Routes.CATEGORIES) },
+                onManageReminders = { navController.navigate(Routes.REMINDERS) },
+            )
         }
         composable(Routes.CATEGORIES) {
             CategoriesScreen(onBack = { navController.popBackStack() })
+        }
+        composable(Routes.REMINDERS) {
+            RemindersScreen(onBack = { navController.popBackStack() })
         }
     }
 }

@@ -10,6 +10,7 @@ object Routes {
     const val ANALYTICS = "analytics"
     const val SETTINGS = "settings"
     const val CATEGORIES = "categories"
+    const val REMINDERS = "reminders"
 
     val bottomBarRoutes = setOf(DASHBOARD, TRANSACTIONS, BUDGETS, ANALYTICS, SETTINGS)
 }
