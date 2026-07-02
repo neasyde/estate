@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import com.financeapp.R
 import com.financeapp.core.ui.icons.materialIcon
+import com.financeapp.core.utils.rememberHaptics
 
 private data class BottomItem(val route: String, val icon: String, @StringRes val label: Int)
 
@@ -22,11 +23,12 @@ private val bottomItems = listOf(
 
 @Composable
 fun BottomBar(currentRoute: String?, onNavigate: (String) -> Unit) {
+    val haptics = rememberHaptics()
     NavigationBar {
         bottomItems.forEach { item ->
             NavigationBarItem(
                 selected = currentRoute == item.route,
-                onClick = { onNavigate(item.route) },
+                onClick = { if (currentRoute != item.route) haptics(true); onNavigate(item.route) },
                 icon = { Icon(materialIcon(item.icon), contentDescription = null) },
                 label = { Text(stringResource(item.label)) },
             )

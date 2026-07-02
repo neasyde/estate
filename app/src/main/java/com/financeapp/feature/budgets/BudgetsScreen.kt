@@ -1,9 +1,12 @@
 package com.financeapp.feature.budgets
 
 import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
+import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -41,7 +44,7 @@ import com.financeapp.R
 import com.financeapp.core.domain.model.Budget
 import com.financeapp.core.domain.model.BudgetPeriod
 import com.financeapp.core.domain.model.BudgetProgress
-import com.financeapp.core.ui.anim.Motion
+import com.financeapp.core.ui.anim.pressScale
 import com.financeapp.core.ui.anim.reducedMotion
 import com.financeapp.core.ui.categoryDisplayName
 import com.financeapp.core.ui.components.CategoryIcon
@@ -100,8 +103,12 @@ private fun BudgetCard(bp: BudgetProgress, onEdit: () -> Unit, onDelete: () -> U
         bp.fraction >= 0.8 -> BudgetAmber
         else -> IncomeGreen
     }
+    val interaction = remember { MutableInteractionSource() }
     Column(
-        Modifier.fillMaxWidth().clickable(onClick = onEdit).padding(horizontal = 20.dp, vertical = 16.dp),
+        Modifier.fillMaxWidth()
+            .pressScale(interaction)
+            .clickable(interactionSource = interaction, indication = LocalIndication.current, onClick = onEdit)
+            .padding(horizontal = 20.dp, vertical = 16.dp),
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             CategoryIcon(bp.category)
@@ -151,7 +158,8 @@ private fun ProgressBar(fraction: Double, color: Color) {
     val target = fraction.coerceIn(0.0, 1.0).toFloat()
     val anim = remember { Animatable(0f) }
     LaunchedEffect(target, reduced) {
-        if (reduced) anim.snapTo(target) else anim.animateTo(target, tween(Motion.Long + 350, easing = Motion.Emphasized))
+        if (reduced) anim.snapTo(target)
+        else anim.animateTo(target, spring(dampingRatio = 0.8f, stiffness = Spring.StiffnessLow))
     }
     Box(
         Modifier.fillMaxWidth().height(8.dp).clip(RoundedCornerShape(4.dp))
