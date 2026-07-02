@@ -17,6 +17,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -76,27 +78,29 @@ fun DashboardScreen(
 
     Box(Modifier.fillMaxSize()) {
         Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
+            Spacer(Modifier.height(8.dp))
             Masthead(data.balanceBase, data.monthIncomeBase, data.monthExpenseBase, baseCurrency, hidden, vm::toggleBalanceHidden)
 
-            Spacer(Modifier.height(24.dp))
-            Eyebrow(stringResource(R.string.dash_last7), modifier = Modifier.padding(horizontal = 20.dp))
-            Spacer(Modifier.height(12.dp))
-            Last7Chart(data.last7Days, Modifier.padding(horizontal = 20.dp))
+            Spacer(Modifier.height(16.dp))
+            SectionCard {
+                Eyebrow(stringResource(R.string.dash_last7), modifier = Modifier.padding(horizontal = 16.dp))
+                Spacer(Modifier.height(12.dp))
+                Last7Chart(data.last7Days, Modifier.padding(horizontal = 16.dp))
+            }
 
-            Spacer(Modifier.height(28.dp))
-            Hairline(Modifier.padding(horizontal = 20.dp))
-            Spacer(Modifier.height(20.dp))
-            Eyebrow(stringResource(R.string.dash_recent), modifier = Modifier.padding(horizontal = 20.dp))
-            Spacer(Modifier.height(8.dp))
-
+            Spacer(Modifier.height(16.dp))
             if (data.recent.isEmpty()) {
                 EmptyState(iconName = "wallet", title = stringResource(R.string.dash_empty))
             } else {
-                data.recent.forEachIndexed { i, item ->
-                    Staggered(i) { TransactionRow(item) }
-                }
-                TextButton(onClick = onSeeAll, modifier = Modifier.fillMaxWidth().padding(top = 4.dp)) {
-                    Text(stringResource(R.string.dash_see_all))
+                SectionCard {
+                    Eyebrow(stringResource(R.string.dash_recent), modifier = Modifier.padding(horizontal = 16.dp))
+                    Spacer(Modifier.height(4.dp))
+                    data.recent.forEachIndexed { i, item ->
+                        Staggered(i) { TransactionRow(item) }
+                    }
+                    TextButton(onClick = onSeeAll, modifier = Modifier.fillMaxWidth().padding(top = 4.dp)) {
+                        Text(stringResource(R.string.dash_see_all))
+                    }
                 }
             }
             Spacer(Modifier.height(96.dp))
@@ -130,40 +134,58 @@ private fun Masthead(
     hidden: Boolean,
     onToggle: () -> Unit,
 ) {
-    Column(Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 24.dp)) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Eyebrow(stringResource(R.string.dash_balance))
-            Spacer(Modifier.weight(1f))
-            IconButton(onClick = onToggle) {
-                Icon(
-                    materialIcon(if (hidden) "visibility_off" else "visibility"),
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
+    Card(
+        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+        shape = MaterialTheme.shapes.extraLarge,
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
+    ) {
+        Column(Modifier.padding(horizontal = 22.dp, vertical = 22.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Eyebrow(stringResource(R.string.dash_balance))
+                Spacer(Modifier.weight(1f))
+                IconButton(onClick = onToggle) {
+                    Icon(
+                        materialIcon(if (hidden) "visibility_off" else "visibility"),
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+            }
+            val animated = animatedCountUp(balance)
+            Text(
+                text = if (hidden) "••••••" else CurrencyFormatter.format(animated, currency),
+                style = MaterialTheme.typography.displayLarge,
+                color = MaterialTheme.colorScheme.onSurface,
+            )
+            Spacer(Modifier.height(20.dp))
+            Hairline()
+            Spacer(Modifier.height(16.dp))
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Column(Modifier.weight(1f)) {
+                    Eyebrow(stringResource(R.string.dash_income))
+                    Spacer(Modifier.height(4.dp))
+                    AmountText(income, currency, income = true, style = MaterialTheme.typography.titleMedium)
+                }
+                Box(Modifier.width(1.dp).height(40.dp).background(MaterialTheme.colorScheme.outline))
+                Column(Modifier.weight(1f).padding(start = 20.dp)) {
+                    Eyebrow(stringResource(R.string.dash_expense))
+                    Spacer(Modifier.height(4.dp))
+                    AmountText(expense, currency, income = false, style = MaterialTheme.typography.titleMedium)
+                }
             }
         }
-        val animated = animatedCountUp(balance)
-        Text(
-            text = if (hidden) "••••••" else CurrencyFormatter.format(animated, currency),
-            style = MaterialTheme.typography.displayLarge,
-            color = MaterialTheme.colorScheme.onBackground,
-        )
-        Spacer(Modifier.height(20.dp))
-        Hairline()
-        Spacer(Modifier.height(16.dp))
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Column(Modifier.weight(1f)) {
-                Eyebrow(stringResource(R.string.dash_income))
-                Spacer(Modifier.height(4.dp))
-                AmountText(income, currency, income = true, style = MaterialTheme.typography.titleMedium)
-            }
-            Box(Modifier.width(1.dp).height(40.dp).background(MaterialTheme.colorScheme.outline))
-            Column(Modifier.weight(1f).padding(start = 20.dp)) {
-                Eyebrow(stringResource(R.string.dash_expense))
-                Spacer(Modifier.height(4.dp))
-                AmountText(expense, currency, income = false, style = MaterialTheme.typography.titleMedium)
-            }
-        }
+    }
+}
+
+@Composable
+private fun SectionCard(content: @Composable androidx.compose.foundation.layout.ColumnScope.() -> Unit) {
+    Card(
+        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+        shape = MaterialTheme.shapes.large,
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
+    ) {
+        Column(Modifier.padding(vertical = 16.dp), content = content)
     }
 }
 

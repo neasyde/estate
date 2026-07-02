@@ -16,6 +16,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
@@ -77,15 +78,23 @@ fun CategoriesScreen(onBack: () -> Unit, vm: CategoriesViewModel = hiltViewModel
                     text = { Text(stringResource(R.string.cat_tab_income)) },
                 )
             }
-            LazyColumn(Modifier.fillMaxSize()) {
+            LazyColumn(
+                Modifier.fillMaxSize(),
+                contentPadding = androidx.compose.foundation.layout.PaddingValues(vertical = 8.dp),
+            ) {
                 items(cats, key = { it.id }) { c ->
-                    CategoryManageRow(
-                        category = c,
-                        onEdit = { if (c.isCustom) { editing = c; sheetOpen = true } },
-                        onToggleHidden = { vm.toggleHidden(c) },
-                        onDelete = { vm.delete(c.id) },
-                    )
-                    Hairline(Modifier.padding(horizontal = 20.dp))
+                    Surface(
+                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
+                        shape = MaterialTheme.shapes.medium,
+                        tonalElevation = 1.dp,
+                    ) {
+                        CategoryManageRow(
+                            category = c,
+                            onEdit = { if (c.isCustom) { editing = c; sheetOpen = true } },
+                            onToggleHidden = { vm.toggleHidden(c) },
+                            onDelete = { vm.delete(c.id) },
+                        )
+                    }
                 }
             }
         }

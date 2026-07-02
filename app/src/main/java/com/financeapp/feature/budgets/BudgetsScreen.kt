@@ -20,6 +20,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -81,10 +83,9 @@ fun BudgetsScreen(vm: BudgetsViewModel = hiltViewModel()) {
                 modifier = Modifier.padding(padding),
             )
         } else {
-            LazyColumn(Modifier.fillMaxSize().padding(padding)) {
+            LazyColumn(Modifier.fillMaxSize().padding(padding), contentPadding = androidx.compose.foundation.layout.PaddingValues(vertical = 8.dp)) {
                 items(budgets, key = { it.budget.id }) { bp ->
                     BudgetCard(bp, onEdit = { editing = bp.budget; sheetOpen = true }, onDelete = { vm.delete(bp.budget.id) })
-                    Hairline(Modifier.padding(horizontal = 20.dp))
                 }
             }
         }
@@ -104,12 +105,15 @@ private fun BudgetCard(bp: BudgetProgress, onEdit: () -> Unit, onDelete: () -> U
         else -> IncomeGreen
     }
     val interaction = remember { MutableInteractionSource() }
-    Column(
-        Modifier.fillMaxWidth()
+    Card(
+        modifier = Modifier.fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 6.dp)
             .pressScale(interaction)
-            .clickable(interactionSource = interaction, indication = LocalIndication.current, onClick = onEdit)
-            .padding(horizontal = 20.dp, vertical = 16.dp),
+            .clickable(interactionSource = interaction, indication = LocalIndication.current, onClick = onEdit),
+        shape = MaterialTheme.shapes.large,
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
     ) {
+        Column(Modifier.padding(horizontal = 20.dp, vertical = 16.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             CategoryIcon(bp.category)
             Spacer(Modifier.width(12.dp))
@@ -148,6 +152,7 @@ private fun BudgetCard(bp: BudgetProgress, onEdit: () -> Unit, onDelete: () -> U
                 Spacer(Modifier.width(6.dp))
                 Text(stringResource(R.string.budget_over), style = MaterialTheme.typography.labelMedium, color = ExpenseRed)
             }
+        }
         }
     }
 }
