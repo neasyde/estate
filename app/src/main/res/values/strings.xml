@@ -82,8 +82,8 @@
     <string name="set_theme_light">Light</string>
     <string name="set_theme_dark">Dark</string>
     <string name="set_scheme">Color scheme</string>
-    <string name="set_scheme_purple">Purple</string>
-    <string name="set_scheme_orange">Orange</string>
+    <string name="set_scheme_purple">Green</string>
+    <string name="set_scheme_orange">Amber</string>
     <string name="set_language">Language</string>
     <string name="set_finance">Finance</string>
     <string name="set_base_currency">Base currency</string>
