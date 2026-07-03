@@ -48,6 +48,7 @@ import androidx.compose.material.icons.rounded.Park
 import androidx.compose.material.icons.rounded.Pets
 import androidx.compose.material.icons.rounded.Phone
 import androidx.compose.material.icons.rounded.Redeem
+import androidx.compose.material.icons.rounded.Refresh
 import androidx.compose.material.icons.rounded.Restaurant
 import androidx.compose.material.icons.rounded.Savings
 import androidx.compose.material.icons.rounded.School
@@ -96,6 +97,7 @@ fun materialIcon(name: String): ImageVector = when (name) {
     "content_copy" -> Icons.Rounded.ContentCopy
     "search" -> Icons.Rounded.Search
     "notifications" -> Icons.Rounded.Notifications
+    "refresh" -> Icons.Rounded.Refresh
     "close" -> Icons.Rounded.Close
     "chevron_right" -> Icons.Rounded.ChevronRight
     "download" -> Icons.Rounded.Download

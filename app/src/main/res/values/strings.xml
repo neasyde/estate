@@ -87,6 +87,16 @@
     <string name="set_language">Language</string>
     <string name="set_finance">Finance</string>
     <string name="set_base_currency">Base currency</string>
+    <string name="set_api_key">exchangerate-api key</string>
+    <string name="set_api_key_hint">Get a free key at exchangerate-api.com</string>
+    <string name="set_refresh_rates">Update rates online</string>
+    <string name="set_rates_manual">Manual rates</string>
+    <string name="set_rates_updated">Updated %1$s</string>
+    <string name="set_rates_never">Not updated yet</string>
+    <string name="rates_updated_ok">Rates updated</string>
+    <string name="rates_no_key">Add an API key to fetch rates online</string>
+    <string name="rates_invalid_key">Invalid API key</string>
+    <string name="rates_failed">Couldn\'t update rates. Check your connection.</string>
     <string name="set_security">Security</string>
     <string name="set_change_pin">Change PIN</string>
     <string name="set_biometric">Biometrics</string>

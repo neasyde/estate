@@ -24,6 +24,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -44,8 +45,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.financeapp.R
 import com.financeapp.core.domain.model.AppLanguage
@@ -72,6 +77,8 @@ fun SettingsScreen(
 ) {
     val settings by vm.settings.collectAsStateWithLifecycle()
     val backupEvent by vm.backupEvent.collectAsStateWithLifecycle()
+    val ratesEvent by vm.ratesEvent.collectAsStateWithLifecycle()
+    val ratesLoading by vm.ratesLoading.collectAsStateWithLifecycle()
     var showPinDialog by remember { mutableStateOf(false) }
     var showRestoreConfirm by remember { mutableStateOf(false) }
     val exportLauncher = rememberLauncherForActivityResult(
@@ -148,6 +155,22 @@ fun SettingsScreen(
                     onSelect = vm::setBaseCurrency,
                 )
                 Spacer(Modifier.height(16.dp))
+                ApiKeyField(settings.exchangeApiKey.orEmpty(), onChange = vm::setApiKey)
+                Spacer(Modifier.height(6.dp))
+                Text(
+                    stringResource(R.string.set_api_key_hint),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+                Spacer(Modifier.height(14.dp))
+                RefreshRatesButton(
+                    updatedAt = settings.ratesUpdatedAt,
+                    loading = ratesLoading,
+                    onClick = { vm.refreshRates() },
+                )
+                Spacer(Modifier.height(18.dp))
+                Eyebrow(stringResource(R.string.set_rates_manual))
+                Spacer(Modifier.height(10.dp))
                 RateField(stringResource(R.string.onb_rate_usd), settings.rateUsd) { vm.setRates(it, settings.rateEur) }
                 Spacer(Modifier.height(10.dp))
                 RateField(stringResource(R.string.onb_rate_eur), settings.rateEur) { vm.setRates(settings.rateUsd, it) }
@@ -224,6 +247,88 @@ fun SettingsScreen(
                 TextButton(onClick = { vm.clearBackupEvent() }) { Text(stringResource(R.string.action_ok)) }
             },
             text = { Text(message) },
+        )
+    }
+
+    ratesEvent?.let { event ->
+        val message = when (event) {
+            RatesEvent.UPDATED -> stringResource(R.string.rates_updated_ok)
+            RatesEvent.NO_KEY -> stringResource(R.string.rates_no_key)
+            RatesEvent.INVALID_KEY -> stringResource(R.string.rates_invalid_key)
+            RatesEvent.FAILED -> stringResource(R.string.rates_failed)
+        }
+        AlertDialog(
+            onDismissRequest = { vm.clearRatesEvent() },
+            confirmButton = {
+                TextButton(onClick = { vm.clearRatesEvent() }) { Text(stringResource(R.string.action_ok)) }
+            },
+            text = { Text(message) },
+        )
+    }
+}
+
+@Composable
+private fun ApiKeyField(value: String, onChange: (String) -> Unit) {
+    var text by remember(value) { mutableStateOf(value) }
+    OutlinedTextField(
+        value = text,
+        onValueChange = { text = it; onChange(it) },
+        label = { Text(stringResource(R.string.set_api_key)) },
+        modifier = Modifier.fillMaxWidth(),
+        singleLine = true,
+    )
+}
+
+@Composable
+private fun RefreshRatesButton(updatedAt: Long, loading: Boolean, onClick: () -> Unit) {
+    Column {
+        Row(
+            Modifier
+                .fillMaxWidth()
+                .clip(PillShape)
+                .background(MaterialTheme.colorScheme.primary)
+                .clickable(enabled = !loading) { onClick() }
+                .padding(vertical = 12.dp),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            if (loading) {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(18.dp),
+                    strokeWidth = 2.dp,
+                    color = MaterialTheme.colorScheme.onPrimary,
+                )
+            } else {
+                Icon(
+                    materialIcon("refresh"),
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onPrimary,
+                    modifier = Modifier.size(18.dp),
+                )
+            }
+            Spacer(Modifier.size(8.dp))
+            Text(
+                stringResource(R.string.set_refresh_rates),
+                style = MaterialTheme.typography.labelLarge,
+                fontWeight = FontWeight.SemiBold,
+                color = MaterialTheme.colorScheme.onPrimary,
+            )
+        }
+        Spacer(Modifier.height(8.dp))
+        val label = if (updatedAt <= 0L) {
+            stringResource(R.string.set_rates_never)
+        } else {
+            val stamp = remember(updatedAt) {
+                SimpleDateFormat("d MMM, HH:mm", Locale.getDefault()).format(Date(updatedAt))
+            }
+            stringResource(R.string.set_rates_updated, stamp)
+        }
+        Text(
+            label,
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.fillMaxWidth(),
+            textAlign = TextAlign.Center,
         )
     }
 }

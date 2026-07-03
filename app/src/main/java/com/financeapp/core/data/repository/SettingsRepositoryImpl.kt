@@ -30,6 +30,8 @@ class SettingsRepositoryImpl @Inject constructor(
             biometricEnabled = p[SettingsKeys.BIOMETRIC] ?: def.biometricEnabled,
             language = p[SettingsKeys.LANGUAGE]?.let { AppLanguage.valueOf(it) } ?: def.language,
             onboardingCompleted = p[SettingsKeys.ONBOARDING] ?: def.onboardingCompleted,
+            exchangeApiKey = p[SettingsKeys.EXCHANGE_API_KEY]?.takeIf { it.isNotBlank() },
+            ratesUpdatedAt = p[SettingsKeys.RATES_UPDATED_AT] ?: def.ratesUpdatedAt,
         )
     }
 
@@ -38,7 +40,18 @@ class SettingsRepositoryImpl @Inject constructor(
     }
 
     override suspend fun setRates(usd: Double, eur: Double) {
-        dataStore.edit { it[SettingsKeys.RATE_USD] = usd; it[SettingsKeys.RATE_EUR] = eur }
+        dataStore.edit {
+            it[SettingsKeys.RATE_USD] = usd
+            it[SettingsKeys.RATE_EUR] = eur
+            it[SettingsKeys.RATES_UPDATED_AT] = System.currentTimeMillis()
+        }
+    }
+
+    override suspend fun setExchangeApiKey(key: String?) {
+        dataStore.edit {
+            val trimmed = key?.trim().orEmpty()
+            if (trimmed.isEmpty()) it.remove(SettingsKeys.EXCHANGE_API_KEY) else it[SettingsKeys.EXCHANGE_API_KEY] = trimmed
+        }
     }
 
     override suspend fun setThemeMode(m: ThemeMode) {

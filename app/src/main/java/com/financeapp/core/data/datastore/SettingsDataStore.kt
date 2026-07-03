@@ -5,6 +5,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.doublePreferencesKey
+import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 
@@ -18,6 +19,8 @@ object SettingsKeys {
     val BIOMETRIC = booleanPreferencesKey("biometric_enabled")
     val LANGUAGE = stringPreferencesKey("language")
     val ONBOARDING = booleanPreferencesKey("onboarding_completed")
+    val EXCHANGE_API_KEY = stringPreferencesKey("exchange_api_key")
+    val RATES_UPDATED_AT = longPreferencesKey("rates_updated_at")
 }
 
 val Context.settingsDataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")

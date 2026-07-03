@@ -4,6 +4,8 @@ import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.financeapp.core.backup.BackupManager
+import com.financeapp.core.data.remote.ExchangeRateApi
+import com.financeapp.core.data.remote.ExchangeResult
 import com.financeapp.core.domain.model.AppLanguage
 import com.financeapp.core.domain.model.AppSettings
 import com.financeapp.core.domain.model.ColorScheme
@@ -16,23 +18,41 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 enum class BackupEvent { EXPORT_OK, EXPORT_FAIL, IMPORT_OK, IMPORT_FAIL }
+enum class RatesEvent { UPDATED, NO_KEY, INVALID_KEY, FAILED }
 
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
     private val settingsRepo: SettingsRepository,
     private val setPin: SetPinUseCase,
     private val backupManager: BackupManager,
+    private val exchangeApi: ExchangeRateApi,
 ) : ViewModel() {
     val settings: StateFlow<AppSettings> = settingsRepo.settings
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), AppSettings())
 
     private val _backupEvent = MutableStateFlow<BackupEvent?>(null)
     val backupEvent: StateFlow<BackupEvent?> = _backupEvent.asStateFlow()
+
+    private val _ratesEvent = MutableStateFlow<RatesEvent?>(null)
+    val ratesEvent: StateFlow<RatesEvent?> = _ratesEvent.asStateFlow()
+
+    private val _ratesLoading = MutableStateFlow(false)
+    val ratesLoading: StateFlow<Boolean> = _ratesLoading.asStateFlow()
+
+    init {
+        // Refresh silently on open when a key is set and the cached rates are stale.
+        viewModelScope.launch {
+            val s = settingsRepo.settings.first()
+            val stale = System.currentTimeMillis() - s.ratesUpdatedAt > STALE_AFTER_MS
+            if (!s.exchangeApiKey.isNullOrBlank() && stale) refreshRates(silent = true)
+        }
+    }
 
     fun setTheme(m: ThemeMode) = viewModelScope.launch { settingsRepo.setThemeMode(m) }
     fun setScheme(s: ColorScheme) = viewModelScope.launch { settingsRepo.setColorScheme(s) }
@@ -41,6 +61,32 @@ class SettingsViewModel @Inject constructor(
     fun setRates(usd: Double, eur: Double) = viewModelScope.launch { settingsRepo.setRates(usd, eur) }
     fun setBiometric(b: Boolean) = viewModelScope.launch { settingsRepo.setBiometricEnabled(b) }
     fun changePin(pin: String) = viewModelScope.launch { setPin(pin) }
+
+    fun setApiKey(key: String) = viewModelScope.launch { settingsRepo.setExchangeApiKey(key) }
+
+    fun refreshRates(silent: Boolean = false) = viewModelScope.launch {
+        val key = settingsRepo.settings.first().exchangeApiKey
+        if (key.isNullOrBlank()) {
+            if (!silent) _ratesEvent.value = RatesEvent.NO_KEY
+            return@launch
+        }
+        _ratesLoading.value = true
+        when (val r = exchangeApi.fetchRates(key)) {
+            is ExchangeResult.Success -> {
+                settingsRepo.setRates(r.usdRate, r.eurRate)
+                if (!silent) _ratesEvent.value = RatesEvent.UPDATED
+            }
+            is ExchangeResult.Failure -> if (!silent) {
+                _ratesEvent.value = when (r.type) {
+                    "invalid-key", "inactive-account" -> RatesEvent.INVALID_KEY
+                    else -> RatesEvent.FAILED
+                }
+            }
+        }
+        _ratesLoading.value = false
+    }
+
+    fun clearRatesEvent() { _ratesEvent.value = null }
 
     fun exportBackup(uri: Uri) = viewModelScope.launch {
         _backupEvent.value = if (backupManager.exportTo(uri)) BackupEvent.EXPORT_OK else BackupEvent.EXPORT_FAIL
@@ -51,4 +97,8 @@ class SettingsViewModel @Inject constructor(
     }
 
     fun clearBackupEvent() { _backupEvent.value = null }
+
+    private companion object {
+        const val STALE_AFTER_MS = 12L * 60 * 60 * 1000 // 12 hours
+    }
 }

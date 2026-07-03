@@ -80,6 +80,16 @@
     <string name="set_language">Язык</string>
     <string name="set_finance">Финансы</string>
     <string name="set_base_currency">Базовая валюта</string>
+    <string name="set_api_key">Ключ exchangerate-api</string>
+    <string name="set_api_key_hint">Бесплатный ключ на exchangerate-api.com</string>
+    <string name="set_refresh_rates">Обновить курс из интернета</string>
+    <string name="set_rates_manual">Курс вручную</string>
+    <string name="set_rates_updated">Обновлено %1$s</string>
+    <string name="set_rates_never">Ещё не обновлялось</string>
+    <string name="rates_updated_ok">Курс обновлён</string>
+    <string name="rates_no_key">Добавьте API-ключ, чтобы брать курс из интернета</string>
+    <string name="rates_invalid_key">Неверный API-ключ</string>
+    <string name="rates_failed">Не удалось обновить курс. Проверьте подключение.</string>
     <string name="set_security">Безопасность</string>
     <string name="set_change_pin">Изменить PIN</string>
     <string name="set_biometric">Биометрия</string>
