@@ -7,6 +7,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import com.financeapp.core.domain.model.Currency
 import com.financeapp.core.ui.theme.ExpenseRed
+import com.financeapp.core.ui.theme.FrauncesTitle
 import com.financeapp.core.ui.theme.IncomeGreen
 import com.financeapp.core.utils.CurrencyFormatter
 
@@ -21,7 +22,7 @@ fun AmountText(
     Text(
         text = sign + CurrencyFormatter.format(amount, currency),
         color = if (income) IncomeGreen else ExpenseRed,
-        style = style,
-        fontWeight = FontWeight.SemiBold,
+        style = style.copy(fontFamily = FrauncesTitle),
+        fontWeight = FontWeight.Normal,
     )
 }

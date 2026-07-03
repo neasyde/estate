@@ -2,6 +2,7 @@ package com.financeapp.core.ui.components
 
 import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
@@ -20,8 +21,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.font.FontWeight
@@ -30,53 +29,38 @@ import androidx.compose.ui.unit.dp
 import com.financeapp.core.ui.anim.pressScale
 import com.financeapp.core.ui.icons.materialIcon
 import com.financeapp.core.ui.theme.EyebrowStyle
-import com.financeapp.core.ui.theme.LocalAccentColors
 import com.financeapp.core.ui.theme.PillShape
 
 /**
- * Soft Depth signature: a coloured, blurred shadow so surfaces read as gently floating
- * above the page rather than boxed by borders. Colour tinting shows on API 28+.
- */
-fun Modifier.softShadow(shape: Shape, color: Color, elevation: Dp = 12.dp): Modifier =
-    this.shadow(elevation = elevation, shape = shape, clip = false, ambientColor = color, spotColor = color)
-
-/** Diagonal accent gradient (top-start → bottom-end) used on the hero surface. */
-@Composable
-fun accentBrush(): Brush {
-    val a = LocalAccentColors.current
-    return Brush.linearGradient(listOf(a.gradientStart, a.gradientEnd))
-}
-
-/**
- * A rounded surface that floats on a soft accent-tinted shadow.
- * The default container is the theme surface; pass a brush-filled variant manually for the hero.
+ * Quiet Minimal container: flat (no shadow). Separation comes from whitespace, the surface
+ * tint, or an optional hairline [border]. [elevation] is accepted but ignored (kept for
+ * call-site compatibility during the redesign).
  */
 @Composable
 fun SoftCard(
     modifier: Modifier = Modifier,
     shape: Shape = MaterialTheme.shapes.large,
     containerColor: Color = MaterialTheme.colorScheme.surface,
-    shadowColor: Color = LocalAccentColors.current.primary,
-    elevation: Dp = 10.dp,
+    @Suppress("UNUSED_PARAMETER") elevation: Dp = 0.dp,
+    border: Boolean = false,
     onClick: (() -> Unit)? = null,
     contentPadding: PaddingValues = PaddingValues(vertical = 16.dp),
     content: @Composable ColumnScope.() -> Unit,
 ) {
     val interaction = remember { MutableInteractionSource() }
-    val interactive = if (onClick != null) {
+    val shaped = Modifier
+        .then(if (border) Modifier.border(1.dp, MaterialTheme.colorScheme.outlineVariant, shape) else Modifier)
+        .clip(shape)
+        .background(containerColor)
+    val base = if (onClick != null) {
         modifier
             .pressScale(interaction)
-            .softShadow(shape, shadowColor, elevation)
-            .clip(shape)
-            .background(containerColor)
+            .then(shaped)
             .clickable(interactionSource = interaction, indication = LocalIndication.current, onClick = onClick)
     } else {
-        modifier
-            .softShadow(shape, shadowColor, elevation)
-            .clip(shape)
-            .background(containerColor)
+        modifier.then(shaped)
     }
-    Column(interactive.padding(contentPadding), content = content)
+    Column(base.padding(contentPadding), content = content)
 }
 
 /** A stadium-shaped capsule: small icon + tracked label above a bold value. */

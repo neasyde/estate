@@ -51,7 +51,7 @@ private fun lightScheme(a: Accent) = lightColorScheme(
 )
 
 private fun darkScheme(a: Accent) = darkColorScheme(
-    primary = a.primary, onPrimary = Color.White,
+    primary = a.tertiary, onPrimary = Color(0xFF14120E),
     secondary = a.secondary, onSecondary = Color.White,
     tertiary = a.tertiary, onTertiary = Color.Black,
     primaryContainer = a.containerDark, onPrimaryContainer = Color.White,

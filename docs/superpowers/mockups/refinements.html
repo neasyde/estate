@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>estate — refinements + dark</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  body{ background:#E7E5E0; font-family:'Inter',system-ui,sans-serif; color:#1A1712;
+        display:flex; flex-wrap:wrap; gap:40px; justify-content:center; padding:50px 20px; }
+  .col{ display:flex; flex-direction:column; align-items:center; gap:14px; }
+  .tag{ font-size:13px; letter-spacing:.14em; text-transform:uppercase; color:#77746c; font-weight:600; }
+  .phone{ width:314px; height:648px; border-radius:42px; overflow:hidden; position:relative;
+          background:#F7F6F3; box-shadow:0 30px 60px -30px rgba(0,0,0,.35); }
+  .screen{ position:absolute; inset:0; padding:28px 22px 78px; overflow:hidden; }
+  .eyebrow{ font-size:11px; letter-spacing:.18em; text-transform:uppercase; color:#9a9488; font-weight:600; }
+  .h1{ font-family:'Fraunces',serif; font-weight:400; font-size:30px; letter-spacing:-.01em; }
+  .serif{ font-family:'Fraunces',serif; font-weight:400; }
+  .up{ color:#2F6B4F; } .down{ color:#B0492F; } .acc{ color:#2F5D50; }
+  .rule{ height:1px; background:#EEEAE2; }
+  .row{ display:flex; align-items:center; gap:13px; padding:12px 0; border-bottom:1px solid #EEEAE2; }
+  .ic{ width:38px; height:38px; border-radius:12px; background:#EFEBE2; display:grid; place-items:center; font-size:16px; flex:none; }
+  .row .t{ flex:1; } .row .t small{ color:#9a9488; font-size:12px; display:block; }
+  .row .t .note{ color:#B0492F; font-size:12px; opacity:.85; }
+  .amt{ font-family:'Fraunces',serif; font-size:16px; }
+  .bar{ position:absolute; left:0; right:0; bottom:0; height:64px; background:#F7F6F3;
+        border-top:1px solid #EEEAE2; display:flex; justify-content:space-around; align-items:center;
+        font-size:10.5px; color:#9a9488; }
+  .bar div{ display:flex; flex-direction:column; align-items:center; gap:3px; } .bar .i{ font-size:17px; }
+  .bar .on{ color:#1A1712; font-weight:700; }
+  .fab{ position:absolute; right:20px; bottom:80px; width:52px; height:52px; border-radius:50%;
+        background:#2F5D50; color:#F7F6F3; display:grid; place-items:center; font-size:26px; }
+  .tabs{ display:flex; gap:20px; margin:16px 0 4px; font-size:14px; color:#9a9488; }
+  .tabs .on{ color:#1A1712; font-weight:600; border-bottom:2px solid #2F5D50; padding-bottom:3px; }
+  .day{ margin:16px 0 2px; }
+  .search{ margin-top:14px; padding:11px 14px; border:1px solid #E7E3DA; border-radius:14px; color:#b6b0a3; font-size:14px; }
+  .note2{ font-size:12px; color:#8a8781; max-width:300px; text-align:center; line-height:1.5; }
+  .bigamt{ font-family:'Fraunces',serif; font-size:50px; text-align:center; margin:22px 0 8px; }
+  .seg{ display:flex; background:#EFEBE2; border-radius:100px; padding:4px; margin:0 auto 18px; width:210px; }
+  .seg span{ flex:1; text-align:center; padding:8px; border-radius:100px; font-size:13px; font-weight:600; color:#9a9488; }
+  .seg .on{ background:#F7F6F3; color:#1A1712; }
+  .grid{ display:grid; grid-template-columns:repeat(5,1fr); gap:9px; margin-top:6px; }
+  .grid .g{ aspect-ratio:1; border-radius:14px; background:#EFEBE2; display:grid; place-items:center; font-size:15px; }
+  .grid .g.sel{ background:#2F5D50; color:#F7F6F3; }
+  .field{ margin-top:16px; padding:12px 14px; border:1px solid #E7E3DA; border-radius:14px; color:#b6b0a3; font-size:14px; }
+  .save{ margin-top:18px; background:#2F5D50; color:#F7F6F3; text-align:center; padding:14px; border-radius:16px; font-weight:600; }
+  /* budget framed */
+  .bcard{ border:1px solid #E7E3DA; border-radius:18px; padding:16px; margin-top:16px; }
+  .prog{ height:6px; border-radius:3px; background:#EBE7DE; margin:9px 0 6px; overflow:hidden; }
+  .prog i{ display:block; height:100%; border-radius:3px; }
+  .brow{ display:flex; justify-content:space-between; align-items:baseline; }
+  .bsub{ display:flex; justify-content:space-between; font-size:13px; color:#9a9488; }
+
+  /* ---- DARK ---- */
+  .phone.dark{ background:#15130E; color:#EDEAE2; }
+  .dark .eyebrow{ color:#8F8A7E; } .dark .acc{ color:#5FA98A; }
+  .dark .up{ color:#5FA98A; } .dark .down{ color:#D2795E; }
+  .dark .rule{ background:#2A2620; } .dark .row{ border-color:#2A2620; }
+  .dark .ic{ background:#221E17; }
+  .dark .row .t small{ color:#8F8A7E; } .dark .row .t .note{ color:#D2795E; }
+  .dark .bar{ background:#15130E; border-color:#2A2620; color:#8F8A7E; } .dark .bar .on{ color:#EDEAE2; }
+  .dark .search{ border-color:#2A2620; color:#6f6a5f; }
+  .dark .fab{ background:#4E9B7E; color:#14120E; }
+  .dark .tabs .on{ color:#EDEAE2; border-color:#4E9B7E; }
+</style>
+</head>
+<body>
+
+<!-- ADD with note -->
+<div class="col"><div class="tag">Добавление — с заметкой</div>
+<div class="phone"><div class="screen">
+  <div class="eyebrow" style="text-align:center">Расход</div>
+  <div class="bigamt down">−540 ₽</div>
+  <div class="seg"><span class="on">Расход</span><span>Доход</span></div>
+  <div class="eyebrow">Категория</div>
+  <div class="grid">
+    <div class="g sel">🚕</div><div class="g">☕</div><div class="g">🛒</div><div class="g">🏠</div><div class="g">🎬</div>
+  </div>
+  <div class="field">✎ Заметка — «аэропорт»</div>
+  <div class="save">Сохранить</div>
+</div></div>
+<div class="note2">Новая плашка «Заметка» под категориями. Необязательная.</div></div>
+
+<!-- HISTORY with note line -->
+<div class="col"><div class="tag">История — заметка в строке</div>
+<div class="phone"><div class="screen">
+  <div class="h1">История</div>
+  <div class="search">⌕ Поиск</div>
+  <div class="tabs"><span class="on">Все</span><span>Доход</span><span>Расход</span></div>
+  <div class="eyebrow day">Сегодня</div>
+  <div class="row"><div class="ic">🚕</div><div class="t">Транспорт<div class="note">аэропорт</div></div><div class="amt down">−540</div></div>
+  <div class="row"><div class="ic">☕</div><div class="t">Кафе<small>без заметки</small></div><div class="amt down">−320</div></div>
+  <div class="row"><div class="ic">🛒</div><div class="t">Продукты<div class="note">на неделю</div></div><div class="amt down">−2 140</div></div>
+</div>
+<div class="fab">+</div>
+<div class="bar"><div><span class="i">⌂</span>Главная</div><div class="on"><span class="i">☷</span>История</div><div><span class="i">◎</span>Бюджеты</div><div><span class="i">▤</span>Анализ</div><div><span class="i">⋯</span>Ещё</div></div>
+</div>
+<div class="note2">Заметка — вторая строка под категорией (приглушённая). Если заметки нет — просто её нет.</div></div>
+
+<!-- BUDGETS framed -->
+<div class="col"><div class="tag">Бюджеты — тонкая рамка</div>
+<div class="phone"><div class="screen">
+  <div class="h1">Бюджеты</div>
+  <div class="bcard">
+    <div class="brow"><div><span class="ic" style="display:inline-grid;vertical-align:middle">🛒</span> <b>Продукты</b></div><div class="serif acc">62%</div></div>
+    <div class="prog"><i style="width:62%;background:#2F6B4F"></i></div>
+    <div class="bsub"><span class="serif" style="color:#1A1712">18 600 ₽</span><span>из 30 000 ₽</span></div>
+  </div>
+  <div class="bcard">
+    <div class="brow"><div><span class="ic" style="display:inline-grid;vertical-align:middle">🎬</span> <b>Развлечения</b></div><div class="serif down">104%</div></div>
+    <div class="prog"><i style="width:100%;background:#B0492F"></i></div>
+    <div class="bsub"><span class="serif" style="color:#1A1712">10 400 ₽</span><span>из 10 000 ₽</span></div>
+  </div>
+</div>
+<div class="fab">+</div>
+<div class="bar"><div><span class="i">⌂</span>Главная</div><div><span class="i">☷</span>История</div><div class="on"><span class="i">◎</span>Бюджеты</div><div><span class="i">▤</span>Анализ</div><div><span class="i">⋯</span>Ещё</div></div>
+</div>
+<div class="note2">Каждый бюджет — в тонкой рамке (18px радиус), внутри воздух + линия прогресса.</div></div>
+
+<!-- DARK home -->
+<div class="col"><div class="tag">Ночная тема</div>
+<div class="phone dark"><div class="screen">
+  <div class="eyebrow">Баланс · июль</div>
+  <div class="serif" style="font-size:50px;letter-spacing:-.02em;margin-top:8px">1 248 050<span style="font-size:24px;color:#5a5650"> ₽</span></div>
+  <div style="display:flex;gap:26px;margin-top:18px">
+    <div><div class="eyebrow">Доход</div><div class="serif up" style="font-size:19px">+320 000</div></div>
+    <div><div class="eyebrow">Расход</div><div class="serif down" style="font-size:19px">−185 000</div></div>
+  </div>
+  <div class="rule" style="margin:26px 0 6px"></div>
+  <div class="serif" style="font-size:20px;margin:16px 0 6px">Последние</div>
+  <div class="row"><div class="ic">🚕</div><div class="t">Транспорт<div class="note">аэропорт</div></div><div class="amt down">−540</div></div>
+  <div class="row"><div class="ic">☕</div><div class="t">Кафе<small>без заметки</small></div><div class="amt down">−320</div></div>
+  <div class="row"><div class="ic">💼</div><div class="t">Доход<small>Зарплата</small></div><div class="amt up">+120 000</div></div>
+</div>
+<div class="fab">+</div>
+<div class="bar"><div class="on"><span class="i">⌂</span>Главная</div><div><span class="i">☷</span>История</div><div><span class="i">◎</span>Бюджеты</div><div><span class="i">▤</span>Анализ</div><div><span class="i">⋯</span>Ещё</div></div>
+</div>
+<div class="note2">Тёплый near-black `#15130E`, off-white текст, зелёный чуть ярче. Тот же язык: плоско, волоски, serif.</div></div>
+
+</body>
+</html>
