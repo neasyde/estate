@@ -88,7 +88,7 @@ fun SettingsScreen(
     ) {
         Spacer(Modifier.height(20.dp))
         Text(
-            text = stringResource(R.string.nav_settings),
+            text = stringResource(R.string.nav_more),
             style = MaterialTheme.typography.headlineMedium,
             color = MaterialTheme.colorScheme.onBackground,
         )
