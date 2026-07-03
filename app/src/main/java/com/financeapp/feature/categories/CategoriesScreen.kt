@@ -10,7 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -39,7 +39,7 @@ import com.financeapp.core.domain.model.CategoryType
 import com.financeapp.core.ui.categoryDisplayName
 import com.financeapp.core.ui.components.CategoryIcon
 import com.financeapp.core.ui.components.Eyebrow
-import com.financeapp.core.ui.components.SoftCard
+import com.financeapp.core.ui.components.Hairline
 import com.financeapp.core.ui.icons.materialIcon
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -82,20 +82,14 @@ fun CategoriesScreen(onBack: () -> Unit, vm: CategoriesViewModel = hiltViewModel
                 Modifier.fillMaxSize(),
                 contentPadding = androidx.compose.foundation.layout.PaddingValues(vertical = 8.dp),
             ) {
-                items(cats, key = { it.id }) { c ->
-                    SoftCard(
-                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 5.dp),
-                        shape = MaterialTheme.shapes.large,
-                        elevation = 0.dp,
-                        contentPadding = PaddingValues(0.dp),
-                    ) {
-                        CategoryManageRow(
-                            category = c,
-                            onEdit = { if (c.isCustom) { editing = c; sheetOpen = true } },
-                            onToggleHidden = { vm.toggleHidden(c) },
-                            onDelete = { vm.delete(c.id) },
-                        )
-                    }
+                itemsIndexed(cats, key = { _, c -> c.id }) { i, c ->
+                    CategoryManageRow(
+                        category = c,
+                        onEdit = { if (c.isCustom) { editing = c; sheetOpen = true } },
+                        onToggleHidden = { vm.toggleHidden(c) },
+                        onDelete = { vm.delete(c.id) },
+                    )
+                    if (i < cats.lastIndex) Hairline(Modifier.padding(horizontal = 20.dp))
                 }
             }
         }

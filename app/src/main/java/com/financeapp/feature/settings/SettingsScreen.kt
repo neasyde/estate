@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -56,7 +55,6 @@ import com.financeapp.core.domain.model.ThemeMode
 import com.financeapp.core.ui.anim.Motion
 import com.financeapp.core.ui.anim.reducedMotion
 import com.financeapp.core.ui.components.Eyebrow
-import com.financeapp.core.ui.components.SoftCard
 import com.financeapp.core.ui.icons.materialIcon
 import com.financeapp.core.ui.theme.OrangeGradEnd
 import com.financeapp.core.ui.theme.OrangeGradStart
@@ -231,7 +229,7 @@ fun SettingsScreen(
 }
 
 @Composable
-private fun GroupGap() = Spacer(Modifier.height(16.dp))
+private fun GroupGap() = Spacer(Modifier.height(26.dp))
 
 @Composable
 private fun Reveal(index: Int, content: @Composable () -> Unit) {
@@ -250,11 +248,7 @@ private fun Reveal(index: Int, content: @Composable () -> Unit) {
 
 @Composable
 private fun SettingsGroup(eyebrow: String, content: @Composable ColumnScope.() -> Unit) {
-    SoftCard(
-        modifier = Modifier.fillMaxWidth(),
-        elevation = 8.dp,
-        contentPadding = PaddingValues(horizontal = 20.dp, vertical = 18.dp),
-    ) {
+    Column(Modifier.fillMaxWidth()) {
         Eyebrow(eyebrow, color = MaterialTheme.colorScheme.primary)
         Spacer(Modifier.height(14.dp))
         content()

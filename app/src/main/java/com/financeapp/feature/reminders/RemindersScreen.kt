@@ -19,7 +19,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.DatePicker
@@ -61,7 +61,7 @@ import com.financeapp.core.domain.model.Reminder
 import com.financeapp.core.domain.model.RepeatType
 import com.financeapp.core.ui.components.Eyebrow
 import com.financeapp.core.ui.components.EmptyState
-import com.financeapp.core.ui.components.SoftCard
+import com.financeapp.core.ui.components.Hairline
 import com.financeapp.core.ui.icons.materialIcon
 import com.financeapp.core.ui.theme.PillShape
 import com.financeapp.core.utils.CurrencyFormatter
@@ -109,8 +109,9 @@ fun RemindersScreen(onBack: () -> Unit, vm: RemindersViewModel = hiltViewModel()
                 Modifier.fillMaxSize().padding(padding),
                 contentPadding = PaddingValues(vertical = 8.dp),
             ) {
-                items(reminders, key = { it.id }) { r ->
+                itemsIndexed(reminders, key = { _, r -> r.id }) { i, r ->
                     ReminderCard(r, onEdit = { editing = r; sheetOpen = true }, onDelete = { vm.delete(r) })
+                    if (i < reminders.lastIndex) Hairline(Modifier.padding(horizontal = 20.dp))
                 }
             }
         }
@@ -128,28 +129,24 @@ fun RemindersScreen(onBack: () -> Unit, vm: RemindersViewModel = hiltViewModel()
 
 @Composable
 private fun ReminderCard(r: Reminder, onEdit: () -> Unit, onDelete: () -> Unit) {
-    SoftCard(
-        modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 5.dp),
-        elevation = 0.dp,
-        onClick = onEdit,
-        contentPadding = PaddingValues(horizontal = 18.dp, vertical = 14.dp),
+    Row(
+        Modifier.fillMaxWidth().clickable(onClick = onEdit).padding(horizontal = 20.dp, vertical = 16.dp),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Icon(materialIcon("notifications"), null, tint = MaterialTheme.colorScheme.primary)
-            Spacer(Modifier.width(14.dp))
-            Column(Modifier.weight(1f)) {
-                Text(r.title, style = MaterialTheme.typography.titleMedium)
-                Eyebrow(reminderSubtitle(r))
-            }
-            r.amount?.let {
-                Text(
-                    text = CurrencyFormatter.format(it, r.currency ?: Currency.RUB),
-                    style = MaterialTheme.typography.titleSmall,
-                )
-            }
-            IconButton(onClick = onDelete) {
-                Icon(materialIcon("delete"), contentDescription = stringResource(R.string.action_delete), tint = MaterialTheme.colorScheme.onSurfaceVariant)
-            }
+        Icon(materialIcon("notifications"), null, tint = MaterialTheme.colorScheme.primary)
+        Spacer(Modifier.width(14.dp))
+        Column(Modifier.weight(1f)) {
+            Text(r.title, style = MaterialTheme.typography.titleMedium)
+            Eyebrow(reminderSubtitle(r))
+        }
+        r.amount?.let {
+            Text(
+                text = CurrencyFormatter.format(it, r.currency ?: Currency.RUB),
+                style = MaterialTheme.typography.titleSmall.copy(fontFamily = com.financeapp.core.ui.theme.FrauncesTitle),
+            )
+        }
+        IconButton(onClick = onDelete) {
+            Icon(materialIcon("delete"), contentDescription = stringResource(R.string.action_delete), tint = MaterialTheme.colorScheme.onSurfaceVariant)
         }
     }
 }
