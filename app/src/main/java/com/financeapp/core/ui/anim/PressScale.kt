@@ -17,12 +17,13 @@ import androidx.compose.ui.graphics.graphicsLayer
 @Composable
 fun Modifier.pressScale(
     interactionSource: InteractionSource,
-    pressedScale: Float = 0.97f,
+    pressedScale: Float = 0.98f,
 ): Modifier {
     val pressed by interactionSource.collectIsPressedAsState()
     val scale by animateFloatAsState(
         targetValue = if (pressed) pressedScale else 1f,
-        animationSpec = spring(dampingRatio = 0.5f, stiffness = Spring.StiffnessMediumLow),
+        // Calm, smooth (well-damped) — no bounce, no ripple "hitbox".
+        animationSpec = spring(dampingRatio = 0.85f, stiffness = Spring.StiffnessMedium),
         label = "pressScale",
     )
     return this.graphicsLayer { scaleX = scale; scaleY = scale }

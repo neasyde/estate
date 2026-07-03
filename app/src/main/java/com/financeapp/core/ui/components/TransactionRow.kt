@@ -1,6 +1,5 @@
 package com.financeapp.core.ui.components
 
-import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
@@ -36,7 +35,7 @@ fun TransactionRow(
         modifier = modifier
             .fillMaxWidth()
             .pressScale(interaction)
-            .clickable(interactionSource = interaction, indication = LocalIndication.current) { onClick() }
+            .clickable(interactionSource = interaction, indication = null) { onClick() }
             .padding(horizontal = 16.dp, vertical = 10.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {

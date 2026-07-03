@@ -1,6 +1,5 @@
 package com.financeapp.core.ui.components
 
-import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -56,7 +55,7 @@ fun SoftCard(
         modifier
             .pressScale(interaction)
             .then(shaped)
-            .clickable(interactionSource = interaction, indication = LocalIndication.current, onClick = onClick)
+            .clickable(interactionSource = interaction, indication = null, onClick = onClick)
     } else {
         modifier.then(shaped)
     }
