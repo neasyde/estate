@@ -25,14 +25,15 @@ internal object ReminderIntent {
     const val EXTRA_REPEAT = "rem_repeat"
     const val EXTRA_DUE = "rem_due"
     const val EXTRA_DAYS = "rem_days"
-    private const val NOTIFY_HOUR = 9
 
-    /** Next moment to fire: dueDate − notifyDaysBefore at 09:00 local, advanced past now for repeats. */
+    /** Next moment to fire: dueDate − notifyDaysBefore at the reminder's time of day, advanced past now for repeats. */
     fun triggerAt(r: Reminder, zone: ZoneId = ZoneId.systemDefault()): Long? {
         val now = System.currentTimeMillis()
+        val hour = (r.notifyMinuteOfDay / 60).coerceIn(0, 23)
+        val minute = (r.notifyMinuteOfDay % 60).coerceIn(0, 59)
         var due = Instant.ofEpochMilli(r.dueDate).atZone(zone).toLocalDate()
         fun notifyMillis(d: LocalDate): Long =
-            d.minusDays(r.notifyDaysBefore.toLong()).atTime(NOTIFY_HOUR, 0)
+            d.minusDays(r.notifyDaysBefore.toLong()).atTime(hour, minute)
                 .atZone(zone).toInstant().toEpochMilli()
 
         var t = notifyMillis(due)

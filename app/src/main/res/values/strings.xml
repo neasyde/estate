@@ -166,9 +166,13 @@
     <string name="rem_days_abbrev">%1$d d</string>
     <string name="rem_repeat">Repeat</string>
     <string name="rem_repeat_none">None</string>
+    <string name="rem_time">Time</string>
+    <string name="rem_add">Add</string>
     <string name="rem_empty">No reminders yet</string>
     <string name="rem_channel_name">Reminders</string>
     <string name="rem_channel_desc">Payment and bill reminders</string>
+    <string name="dash_reminders">Reminders</string>
+    <string name="dash_reminders_empty">Create your first reminder</string>
 
     <string name="set_data">Data</string>
     <string name="set_backup">Export backup</string>

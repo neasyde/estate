@@ -14,4 +14,5 @@ data class ReminderEntity(
     val dueDate: Long,
     val notifyDaysBefore: Int,
     val repeatType: String,
+    val notifyMinuteOfDay: Int = 9 * 60,
 )

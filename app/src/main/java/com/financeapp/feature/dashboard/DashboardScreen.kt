@@ -4,6 +4,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.slideInVertically
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.FloatingActionButton
@@ -36,6 +38,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.financeapp.R
 import com.financeapp.core.domain.model.Currency
+import com.financeapp.core.domain.model.Reminder
 import com.financeapp.core.domain.model.TransactionType
 import com.financeapp.core.ui.anim.Motion
 import com.financeapp.core.ui.anim.animatedCountUp
@@ -46,7 +49,10 @@ import com.financeapp.core.ui.components.Eyebrow
 import com.financeapp.core.ui.components.Hairline
 import com.financeapp.core.ui.components.TransactionRow
 import com.financeapp.core.ui.icons.materialIcon
+import com.financeapp.core.ui.theme.FrauncesTitle
 import com.financeapp.core.utils.CurrencyFormatter
+import com.financeapp.feature.reminders.AddEditReminderSheet
+import com.financeapp.feature.reminders.reminderSubtitle
 import com.financeapp.feature.transactions.AddEditTransactionSheet
 import kotlinx.coroutines.delay
 
@@ -58,12 +64,23 @@ fun DashboardScreen(
     val data by vm.state.collectAsStateWithLifecycle()
     val baseCurrency by vm.baseCurrency.collectAsStateWithLifecycle()
     val hidden by vm.balanceHidden.collectAsStateWithLifecycle()
+    val reminders by vm.upcomingReminders.collectAsStateWithLifecycle()
     var sheetOpen by remember { mutableStateOf(false) }
+    var reminderSheetOpen by remember { mutableStateOf(false) }
+    var editingReminder by remember { mutableStateOf<Reminder?>(null) }
 
     Box(Modifier.fillMaxSize()) {
         Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
             Spacer(Modifier.height(16.dp))
             Masthead(data.balanceBase, data.monthIncomeBase, data.monthExpenseBase, baseCurrency, hidden, vm::toggleBalanceHidden)
+
+            Spacer(Modifier.height(28.dp))
+            RemindersSection(
+                reminders = reminders,
+                currency = baseCurrency,
+                onAdd = { editingReminder = null; reminderSheetOpen = true },
+                onEdit = { editingReminder = it; reminderSheetOpen = true },
+            )
 
             Spacer(Modifier.height(30.dp))
             if (data.recent.isEmpty()) {
@@ -102,6 +119,81 @@ fun DashboardScreen(
             defaultCurrency = baseCurrency,
             onDismiss = { sheetOpen = false },
         )
+    }
+
+    if (reminderSheetOpen) {
+        AddEditReminderSheet(
+            initial = editingReminder,
+            defaultCurrency = baseCurrency,
+            onDismiss = { reminderSheetOpen = false },
+            onSave = { vm.saveReminder(it); reminderSheetOpen = false },
+        )
+    }
+}
+
+@Composable
+private fun RemindersSection(
+    reminders: List<Reminder>,
+    currency: Currency,
+    onAdd: () -> Unit,
+    onEdit: (Reminder) -> Unit,
+) {
+    Column(Modifier.fillMaxWidth()) {
+        Row(
+            Modifier.fillMaxWidth().padding(start = 20.dp, end = 8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Eyebrow(stringResource(R.string.dash_reminders), color = MaterialTheme.colorScheme.primary)
+            Spacer(Modifier.weight(1f))
+            TextButton(onClick = onAdd) {
+                Icon(materialIcon("add"), contentDescription = null, modifier = Modifier.height(18.dp))
+                Spacer(Modifier.width(4.dp))
+                Text(stringResource(R.string.rem_add))
+            }
+        }
+        Spacer(Modifier.height(2.dp))
+        if (reminders.isEmpty()) {
+            Row(
+                Modifier.fillMaxWidth().clickable(onClick = onAdd).padding(horizontal = 20.dp, vertical = 14.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Icon(materialIcon("notifications"), null, tint = MaterialTheme.colorScheme.primary)
+                Spacer(Modifier.width(14.dp))
+                Text(
+                    stringResource(R.string.dash_reminders_empty),
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.weight(1f),
+                )
+                Icon(materialIcon("chevron_right"), null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
+            }
+        } else {
+            reminders.forEachIndexed { i, r ->
+                ReminderGlance(r, currency, onClick = { onEdit(r) })
+                if (i < reminders.lastIndex) Hairline(Modifier.padding(horizontal = 20.dp))
+            }
+        }
+    }
+}
+
+@Composable
+private fun ReminderGlance(r: Reminder, currency: Currency, onClick: () -> Unit) {
+    Row(
+        Modifier.fillMaxWidth().clickable(onClick = onClick).padding(horizontal = 20.dp, vertical = 12.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Icon(materialIcon("notifications"), null, tint = MaterialTheme.colorScheme.primary)
+        Spacer(Modifier.width(14.dp))
+        Column(Modifier.weight(1f)) {
+            Text(r.title, style = MaterialTheme.typography.bodyLarge)
+            Eyebrow(reminderSubtitle(r))
+        }
+        r.amount?.let {
+            Text(
+                text = CurrencyFormatter.format(it, r.currency ?: currency),
+                style = MaterialTheme.typography.titleSmall.copy(fontFamily = FrauncesTitle),
+            )
+        }
     }
 }
 

@@ -28,7 +28,7 @@ import kotlinx.coroutines.launch
         ReminderEntity::class,
         RecurringRuleEntity::class,
     ],
-    version = 2,
+    version = 3,
     exportSchema = false,
 )
 abstract class FinanceDatabase : RoomDatabase() {
@@ -47,10 +47,16 @@ abstract class FinanceDatabase : RoomDatabase() {
             }
         }
 
+        val MIGRATION_2_3 = object : Migration(2, 3) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE reminders ADD COLUMN notifyMinuteOfDay INTEGER NOT NULL DEFAULT 540")
+            }
+        }
+
         fun build(context: Context, scope: CoroutineScope): FinanceDatabase {
             var instance: FinanceDatabase? = null
             instance = Room.databaseBuilder(context, FinanceDatabase::class.java, NAME)
-                .addMigrations(MIGRATION_1_2)
+                .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
                 .addCallback(object : RoomDatabase.Callback() {
                     override fun onCreate(db: SupportSQLiteDatabase) {
                         scope.launch(Dispatchers.IO) {

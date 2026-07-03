@@ -13,6 +13,7 @@ fun ReminderEntity.toDomain() = Reminder(
     dueDate = dueDate,
     notifyDaysBefore = notifyDaysBefore,
     repeat = RepeatType.valueOf(repeatType),
+    notifyMinuteOfDay = notifyMinuteOfDay,
 )
 
 fun Reminder.toEntity() = ReminderEntity(
@@ -23,4 +24,5 @@ fun Reminder.toEntity() = ReminderEntity(
     dueDate = dueDate,
     notifyDaysBefore = notifyDaysBefore,
     repeatType = repeat.name,
+    notifyMinuteOfDay = notifyMinuteOfDay,
 )

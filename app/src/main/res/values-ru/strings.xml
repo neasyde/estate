@@ -157,9 +157,13 @@
     <string name="rem_days_abbrev">%1$d дн</string>
     <string name="rem_repeat">Повтор</string>
     <string name="rem_repeat_none">Нет</string>
+    <string name="rem_time">Время</string>
+    <string name="rem_add">Добавить</string>
     <string name="rem_empty">Пока нет напоминаний</string>
     <string name="rem_channel_name">Напоминания</string>
     <string name="rem_channel_desc">Напоминания о платежах и счетах</string>
+    <string name="dash_reminders">Напоминания</string>
+    <string name="dash_reminders_empty">Создайте первое напоминание</string>
 
     <string name="set_data">Данные</string>
     <string name="set_backup">Экспорт (резервная копия)</string>
