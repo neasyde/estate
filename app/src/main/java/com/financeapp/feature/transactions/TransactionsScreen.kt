@@ -44,7 +44,8 @@ import com.financeapp.R
 import com.financeapp.core.domain.model.TransactionType
 import com.financeapp.core.domain.model.TransactionWithCategory
 import com.financeapp.core.ui.components.EmptyState
-import com.financeapp.core.ui.components.SoftCard
+import com.financeapp.core.ui.components.Eyebrow
+import com.financeapp.core.ui.components.Hairline
 import com.financeapp.core.ui.components.TransactionRow
 import com.financeapp.core.ui.icons.materialIcon
 import com.financeapp.core.ui.theme.ExpenseRed
@@ -150,11 +151,9 @@ private fun DayHeader(dayStart: Long, now: Long) {
         DateUtils.DayLabel.Yesterday -> stringResource(R.string.tx_yesterday)
         is DateUtils.DayLabel.Other -> l.text
     }
-    Text(
+    Eyebrow(
         text = label,
-        style = MaterialTheme.typography.labelLarge,
-        color = MaterialTheme.colorScheme.primary,
-        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
+        modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 10.dp),
     )
 }
 
@@ -186,21 +185,16 @@ private fun SwipeRow(
             val align = if (dismissState.dismissDirection == SwipeToDismissBoxValue.EndToStart) Alignment.CenterEnd else Alignment.CenterStart
             val icon = if (dismissState.dismissDirection == SwipeToDismissBoxValue.EndToStart) "delete" else "content_copy"
             Box(
-                Modifier.fillMaxSize().padding(horizontal = 12.dp, vertical = 5.dp)
-                    .clip(MaterialTheme.shapes.large).background(color).padding(horizontal = 24.dp),
+                Modifier.fillMaxSize().background(color).padding(horizontal = 24.dp),
                 contentAlignment = align,
             ) {
                 Icon(materialIcon(icon), contentDescription = null, tint = Color.White)
             }
         },
     ) {
-        SoftCard(
-            modifier = Modifier.padding(horizontal = 12.dp, vertical = 5.dp),
-            shape = MaterialTheme.shapes.large,
-            elevation = 0.dp,
-            contentPadding = PaddingValues(0.dp),
-        ) {
+        Column(Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.background)) {
             TransactionRow(item = item, onClick = onClick)
+            Hairline(Modifier.padding(horizontal = 20.dp))
         }
     }
 }

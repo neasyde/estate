@@ -104,7 +104,8 @@ private fun BudgetCard(bp: BudgetProgress, onEdit: () -> Unit, onDelete: () -> U
     SoftCard(
         modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 6.dp),
         onClick = onEdit,
-        elevation = 9.dp,
+        border = true,
+        containerColor = MaterialTheme.colorScheme.background,
         contentPadding = PaddingValues(horizontal = 20.dp, vertical = 16.dp),
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
