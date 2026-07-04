@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
+import com.financeapp.core.ui.LocalAnimationsEnabled
 
 /** Shared motion language: one emphasized easing + a consistent duration scale. */
 object Motion {
@@ -19,9 +20,13 @@ object Motion {
     const val StaggerStep = 55
 }
 
-/** True when the OS animation scale is 0 (developer/accessibility "remove animations"). */
+/**
+ * True when animations should be suppressed — either the user turned them off in Settings,
+ * or the OS animation scale is 0 (developer/accessibility "remove animations").
+ */
 @Composable
 fun reducedMotion(): Boolean {
+    if (!LocalAnimationsEnabled.current) return true
     val resolver = LocalContext.current.contentResolver
     val scale = runCatching {
         Settings.Global.getFloat(resolver, Settings.Global.ANIMATOR_DURATION_SCALE, 1f)

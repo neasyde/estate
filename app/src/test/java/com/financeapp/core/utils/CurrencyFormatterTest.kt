@@ -16,4 +16,13 @@ class CurrencyFormatterTest {
     @Test fun formatsEur() {
         assertThat(CurrencyFormatter.format(9.9, Currency.EUR)).isEqualTo("€9.90")
     }
+
+    @Test fun hidesDecimalsWhenDisabled() {
+        val out = CurrencyFormatter.format(1234.0, Currency.RUB, showDecimals = false)
+        assertThat(out).isEqualTo("1,234 ₽")
+    }
+
+    @Test fun roundsToWholeWhenDecimalsDisabled() {
+        assertThat(CurrencyFormatter.format(9.9, Currency.EUR, showDecimals = false)).isEqualTo("€10")
+    }
 }

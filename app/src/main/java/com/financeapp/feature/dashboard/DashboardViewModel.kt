@@ -8,6 +8,7 @@ import com.financeapp.core.data.remote.ExchangeResult
 import com.financeapp.core.domain.model.Currency
 import com.financeapp.core.domain.model.DashboardData
 import com.financeapp.core.domain.model.Reminder
+import com.financeapp.core.domain.model.TransactionType
 import com.financeapp.core.domain.repository.SettingsRepository
 import com.financeapp.core.domain.usecase.DeleteReminderUseCase
 import com.financeapp.core.domain.usecase.GetDashboardDataUseCase
@@ -59,6 +60,7 @@ class DashboardViewModel @Inject constructor(
         // auto-refresh is on, and the cached rates are stale. Failures stay silent on Home.
         viewModelScope.launch {
             val s = settingsRepo.settings.first()
+            _balanceHidden.value = s.hideBalanceByDefault
             val key = resolveApiKey(s.exchangeApiKey, appConfig) ?: return@launch
             val intervalMs = s.ratesIntervalHours * 3_600_000L
             if (s.autoRefreshRates &&
@@ -83,6 +85,10 @@ class DashboardViewModel @Inject constructor(
     val baseCurrency: StateFlow<Currency> = settingsRepo.settings
         .map { it.baseCurrency }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), Currency.RUB)
+
+    val defaultTxType: StateFlow<TransactionType> = settingsRepo.settings
+        .map { it.defaultTxType }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), TransactionType.EXPENSE)
 
     private val _balanceHidden = MutableStateFlow(false)
     val balanceHidden: StateFlow<Boolean> = _balanceHidden.asStateFlow()

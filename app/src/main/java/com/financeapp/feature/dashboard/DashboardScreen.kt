@@ -43,6 +43,7 @@ import com.financeapp.core.domain.model.Reminder
 import com.financeapp.core.domain.model.TransactionType
 import com.financeapp.core.ui.anim.Motion
 import com.financeapp.core.ui.anim.animatedCountUp
+import com.financeapp.core.ui.LocalShowDecimals
 import com.financeapp.core.ui.anim.reducedMotion
 import com.financeapp.core.ui.components.AmountText
 import com.financeapp.core.ui.components.EmptyState
@@ -64,6 +65,7 @@ fun DashboardScreen(
 ) {
     val data by vm.state.collectAsStateWithLifecycle()
     val baseCurrency by vm.baseCurrency.collectAsStateWithLifecycle()
+    val defaultTxType by vm.defaultTxType.collectAsStateWithLifecycle()
     val rates by vm.rates.collectAsStateWithLifecycle()
     val hidden by vm.balanceHidden.collectAsStateWithLifecycle()
     val reminders by vm.upcomingReminders.collectAsStateWithLifecycle()
@@ -119,7 +121,7 @@ fun DashboardScreen(
     if (sheetOpen) {
         AddEditTransactionSheet(
             editId = null,
-            presetType = TransactionType.EXPENSE,
+            presetType = defaultTxType,
             defaultCurrency = baseCurrency,
             onDismiss = { sheetOpen = false },
         )
@@ -268,7 +270,7 @@ private fun Masthead(
         }
         val animated = animatedCountUp(balance)
         Text(
-            text = if (hidden) "••••••" else CurrencyFormatter.format(animated, currency),
+            text = if (hidden) "••••••" else CurrencyFormatter.format(animated, currency, LocalShowDecimals.current),
             style = MaterialTheme.typography.displayLarge,
             color = MaterialTheme.colorScheme.onBackground,
         )
