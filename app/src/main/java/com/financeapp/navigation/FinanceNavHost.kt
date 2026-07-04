@@ -54,6 +54,7 @@ fun FinanceNavHost(
         composable(Routes.LOCK) {
             LockScreen(
                 biometricEnabled = settings?.biometricEnabled == true,
+                autoBiometric = settings?.autoBiometric != false,
                 onUnlocked = { navController.navigate(Routes.DASHBOARD) { popUpTo(Routes.LOCK) { inclusive = true } } },
             )
         }

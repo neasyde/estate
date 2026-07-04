@@ -27,7 +27,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -48,6 +50,7 @@ import kotlinx.coroutines.delay
 @Composable
 fun LockScreen(
     biometricEnabled: Boolean,
+    autoBiometric: Boolean = true,
     onUnlocked: () -> Unit,
     vm: LockViewModel = hiltViewModel(),
 ) {
@@ -65,6 +68,17 @@ fun LockScreen(
     }
     val remaining = ((state.lockedUntil - now).coerceAtLeast(0L) / 1000L).toInt() + if (state.lockedUntil > now) 1 else 0
     val locked = state.lockedUntil > now
+
+    // Auto-present the biometric prompt once on entry when enabled and available (not during a lockout).
+    var biometricTried by rememberSaveable { mutableStateOf(false) }
+    LaunchedEffect(Unit) {
+        if (biometricEnabled && autoBiometric && !locked && !biometricTried &&
+            BiometricManager.from(context).canAuthenticate(BIOMETRIC_WEAK) == BiometricManager.BIOMETRIC_SUCCESS
+        ) {
+            biometricTried = true
+            showBiometricPrompt(context, onUnlocked)
+        }
+    }
 
     LaunchedEffect(state.entered) {
         if (state.entered.length == 4 && !locked) {
