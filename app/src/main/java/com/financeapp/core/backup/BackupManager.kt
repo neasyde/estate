@@ -4,9 +4,11 @@ import android.content.Context
 import android.net.Uri
 import com.financeapp.core.data.local.FinanceDatabase
 import com.financeapp.core.domain.model.AppLanguage
+import com.financeapp.core.domain.model.AutoLock
 import com.financeapp.core.domain.model.ColorScheme
 import com.financeapp.core.domain.model.Currency
 import com.financeapp.core.domain.model.ThemeMode
+import com.financeapp.core.domain.model.TransactionType
 import com.financeapp.core.domain.repository.SettingsRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
@@ -46,6 +48,16 @@ class BackupManager @Inject constructor(
                     themeMode = s.themeMode.name,
                     colorScheme = s.colorScheme.name,
                     language = s.language.name,
+                    autoRefreshRates = s.autoRefreshRates,
+                    ratesIntervalHours = s.ratesIntervalHours,
+                    showDecimals = s.showDecimals,
+                    defaultTxType = s.defaultTxType.name,
+                    animationsEnabled = s.animationsEnabled,
+                    hapticsEnabled = s.hapticsEnabled,
+                    hideBalanceByDefault = s.hideBalanceByDefault,
+                    autoLock = s.autoLock.name,
+                    defaultReminderHour = s.defaultReminderHour,
+                    defaultReminderLeadDays = s.defaultReminderLeadDays,
                 ),
             )
             val text = json.encodeToString(BackupData.serializer(), data)
@@ -74,11 +86,26 @@ class BackupManager @Inject constructor(
         }.getOrDefault(false)
     }
 
+    /** Wipes all user data (all Room tables). Settings/PIN are left untouched. */
+    suspend fun clearAllData(): Boolean = withContext(Dispatchers.IO) {
+        runCatching { db.clearAllTables(); true }.getOrDefault(false)
+    }
+
     private suspend fun restoreSettings(s: SettingsBackup) {
         runCatching { settingsRepo.setBaseCurrency(Currency.valueOf(s.baseCurrency)) }
         settingsRepo.setRates(s.rateUsd, s.rateEur)
         runCatching { settingsRepo.setThemeMode(ThemeMode.valueOf(s.themeMode)) }
         runCatching { settingsRepo.setColorScheme(ColorScheme.valueOf(s.colorScheme)) }
         runCatching { settingsRepo.setLanguage(AppLanguage.valueOf(s.language)) }
+        settingsRepo.setAutoRefreshRates(s.autoRefreshRates)
+        settingsRepo.setRatesIntervalHours(s.ratesIntervalHours)
+        settingsRepo.setShowDecimals(s.showDecimals)
+        runCatching { settingsRepo.setDefaultTxType(TransactionType.valueOf(s.defaultTxType)) }
+        settingsRepo.setAnimationsEnabled(s.animationsEnabled)
+        settingsRepo.setHapticsEnabled(s.hapticsEnabled)
+        settingsRepo.setHideBalanceByDefault(s.hideBalanceByDefault)
+        runCatching { settingsRepo.setAutoLock(AutoLock.valueOf(s.autoLock)) }
+        settingsRepo.setDefaultReminderHour(s.defaultReminderHour)
+        settingsRepo.setDefaultReminderLeadDays(s.defaultReminderLeadDays)
     }
 }

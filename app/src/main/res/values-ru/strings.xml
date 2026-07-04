@@ -184,4 +184,27 @@
     <string name="restore_fail">Не удалось прочитать файл копии</string>
     <string name="action_ok">OK</string>
     <string name="nav_more">Ещё</string>
+
+    <!-- expanded settings -->
+    <string name="set_display">Отображение</string>
+    <string name="set_show_decimals">Показывать копейки</string>
+    <string name="set_default_tx">Тип по умолчанию для «+»</string>
+    <string name="set_feedback">Отклик</string>
+    <string name="set_animations">Анимации</string>
+    <string name="set_haptics">Вибро-отклик</string>
+    <string name="set_hide_balance">Скрывать баланс по умолчанию</string>
+    <string name="set_require_pin">Запрашивать PIN при запуске</string>
+    <string name="set_auto_biometric">Биометрия при запуске</string>
+    <string name="set_auto_lock">Автоблокировка</string>
+    <string name="set_lock_immediate">Сразу</string>
+    <string name="set_lock_1min">1 мин</string>
+    <string name="set_lock_5min">5 мин</string>
+    <string name="set_reminder_time">Время по умолчанию</string>
+    <string name="set_reminder_lead">Напоминать за, дней</string>
+    <string name="set_clear_data">Стереть все данные</string>
+    <string name="set_clear_title">Стереть все данные?</string>
+    <string name="set_clear_msg">Это навсегда удалит все транзакции, категории, бюджеты и напоминания. Настройки сохранятся. Отменить нельзя.</string>
+    <string name="backup_cleared">Все данные стёрты</string>
+    <string name="set_about">О приложении</string>
+    <string name="set_version">Версия %1$s</string>
 </resources>

@@ -20,7 +20,11 @@ data class BackupData(
     val settings: SettingsBackup = SettingsBackup(),
 )
 
-/** Portable (non device-local) settings. PIN, biometric and onboarding flags are intentionally excluded. */
+/**
+ * Portable (non device-local) settings. PIN, biometric, api key, require-PIN and
+ * auto-biometric flags are intentionally excluded. New fields are defaulted so older
+ * backups still deserialize.
+ */
 @Serializable
 data class SettingsBackup(
     val baseCurrency: String = "RUB",
@@ -29,4 +33,14 @@ data class SettingsBackup(
     val themeMode: String = "SYSTEM",
     val colorScheme: String = "PURPLE",
     val language: String = "RU",
+    val autoRefreshRates: Boolean = true,
+    val ratesIntervalHours: Int = 12,
+    val showDecimals: Boolean = true,
+    val defaultTxType: String = "EXPENSE",
+    val animationsEnabled: Boolean = true,
+    val hapticsEnabled: Boolean = true,
+    val hideBalanceByDefault: Boolean = false,
+    val autoLock: String = "IMMEDIATE",
+    val defaultReminderHour: Int = 9,
+    val defaultReminderLeadDays: Int = 1,
 )

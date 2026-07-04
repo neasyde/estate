@@ -52,20 +52,27 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.financeapp.BuildConfig
 import com.financeapp.R
 import com.financeapp.core.domain.model.AppLanguage
+import com.financeapp.core.domain.model.AutoLock
 import com.financeapp.core.domain.model.ColorScheme
 import com.financeapp.core.domain.model.Currency
 import com.financeapp.core.domain.model.ThemeMode
+import com.financeapp.core.domain.model.TransactionType
 import com.financeapp.core.ui.anim.Motion
 import com.financeapp.core.ui.anim.reducedMotion
 import com.financeapp.core.ui.components.Eyebrow
 import com.financeapp.core.ui.icons.materialIcon
+import com.financeapp.core.ui.theme.IndigoPrimary
+import com.financeapp.core.ui.theme.IndigoSecondary
 import com.financeapp.core.ui.theme.OrangeGradEnd
 import com.financeapp.core.ui.theme.OrangeGradStart
 import com.financeapp.core.ui.theme.PillShape
 import com.financeapp.core.ui.theme.PurpleGradEnd
 import com.financeapp.core.ui.theme.PurpleGradStart
+import com.financeapp.core.ui.theme.TerracottaPrimary
+import com.financeapp.core.ui.theme.TerracottaSecondary
 import com.financeapp.core.utils.LocaleManager
 import kotlinx.coroutines.delay
 
@@ -81,6 +88,7 @@ fun SettingsScreen(
     val ratesLoading by vm.ratesLoading.collectAsStateWithLifecycle()
     var showPinDialog by remember { mutableStateOf(false) }
     var showRestoreConfirm by remember { mutableStateOf(false) }
+    var showClearConfirm by remember { mutableStateOf(false) }
     val exportLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.CreateDocument("application/json"),
     ) { uri -> uri?.let(vm::exportBackup) }
@@ -127,6 +135,40 @@ fun SettingsScreen(
                         modifier = Modifier.weight(1f),
                     ) { vm.setScheme(ColorScheme.ORANGE) }
                 }
+                Spacer(Modifier.height(12.dp))
+                Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                    SchemeSwatch(
+                        label = stringResource(R.string.set_scheme_indigo),
+                        brush = Brush.linearGradient(listOf(IndigoPrimary, IndigoSecondary)),
+                        selected = settings.colorScheme == ColorScheme.INDIGO,
+                        modifier = Modifier.weight(1f),
+                    ) { vm.setScheme(ColorScheme.INDIGO) }
+                    SchemeSwatch(
+                        label = stringResource(R.string.set_scheme_terracotta),
+                        brush = Brush.linearGradient(listOf(TerracottaPrimary, TerracottaSecondary)),
+                        selected = settings.colorScheme == ColorScheme.TERRACOTTA,
+                        modifier = Modifier.weight(1f),
+                    ) { vm.setScheme(ColorScheme.TERRACOTTA) }
+                }
+            }
+        }
+        GroupGap()
+
+        Reveal(1) {
+            SettingsGroup(stringResource(R.string.set_display)) {
+                SettingSwitch("tune", stringResource(R.string.set_show_decimals), settings.showDecimals, vm::setShowDecimals)
+                SettingSwitch("visibility_off", stringResource(R.string.set_hide_balance), settings.hideBalanceByDefault, vm::setHideBalance)
+                Spacer(Modifier.height(12.dp))
+                Eyebrow(stringResource(R.string.set_default_tx))
+                Spacer(Modifier.height(10.dp))
+                PillSelector(
+                    options = listOf(
+                        TransactionType.EXPENSE to stringResource(R.string.dash_add_expense),
+                        TransactionType.INCOME to stringResource(R.string.dash_add_income),
+                    ),
+                    selected = settings.defaultTxType,
+                    onSelect = vm::setDefaultTxType,
+                )
             }
         }
         GroupGap()
@@ -195,34 +237,84 @@ fun SettingsScreen(
         GroupGap()
 
         Reveal(3) {
-            SettingsGroup(stringResource(R.string.set_security)) {
-                ActionRow("fingerprint", stringResource(R.string.set_change_pin)) { showPinDialog = true }
-                Spacer(Modifier.height(4.dp))
-                Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp)) {
-                    Icon(materialIcon("fingerprint"), null, tint = MaterialTheme.colorScheme.primary)
-                    Spacer(Modifier.size(12.dp))
-                    Text(stringResource(R.string.set_biometric), style = MaterialTheme.typography.bodyLarge, modifier = Modifier.weight(1f))
-                    Switch(checked = settings.biometricEnabled, onCheckedChange = { vm.setBiometric(it) })
-                }
+            SettingsGroup(stringResource(R.string.set_feedback)) {
+                SettingSwitch("animation", stringResource(R.string.set_animations), settings.animationsEnabled, vm::setAnimations)
+                SettingSwitch("vibration", stringResource(R.string.set_haptics), settings.hapticsEnabled, vm::setHaptics)
             }
         }
         GroupGap()
 
         Reveal(4) {
-            SettingsGroup(stringResource(R.string.cat_manage_title)) {
-                ActionRow("edit", stringResource(R.string.cat_manage_title), onClick = onManageCategories)
-                ActionRow("notifications", stringResource(R.string.rem_title), onClick = onManageReminders)
+            SettingsGroup(stringResource(R.string.set_security)) {
+                ActionRow("lock", stringResource(R.string.set_change_pin)) { showPinDialog = true }
+                SettingSwitch("fingerprint", stringResource(R.string.set_biometric), settings.biometricEnabled, vm::setBiometric)
+                SettingSwitch("fingerprint", stringResource(R.string.set_auto_biometric), settings.autoBiometric, vm::setAutoBiometric)
+                SettingSwitch("lock", stringResource(R.string.set_require_pin), settings.requirePinOnLaunch, vm::setRequirePin)
+                Spacer(Modifier.height(12.dp))
+                Eyebrow(stringResource(R.string.set_auto_lock))
+                Spacer(Modifier.height(10.dp))
+                PillSelector(
+                    options = listOf(
+                        AutoLock.IMMEDIATE to stringResource(R.string.set_lock_immediate),
+                        AutoLock.ONE_MIN to stringResource(R.string.set_lock_1min),
+                        AutoLock.FIVE_MIN to stringResource(R.string.set_lock_5min),
+                    ),
+                    selected = settings.autoLock,
+                    onSelect = vm::setAutoLock,
+                )
             }
         }
         GroupGap()
 
         Reveal(5) {
+            SettingsGroup(stringResource(R.string.cat_manage_title)) {
+                ActionRow("edit", stringResource(R.string.cat_manage_title), onClick = onManageCategories)
+                ActionRow("notifications", stringResource(R.string.rem_title), onClick = onManageReminders)
+                Spacer(Modifier.height(12.dp))
+                StepperRow(
+                    icon = "schedule",
+                    label = stringResource(R.string.set_reminder_time),
+                    value = settings.defaultReminderHour,
+                    range = 0..23,
+                    format = { "%02d:00".format(it) },
+                    onChange = vm::setReminderHour,
+                )
+                StepperRow(
+                    icon = "notifications",
+                    label = stringResource(R.string.set_reminder_lead),
+                    value = settings.defaultReminderLeadDays,
+                    range = 0..14,
+                    format = { it.toString() },
+                    onChange = vm::setReminderLeadDays,
+                )
+            }
+        }
+        GroupGap()
+
+        Reveal(6) {
             SettingsGroup(stringResource(R.string.set_data)) {
                 ActionRow("download", stringResource(R.string.set_backup)) {
                     exportLauncher.launch("estate-backup.json")
                 }
                 ActionRow("upload", stringResource(R.string.set_restore)) {
                     showRestoreConfirm = true
+                }
+                DangerRow("delete_forever", stringResource(R.string.set_clear_data)) { showClearConfirm = true }
+            }
+        }
+        GroupGap()
+
+        Reveal(7) {
+            SettingsGroup(stringResource(R.string.set_about)) {
+                Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)) {
+                    Icon(materialIcon("info"), null, tint = MaterialTheme.colorScheme.primary)
+                    Spacer(Modifier.size(12.dp))
+                    Text(stringResource(R.string.app_name), style = MaterialTheme.typography.bodyLarge, modifier = Modifier.weight(1f))
+                    Text(
+                        stringResource(R.string.set_version, BuildConfig.VERSION_NAME),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
                 }
             }
         }
@@ -250,12 +342,30 @@ fun SettingsScreen(
         )
     }
 
+    if (showClearConfirm) {
+        AlertDialog(
+            onDismissRequest = { showClearConfirm = false },
+            title = { Text(stringResource(R.string.set_clear_title)) },
+            text = { Text(stringResource(R.string.set_clear_msg)) },
+            confirmButton = {
+                TextButton(onClick = { showClearConfirm = false; vm.clearAllData() }) {
+                    Text(stringResource(R.string.set_clear_data), color = MaterialTheme.colorScheme.error)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showClearConfirm = false }) { Text(stringResource(R.string.action_cancel)) }
+            },
+        )
+    }
+
     backupEvent?.let { event ->
         val message = when (event) {
             BackupEvent.EXPORT_OK -> stringResource(R.string.backup_ok)
             BackupEvent.EXPORT_FAIL -> stringResource(R.string.backup_fail)
             BackupEvent.IMPORT_OK -> stringResource(R.string.restore_ok)
             BackupEvent.IMPORT_FAIL -> stringResource(R.string.restore_fail)
+            BackupEvent.CLEARED -> stringResource(R.string.backup_cleared)
+            BackupEvent.CLEAR_FAIL -> stringResource(R.string.backup_fail)
         }
         AlertDialog(
             onDismissRequest = { vm.clearBackupEvent() },
@@ -359,6 +469,44 @@ private fun SettingSwitch(icon: String, label: String, checked: Boolean, onChang
         Spacer(Modifier.size(12.dp))
         Text(label, style = MaterialTheme.typography.bodyLarge, modifier = Modifier.weight(1f))
         Switch(checked = checked, onCheckedChange = onChange)
+    }
+}
+
+@Composable
+private fun StepperRow(
+    icon: String,
+    label: String,
+    value: Int,
+    range: IntRange,
+    format: (Int) -> String,
+    onChange: (Int) -> Unit,
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp),
+    ) {
+        Icon(materialIcon(icon), null, tint = MaterialTheme.colorScheme.primary)
+        Spacer(Modifier.size(12.dp))
+        Text(label, style = MaterialTheme.typography.bodyLarge, modifier = Modifier.weight(1f))
+        TextButton(onClick = { if (value > range.first) onChange(value - 1) }, enabled = value > range.first) { Text("−") }
+        Text(
+            format(value),
+            style = MaterialTheme.typography.titleSmall,
+            modifier = Modifier.padding(horizontal = 4.dp),
+        )
+        TextButton(onClick = { if (value < range.last) onChange(value + 1) }, enabled = value < range.last) { Text("+") }
+    }
+}
+
+@Composable
+private fun DangerRow(icon: String, label: String, onClick: () -> Unit) {
+    Row(
+        Modifier.fillMaxWidth().clip(MaterialTheme.shapes.medium).clickable { onClick() }.padding(vertical = 12.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Icon(materialIcon(icon), null, tint = MaterialTheme.colorScheme.error)
+        Spacer(Modifier.size(12.dp))
+        Text(label, style = MaterialTheme.typography.bodyLarge, color = MaterialTheme.colorScheme.error, modifier = Modifier.weight(1f))
     }
 }
 

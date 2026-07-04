@@ -11,9 +11,11 @@ import com.financeapp.core.domain.usecase.resolveApiKey
 import com.financeapp.core.domain.usecase.shouldRefreshRates
 import com.financeapp.core.domain.model.AppLanguage
 import com.financeapp.core.domain.model.AppSettings
+import com.financeapp.core.domain.model.AutoLock
 import com.financeapp.core.domain.model.ColorScheme
 import com.financeapp.core.domain.model.Currency
 import com.financeapp.core.domain.model.ThemeMode
+import com.financeapp.core.domain.model.TransactionType
 import com.financeapp.core.domain.repository.SettingsRepository
 import com.financeapp.core.domain.usecase.SetPinUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -26,7 +28,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-enum class BackupEvent { EXPORT_OK, EXPORT_FAIL, IMPORT_OK, IMPORT_FAIL }
+enum class BackupEvent { EXPORT_OK, EXPORT_FAIL, IMPORT_OK, IMPORT_FAIL, CLEARED, CLEAR_FAIL }
 enum class RatesEvent { UPDATED, NO_KEY, INVALID_KEY, FAILED }
 
 @HiltViewModel
@@ -70,6 +72,21 @@ class SettingsViewModel @Inject constructor(
     fun setRates(usd: Double, eur: Double) = viewModelScope.launch { settingsRepo.setRates(usd, eur) }
     fun setBiometric(b: Boolean) = viewModelScope.launch { settingsRepo.setBiometricEnabled(b) }
     fun changePin(pin: String) = viewModelScope.launch { setPin(pin) }
+
+    fun setShowDecimals(b: Boolean) = viewModelScope.launch { settingsRepo.setShowDecimals(b) }
+    fun setDefaultTxType(t: TransactionType) = viewModelScope.launch { settingsRepo.setDefaultTxType(t) }
+    fun setAnimations(b: Boolean) = viewModelScope.launch { settingsRepo.setAnimationsEnabled(b) }
+    fun setHaptics(b: Boolean) = viewModelScope.launch { settingsRepo.setHapticsEnabled(b) }
+    fun setHideBalance(b: Boolean) = viewModelScope.launch { settingsRepo.setHideBalanceByDefault(b) }
+    fun setRequirePin(b: Boolean) = viewModelScope.launch { settingsRepo.setRequirePinOnLaunch(b) }
+    fun setAutoBiometric(b: Boolean) = viewModelScope.launch { settingsRepo.setAutoBiometric(b) }
+    fun setAutoLock(a: AutoLock) = viewModelScope.launch { settingsRepo.setAutoLock(a) }
+    fun setReminderHour(h: Int) = viewModelScope.launch { settingsRepo.setDefaultReminderHour(h) }
+    fun setReminderLeadDays(d: Int) = viewModelScope.launch { settingsRepo.setDefaultReminderLeadDays(d) }
+
+    fun clearAllData() = viewModelScope.launch {
+        _backupEvent.value = if (backupManager.clearAllData()) BackupEvent.CLEARED else BackupEvent.CLEAR_FAIL
+    }
 
     fun setApiKey(key: String) = viewModelScope.launch { settingsRepo.setExchangeApiKey(key) }
 
