@@ -80,6 +80,8 @@
     <string name="set_scheme">Цветовая схема</string>
     <string name="set_scheme_purple">Зелёная</string>
     <string name="set_scheme_orange">Янтарная</string>
+    <string name="set_scheme_indigo">Индиго</string>
+    <string name="set_scheme_terracotta">Терракота</string>
     <string name="set_language">Язык</string>
     <string name="set_finance">Финансы</string>
     <string name="set_base_currency">Базовая валюта</string>

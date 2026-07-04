@@ -30,6 +30,8 @@ private class Accent(
 
 private val purple = Accent(PurplePrimary, PurpleSecondary, PurpleTertiary, PurpleGradStart, PurpleGradEnd, PurpleContainerLight, PurpleContainerDark)
 private val orange = Accent(OrangePrimary, OrangeSecondary, OrangeTertiary, OrangeGradStart, OrangeGradEnd, OrangeContainerLight, OrangeContainerDark)
+private val indigo = Accent(IndigoPrimary, IndigoSecondary, IndigoTertiary, IndigoPrimary, IndigoSecondary, IndigoContainerLight, IndigoContainerDark)
+private val terracotta = Accent(TerracottaPrimary, TerracottaSecondary, TerracottaTertiary, TerracottaPrimary, TerracottaSecondary, TerracottaContainerLight, TerracottaContainerDark)
 
 /** Accent colours exposed to composables that draw gradients / coloured depth (Soft Depth). */
 data class AccentColors(val primary: Color, val gradientStart: Color, val gradientEnd: Color)
@@ -76,6 +78,8 @@ fun FinanceTheme(
     val accent = when (colorScheme) {
         AppColorScheme.PURPLE -> purple
         AppColorScheme.ORANGE -> orange
+        AppColorScheme.INDIGO -> indigo
+        AppColorScheme.TERRACOTTA -> terracotta
     }
     val scheme = if (dark) darkScheme(accent) else lightScheme(accent)
 

@@ -42,11 +42,25 @@ val InkDark = Color(0xFFEDEAE2)
 val InkMutedDark = Color(0xFF8F8A7E)
 val LineDark = Color(0xFF2A2620)
 
+// Accent — muted indigo (calm, cool alt that still reads warm-neutral alongside the paper).
+val IndigoPrimary = Color(0xFF41508F)
+val IndigoSecondary = Color(0xFF5766A0)
+val IndigoTertiary = Color(0xFF8C98D8)   // brighter — dark-theme accent
+
+// Accent — terracotta (warm clay, distinct from amber & the brick expense colour).
+val TerracottaPrimary = Color(0xFFBE5A43)
+val TerracottaSecondary = Color(0xFFCE7059)
+val TerracottaTertiary = Color(0xFFDD8E77)
+
 // Subtle accent container tints per scheme.
 val PurpleContainerLight = Color(0xFFE4EDE8)
 val PurpleContainerDark = Color(0xFF1E3A31)
 val OrangeContainerLight = Color(0xFFF3E8D8)
 val OrangeContainerDark = Color(0xFF3A2C16)
+val IndigoContainerLight = Color(0xFFE6E8F3)
+val IndigoContainerDark = Color(0xFF232A47)
+val TerracottaContainerLight = Color(0xFFF5E7E1)
+val TerracottaContainerDark = Color(0xFF3A241D)
 
 // 16-colour palette still stored for custom categories (icons render monochrome; kept for data).
 val CategoryPalette = listOf(
