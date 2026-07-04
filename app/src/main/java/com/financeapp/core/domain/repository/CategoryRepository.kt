@@ -11,5 +11,6 @@ interface CategoryRepository {
     suspend fun getById(id: Long): Category?
     suspend fun upsert(c: Category): Long
     suspend fun setHidden(id: Long, hidden: Boolean)
+    suspend fun reorder(orderedIds: List<Long>)
     suspend fun delete(id: Long)
 }

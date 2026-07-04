@@ -9,17 +9,20 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface CategoryDao {
-    @Query("SELECT * FROM categories ORDER BY id")
+    @Query("SELECT * FROM categories ORDER BY sortOrder, id")
     fun observeAll(): Flow<List<CategoryEntity>>
 
-    @Query("SELECT * FROM categories WHERE (type = :type OR type = 'BOTH') AND isHidden = 0 ORDER BY id")
+    @Query("SELECT * FROM categories WHERE (type = :type OR type = 'BOTH') AND isHidden = 0 ORDER BY sortOrder, id")
     fun observeByType(type: String): Flow<List<CategoryEntity>>
 
-    @Query("SELECT * FROM categories WHERE type = :type OR type = 'BOTH' ORDER BY isHidden, id")
+    @Query("SELECT * FROM categories WHERE type = :type OR type = 'BOTH' ORDER BY isHidden, sortOrder, id")
     fun observeManagedByType(type: String): Flow<List<CategoryEntity>>
 
     @Query("UPDATE categories SET isHidden = :hidden WHERE id = :id")
     suspend fun setHidden(id: Long, hidden: Boolean)
+
+    @Query("UPDATE categories SET sortOrder = :order WHERE id = :id")
+    suspend fun setOrder(id: Long, order: Int)
 
     @Query("SELECT * FROM categories WHERE id = :id")
     suspend fun getById(id: Long): CategoryEntity?

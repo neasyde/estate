@@ -28,5 +28,9 @@ class CategoryRepositoryImpl @Inject constructor(
 
     override suspend fun setHidden(id: Long, hidden: Boolean) = dao.setHidden(id, hidden)
 
+    override suspend fun reorder(orderedIds: List<Long>) {
+        orderedIds.forEachIndexed { index, id -> dao.setOrder(id, index) }
+    }
+
     override suspend fun delete(id: Long) = dao.delete(id)
 }

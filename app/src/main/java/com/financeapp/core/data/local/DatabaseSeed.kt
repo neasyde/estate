@@ -8,7 +8,9 @@ import com.financeapp.core.data.local.entity.CategoryEntity
  * `color` values are plain data (category swatches), not theme colors.
  */
 object DatabaseSeed {
-    fun categories(): List<CategoryEntity> = listOf(
+    fun categories(): List<CategoryEntity> = presets().mapIndexed { i, c -> c.copy(sortOrder = i) }
+
+    private fun presets(): List<CategoryEntity> = listOf(
         CategoryEntity(name = "cat_food", icon = "restaurant", color = 0xFFEF5350.toInt(), type = "EXPENSE"),
         CategoryEntity(name = "cat_transport", icon = "directions_car", color = 0xFF42A5F5.toInt(), type = "EXPENSE"),
         CategoryEntity(name = "cat_health", icon = "medical_services", color = 0xFF26A69A.toInt(), type = "EXPENSE"),

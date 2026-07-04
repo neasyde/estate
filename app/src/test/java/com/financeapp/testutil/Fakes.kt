@@ -81,6 +81,8 @@ class FakeCategoryRepository(private val cats: List<Category> = emptyList()) : C
     override suspend fun getById(id: Long): Category? = cats.find { it.id == id }
     override suspend fun upsert(c: Category): Long = c.id
     override suspend fun setHidden(id: Long, hidden: Boolean) {}
+    var reordered: List<Long> = emptyList()
+    override suspend fun reorder(orderedIds: List<Long>) { reordered = orderedIds }
     override suspend fun delete(id: Long) {}
 }
 

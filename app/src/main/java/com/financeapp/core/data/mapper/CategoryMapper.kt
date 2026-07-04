@@ -12,6 +12,7 @@ fun CategoryEntity.toDomain() = Category(
     type = CategoryType.valueOf(type),
     isCustom = isCustom,
     isHidden = isHidden,
+    sortOrder = sortOrder,
 )
 
 fun Category.toEntity() = CategoryEntity(
@@ -22,4 +23,5 @@ fun Category.toEntity() = CategoryEntity(
     type = type.name,
     isCustom = isCustom,
     isHidden = isHidden,
+    sortOrder = sortOrder,
 )

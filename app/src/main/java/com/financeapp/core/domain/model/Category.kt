@@ -8,4 +8,5 @@ data class Category(
     val type: CategoryType,
     val isCustom: Boolean = false,
     val isHidden: Boolean = false,
+    val sortOrder: Int = 0,
 )

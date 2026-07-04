@@ -14,4 +14,5 @@ data class CategoryEntity(
     val type: String,
     val isCustom: Boolean = false,
     val isHidden: Boolean = false,
+    val sortOrder: Int = 0,
 )
