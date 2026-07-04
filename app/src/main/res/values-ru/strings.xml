@@ -9,11 +9,12 @@
     <string name="nav_analytics">Аналитика</string>
     <string name="nav_settings">Настройки</string>
 
-    <string name="onb_welcome_title">Добро пожаловать в FinanceApp</string>
+    <string name="onb_welcome_title">Добро пожаловать в estate</string>
     <string name="onb_welcome_subtitle">Учитывайте доходы и расходы легко.</string>
     <string name="onb_language">Язык</string>
     <string name="onb_currency_title">Базовая валюта</string>
-    <string name="onb_currency_subtitle">Выберите основную валюту и задайте курсы.</string>
+    <string name="onb_currency_subtitle">Выберите основную валюту — курсы обновятся автоматически.</string>
+    <string name="onb_rates_auto">Курсы берутся из интернета автоматически. При желании их можно задать вручную ниже.</string>
     <string name="onb_rate_usd">Рублей за 1 USD</string>
     <string name="onb_rate_eur">Рублей за 1 EUR</string>
     <string name="onb_security_title">Безопасность</string>

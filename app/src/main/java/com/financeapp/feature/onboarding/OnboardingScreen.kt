@@ -143,7 +143,13 @@ private fun SlideCurrency(
                 }
             }
         }
-        Spacer(Modifier.height(24.dp))
+        Spacer(Modifier.height(16.dp))
+        Text(
+            stringResource(R.string.onb_rates_auto),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        Spacer(Modifier.height(16.dp))
         OutlinedTextField(
             value = rateUsd, onValueChange = onUsd, modifier = Modifier.fillMaxWidth(),
             label = { Text(stringResource(R.string.onb_rate_usd)) },

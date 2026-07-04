@@ -11,11 +11,12 @@
     <string name="nav_settings">Settings</string>
 
     <!-- onboarding -->
-    <string name="onb_welcome_title">Welcome to FinanceApp</string>
+    <string name="onb_welcome_title">Welcome to estate</string>
     <string name="onb_welcome_subtitle">Track income and expenses, simply.</string>
     <string name="onb_language">Language</string>
     <string name="onb_currency_title">Base currency</string>
-    <string name="onb_currency_subtitle">Pick your main currency and set rates.</string>
+    <string name="onb_currency_subtitle">Pick your main currency — rates update automatically.</string>
+    <string name="onb_rates_auto">Rates are fetched from the internet automatically. You can override them by hand below.</string>
     <string name="onb_rate_usd">RUB per 1 USD</string>
     <string name="onb_rate_eur">RUB per 1 EUR</string>
     <string name="onb_security_title">Security</string>
