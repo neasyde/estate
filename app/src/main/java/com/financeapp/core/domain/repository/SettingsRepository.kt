@@ -11,6 +11,8 @@ interface SettingsRepository {
     val settings: Flow<AppSettings>
     suspend fun setBaseCurrency(c: Currency)
     suspend fun setRates(usd: Double, eur: Double)
+    suspend fun setAutoRefreshRates(enabled: Boolean)
+    suspend fun setRatesIntervalHours(hours: Int)
     suspend fun setExchangeApiKey(key: String?)
     suspend fun setThemeMode(m: ThemeMode)
     suspend fun setColorScheme(s: ColorScheme)

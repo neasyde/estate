@@ -32,6 +32,8 @@ class SettingsRepositoryImpl @Inject constructor(
             onboardingCompleted = p[SettingsKeys.ONBOARDING] ?: def.onboardingCompleted,
             exchangeApiKey = p[SettingsKeys.EXCHANGE_API_KEY]?.takeIf { it.isNotBlank() },
             ratesUpdatedAt = p[SettingsKeys.RATES_UPDATED_AT] ?: def.ratesUpdatedAt,
+            autoRefreshRates = p[SettingsKeys.AUTO_REFRESH] ?: def.autoRefreshRates,
+            ratesIntervalHours = p[SettingsKeys.RATES_INTERVAL] ?: def.ratesIntervalHours,
         )
     }
 
@@ -45,6 +47,14 @@ class SettingsRepositoryImpl @Inject constructor(
             it[SettingsKeys.RATE_EUR] = eur
             it[SettingsKeys.RATES_UPDATED_AT] = System.currentTimeMillis()
         }
+    }
+
+    override suspend fun setAutoRefreshRates(enabled: Boolean) {
+        dataStore.edit { it[SettingsKeys.AUTO_REFRESH] = enabled }
+    }
+
+    override suspend fun setRatesIntervalHours(hours: Int) {
+        dataStore.edit { it[SettingsKeys.RATES_INTERVAL] = hours }
     }
 
     override suspend fun setExchangeApiKey(key: String?) {

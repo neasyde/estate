@@ -27,6 +27,8 @@ class FakeSettingsRepository(initial: AppSettings = AppSettings()) : SettingsRep
     fun current() = _s.value
     override suspend fun setBaseCurrency(c: Currency) = _s.update { it.copy(baseCurrency = c) }
     override suspend fun setRates(usd: Double, eur: Double) = _s.update { it.copy(rateUsd = usd, rateEur = eur) }
+    override suspend fun setAutoRefreshRates(enabled: Boolean) = _s.update { it.copy(autoRefreshRates = enabled) }
+    override suspend fun setRatesIntervalHours(hours: Int) = _s.update { it.copy(ratesIntervalHours = hours) }
     override suspend fun setExchangeApiKey(key: String?) = _s.update { it.copy(exchangeApiKey = key?.trim()?.takeIf(String::isNotEmpty)) }
     override suspend fun setThemeMode(m: ThemeMode) = _s.update { it.copy(themeMode = m) }
     override suspend fun setColorScheme(s: ColorScheme) = _s.update { it.copy(colorScheme = s) }

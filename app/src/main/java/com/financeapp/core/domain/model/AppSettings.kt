@@ -14,4 +14,8 @@ data class AppSettings(
     val exchangeApiKey: String? = null,
     /** Epoch millis of the last successful rate update (0 = never). */
     val ratesUpdatedAt: Long = 0L,
+    /** When true, rates are refreshed silently on app open once stale. */
+    val autoRefreshRates: Boolean = true,
+    /** How old (hours) cached rates may get before an auto-refresh is attempted. */
+    val ratesIntervalHours: Int = 12,
 )

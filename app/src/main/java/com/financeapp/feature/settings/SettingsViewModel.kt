@@ -4,8 +4,11 @@ import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.financeapp.core.backup.BackupManager
+import com.financeapp.core.config.AppConfig
 import com.financeapp.core.data.remote.ExchangeRateApi
 import com.financeapp.core.data.remote.ExchangeResult
+import com.financeapp.core.domain.usecase.resolveApiKey
+import com.financeapp.core.domain.usecase.shouldRefreshRates
 import com.financeapp.core.domain.model.AppLanguage
 import com.financeapp.core.domain.model.AppSettings
 import com.financeapp.core.domain.model.ColorScheme
@@ -32,6 +35,7 @@ class SettingsViewModel @Inject constructor(
     private val setPin: SetPinUseCase,
     private val backupManager: BackupManager,
     private val exchangeApi: ExchangeRateApi,
+    private val appConfig: AppConfig,
 ) : ViewModel() {
     val settings: StateFlow<AppSettings> = settingsRepo.settings
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), AppSettings())
@@ -46,11 +50,16 @@ class SettingsViewModel @Inject constructor(
     val ratesLoading: StateFlow<Boolean> = _ratesLoading.asStateFlow()
 
     init {
-        // Refresh silently on open when a key is set and the cached rates are stale.
+        // Refresh silently on open when a key resolves, auto-refresh is on, and rates are stale.
         viewModelScope.launch {
             val s = settingsRepo.settings.first()
-            val stale = System.currentTimeMillis() - s.ratesUpdatedAt > STALE_AFTER_MS
-            if (!s.exchangeApiKey.isNullOrBlank() && stale) refreshRates(silent = true)
+            val key = resolveApiKey(s.exchangeApiKey, appConfig)
+            val intervalMs = s.ratesIntervalHours * 3_600_000L
+            if (s.autoRefreshRates &&
+                shouldRefreshRates(System.currentTimeMillis(), s.ratesUpdatedAt, intervalMs, key != null)
+            ) {
+                refreshRates(silent = true)
+            }
         }
     }
 
@@ -64,8 +73,11 @@ class SettingsViewModel @Inject constructor(
 
     fun setApiKey(key: String) = viewModelScope.launch { settingsRepo.setExchangeApiKey(key) }
 
+    fun setAutoRefresh(enabled: Boolean) = viewModelScope.launch { settingsRepo.setAutoRefreshRates(enabled) }
+    fun setRatesInterval(hours: Int) = viewModelScope.launch { settingsRepo.setRatesIntervalHours(hours) }
+
     fun refreshRates(silent: Boolean = false) = viewModelScope.launch {
-        val key = settingsRepo.settings.first().exchangeApiKey
+        val key = resolveApiKey(settingsRepo.settings.first().exchangeApiKey, appConfig)
         if (key.isNullOrBlank()) {
             if (!silent) _ratesEvent.value = RatesEvent.NO_KEY
             return@launch
@@ -97,8 +109,4 @@ class SettingsViewModel @Inject constructor(
     }
 
     fun clearBackupEvent() { _backupEvent.value = null }
-
-    private companion object {
-        const val STALE_AFTER_MS = 12L * 60 * 60 * 1000 // 12 hours
-    }
 }
