@@ -18,4 +18,17 @@ data class AppSettings(
     val autoRefreshRates: Boolean = true,
     /** How old (hours) cached rates may get before an auto-refresh is attempted. */
     val ratesIntervalHours: Int = 12,
+    // --- display & behaviour ---
+    val showDecimals: Boolean = true,
+    val defaultTxType: TransactionType = TransactionType.EXPENSE,
+    val animationsEnabled: Boolean = true,
+    val hapticsEnabled: Boolean = true,
+    val hideBalanceByDefault: Boolean = false,
+    // --- security ---
+    val requirePinOnLaunch: Boolean = true,
+    val autoBiometric: Boolean = true,
+    val autoLock: AutoLock = AutoLock.IMMEDIATE,
+    // --- reminders defaults ---
+    val defaultReminderHour: Int = 9,
+    val defaultReminderLeadDays: Int = 1,
 )

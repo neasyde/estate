@@ -7,6 +7,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStoreFile
 import androidx.test.core.app.ApplicationProvider
 import com.financeapp.core.data.repository.SettingsRepositoryImpl
+import com.financeapp.core.domain.model.AutoLock
 import com.financeapp.core.domain.model.ColorScheme
 import com.financeapp.core.domain.model.Currency
 import com.google.common.truth.Truth.assertThat
@@ -34,5 +35,20 @@ class SettingsRepositoryTest {
         val s = r.settings.first()
         assertThat(s.colorScheme).isEqualTo(ColorScheme.ORANGE)
         assertThat(s.pinHash).isEqualTo("abc")
+    }
+
+    @Test fun newSettingsDefaultsAndRoundTrip() = runTest {
+        val r = repo()
+        val def = r.settings.first()
+        assertThat(def.showDecimals).isTrue()
+        assertThat(def.autoBiometric).isTrue()
+        assertThat(def.autoLock).isEqualTo(AutoLock.IMMEDIATE)
+        r.setShowDecimals(false)
+        r.setAutoLock(AutoLock.FIVE_MIN)
+        r.setDefaultReminderHour(21)
+        val s = r.settings.first()
+        assertThat(s.showDecimals).isFalse()
+        assertThat(s.autoLock).isEqualTo(AutoLock.FIVE_MIN)
+        assertThat(s.defaultReminderHour).isEqualTo(21)
     }
 }

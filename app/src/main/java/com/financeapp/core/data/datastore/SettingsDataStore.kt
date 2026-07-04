@@ -24,6 +24,16 @@ object SettingsKeys {
     val RATES_UPDATED_AT = longPreferencesKey("rates_updated_at")
     val AUTO_REFRESH = booleanPreferencesKey("auto_refresh_rates")
     val RATES_INTERVAL = intPreferencesKey("rates_interval_hours")
+    val SHOW_DECIMALS = booleanPreferencesKey("show_decimals")
+    val DEFAULT_TX_TYPE = stringPreferencesKey("default_tx_type")
+    val ANIMATIONS = booleanPreferencesKey("animations_enabled")
+    val HAPTICS = booleanPreferencesKey("haptics_enabled")
+    val HIDE_BALANCE = booleanPreferencesKey("hide_balance_default")
+    val REQUIRE_PIN = booleanPreferencesKey("require_pin_on_launch")
+    val AUTO_BIOMETRIC = booleanPreferencesKey("auto_biometric")
+    val AUTO_LOCK = stringPreferencesKey("auto_lock")
+    val REMINDER_HOUR = intPreferencesKey("default_reminder_hour")
+    val REMINDER_LEAD_DAYS = intPreferencesKey("default_reminder_lead_days")
 }
 
 val Context.settingsDataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")

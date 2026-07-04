@@ -2,12 +2,14 @@ package com.financeapp.testutil
 
 import com.financeapp.core.domain.model.AppLanguage
 import com.financeapp.core.domain.model.AppSettings
+import com.financeapp.core.domain.model.AutoLock
 import com.financeapp.core.domain.model.Category
 import com.financeapp.core.domain.model.CategoryType
 import com.financeapp.core.domain.model.ColorScheme
 import com.financeapp.core.domain.model.Currency
 import com.financeapp.core.domain.model.IntervalType
 import com.financeapp.core.domain.model.ThemeMode
+import com.financeapp.core.domain.model.TransactionType
 import com.financeapp.core.domain.model.Transaction
 import com.financeapp.core.domain.model.Budget
 import com.financeapp.core.domain.repository.BudgetRepository
@@ -36,6 +38,16 @@ class FakeSettingsRepository(initial: AppSettings = AppSettings()) : SettingsRep
     override suspend fun setPinHash(hash: String?) = _s.update { it.copy(pinHash = hash) }
     override suspend fun setBiometricEnabled(b: Boolean) = _s.update { it.copy(biometricEnabled = b) }
     override suspend fun setOnboardingCompleted(b: Boolean) = _s.update { it.copy(onboardingCompleted = b) }
+    override suspend fun setShowDecimals(b: Boolean) = _s.update { it.copy(showDecimals = b) }
+    override suspend fun setDefaultTxType(t: TransactionType) = _s.update { it.copy(defaultTxType = t) }
+    override suspend fun setAnimationsEnabled(b: Boolean) = _s.update { it.copy(animationsEnabled = b) }
+    override suspend fun setHapticsEnabled(b: Boolean) = _s.update { it.copy(hapticsEnabled = b) }
+    override suspend fun setHideBalanceByDefault(b: Boolean) = _s.update { it.copy(hideBalanceByDefault = b) }
+    override suspend fun setRequirePinOnLaunch(b: Boolean) = _s.update { it.copy(requirePinOnLaunch = b) }
+    override suspend fun setAutoBiometric(b: Boolean) = _s.update { it.copy(autoBiometric = b) }
+    override suspend fun setAutoLock(a: AutoLock) = _s.update { it.copy(autoLock = a) }
+    override suspend fun setDefaultReminderHour(h: Int) = _s.update { it.copy(defaultReminderHour = h) }
+    override suspend fun setDefaultReminderLeadDays(d: Int) = _s.update { it.copy(defaultReminderLeadDays = d) }
 }
 
 class FakeTransactionRepository(
