@@ -21,9 +21,10 @@ data class BackupData(
 )
 
 /**
- * Portable (non device-local) settings. PIN, biometric, api key, require-PIN and
- * auto-biometric flags are intentionally excluded. New fields are defaulted so older
- * backups still deserialize.
+ * Portable (non device-local) settings. Security-posture flags — PIN, biometric, api key,
+ * require-PIN, auto-biometric AND auto-lock timing — are intentionally excluded so restoring
+ * a backup can never silently weaken this device's lock behaviour. New fields are defaulted
+ * so older backups still deserialize.
  */
 @Serializable
 data class SettingsBackup(
@@ -40,7 +41,6 @@ data class SettingsBackup(
     val animationsEnabled: Boolean = true,
     val hapticsEnabled: Boolean = true,
     val hideBalanceByDefault: Boolean = false,
-    val autoLock: String = "IMMEDIATE",
     val defaultReminderHour: Int = 9,
     val defaultReminderLeadDays: Int = 1,
 )

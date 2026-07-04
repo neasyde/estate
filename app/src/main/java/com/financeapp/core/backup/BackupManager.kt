@@ -4,7 +4,6 @@ import android.content.Context
 import android.net.Uri
 import com.financeapp.core.data.local.FinanceDatabase
 import com.financeapp.core.domain.model.AppLanguage
-import com.financeapp.core.domain.model.AutoLock
 import com.financeapp.core.domain.model.ColorScheme
 import com.financeapp.core.domain.model.Currency
 import com.financeapp.core.domain.model.ThemeMode
@@ -55,7 +54,6 @@ class BackupManager @Inject constructor(
                     animationsEnabled = s.animationsEnabled,
                     hapticsEnabled = s.hapticsEnabled,
                     hideBalanceByDefault = s.hideBalanceByDefault,
-                    autoLock = s.autoLock.name,
                     defaultReminderHour = s.defaultReminderHour,
                     defaultReminderLeadDays = s.defaultReminderLeadDays,
                 ),
@@ -104,7 +102,6 @@ class BackupManager @Inject constructor(
         settingsRepo.setAnimationsEnabled(s.animationsEnabled)
         settingsRepo.setHapticsEnabled(s.hapticsEnabled)
         settingsRepo.setHideBalanceByDefault(s.hideBalanceByDefault)
-        runCatching { settingsRepo.setAutoLock(AutoLock.valueOf(s.autoLock)) }
         settingsRepo.setDefaultReminderHour(s.defaultReminderHour)
         settingsRepo.setDefaultReminderLeadDays(s.defaultReminderLeadDays)
     }
