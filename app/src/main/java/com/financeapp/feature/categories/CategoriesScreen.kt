@@ -1,6 +1,8 @@
 package com.financeapp.feature.categories
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -8,6 +10,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -29,8 +32,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.financeapp.R
@@ -78,18 +86,48 @@ fun CategoriesScreen(onBack: () -> Unit, vm: CategoriesViewModel = hiltViewModel
                     text = { Text(stringResource(R.string.cat_tab_income)) },
                 )
             }
+            var order by remember(cats) { mutableStateOf(cats) }
+            var draggingId by remember { mutableStateOf<Long?>(null) }
+            var dragOffsetY by remember { mutableStateOf(0f) }
+            var rowHeightPx by remember { mutableStateOf(0f) }
             LazyColumn(
                 Modifier.fillMaxSize(),
-                contentPadding = androidx.compose.foundation.layout.PaddingValues(vertical = 8.dp),
+                contentPadding = PaddingValues(vertical = 8.dp),
             ) {
-                itemsIndexed(cats, key = { _, c -> c.id }) { i, c ->
+                itemsIndexed(order, key = { _, c -> c.id }) { i, c ->
+                    val dragging = c.id == draggingId
                     CategoryManageRow(
                         category = c,
+                        dragging = dragging,
+                        modifier = Modifier
+                            .onSizeChanged { if (rowHeightPx == 0f) rowHeightPx = it.height.toFloat() }
+                            .zIndex(if (dragging) 1f else 0f)
+                            .graphicsLayer { translationY = if (dragging) dragOffsetY else 0f },
+                        handleModifier = Modifier.pointerInput(c.id) {
+                            detectDragGesturesAfterLongPress(
+                                onDragStart = { draggingId = c.id; dragOffsetY = 0f },
+                                onDragEnd = { vm.reorder(order.map { it.id }); draggingId = null; dragOffsetY = 0f },
+                                onDragCancel = { draggingId = null; dragOffsetY = 0f },
+                                onDrag = { change, amt ->
+                                    change.consume()
+                                    dragOffsetY += amt.y
+                                    val cur = order.indexOfFirst { it.id == draggingId }
+                                    val h = if (rowHeightPx > 0f) rowHeightPx else 1f
+                                    if (cur in 0 until order.lastIndex && dragOffsetY > h / 2) {
+                                        order = order.toMutableList().also { it.add(cur + 1, it.removeAt(cur)) }
+                                        dragOffsetY -= h
+                                    } else if (cur > 0 && dragOffsetY < -h / 2) {
+                                        order = order.toMutableList().also { it.add(cur - 1, it.removeAt(cur)) }
+                                        dragOffsetY += h
+                                    }
+                                },
+                            )
+                        },
                         onEdit = { if (c.isCustom) { editing = c; sheetOpen = true } },
                         onToggleHidden = { vm.toggleHidden(c) },
                         onDelete = { vm.delete(c.id) },
                     )
-                    if (i < cats.lastIndex) Hairline(Modifier.padding(horizontal = 20.dp))
+                    if (i < order.lastIndex) Hairline(Modifier.padding(horizontal = 20.dp))
                 }
             }
         }
@@ -103,18 +141,29 @@ fun CategoriesScreen(onBack: () -> Unit, vm: CategoriesViewModel = hiltViewModel
 @Composable
 private fun CategoryManageRow(
     category: Category,
+    dragging: Boolean,
+    modifier: Modifier = Modifier,
+    handleModifier: Modifier = Modifier,
     onEdit: () -> Unit,
     onToggleHidden: () -> Unit,
     onDelete: () -> Unit,
 ) {
     Row(
-        Modifier
+        modifier
             .fillMaxWidth()
+            .background(if (dragging) MaterialTheme.colorScheme.surfaceVariant else Color.Transparent)
             .clickable(enabled = category.isCustom, onClick = onEdit)
             .padding(horizontal = 20.dp, vertical = 12.dp)
             .alpha(if (category.isHidden) 0.45f else 1f),
         verticalAlignment = Alignment.CenterVertically,
     ) {
+        Icon(
+            materialIcon("drag_handle"),
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = handleModifier.size(24.dp),
+        )
+        Spacer(Modifier.width(12.dp))
         CategoryIcon(category)
         Spacer(Modifier.width(12.dp))
         Column(Modifier.weight(1f)) {

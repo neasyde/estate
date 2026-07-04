@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.financeapp.core.domain.model.Category
 import com.financeapp.core.domain.model.CategoryType
+import com.financeapp.core.domain.repository.CategoryRepository
 import com.financeapp.core.domain.usecase.DeleteCategoryUseCase
 import com.financeapp.core.domain.usecase.ObserveManagedCategoriesUseCase
 import com.financeapp.core.domain.usecase.SetCategoryHiddenUseCase
@@ -24,6 +25,7 @@ class CategoriesViewModel @Inject constructor(
     observeManaged: ObserveManagedCategoriesUseCase,
     private val setHidden: SetCategoryHiddenUseCase,
     private val deleteCat: DeleteCategoryUseCase,
+    private val categoryRepo: CategoryRepository,
 ) : ViewModel() {
     private val _tab = MutableStateFlow(CategoryType.EXPENSE)
     val tab: StateFlow<CategoryType> = _tab.asStateFlow()
@@ -35,4 +37,5 @@ class CategoriesViewModel @Inject constructor(
     fun setTab(t: CategoryType) { _tab.value = t }
     fun toggleHidden(c: Category) = viewModelScope.launch { setHidden(c.id, !c.isHidden) }
     fun delete(id: Long) = viewModelScope.launch { deleteCat(id) }
+    fun reorder(ids: List<Long>) = viewModelScope.launch { categoryRepo.reorder(ids) }
 }

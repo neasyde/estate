@@ -17,6 +17,7 @@ import androidx.compose.material.icons.rounded.Brush
 import androidx.compose.material.icons.rounded.Build
 import androidx.compose.material.icons.rounded.Cake
 import androidx.compose.material.icons.rounded.DeleteForever
+import androidx.compose.material.icons.rounded.DragHandle
 import androidx.compose.material.icons.rounded.ExpandLess
 import androidx.compose.material.icons.rounded.ExpandMore
 import androidx.compose.material.icons.rounded.Info
@@ -120,6 +121,7 @@ fun materialIcon(name: String): ImageVector = when (name) {
     "info" -> Icons.Rounded.Info
     "tune" -> Icons.Rounded.Tune
     "delete_forever" -> Icons.Rounded.DeleteForever
+    "drag_handle" -> Icons.Rounded.DragHandle
     "close" -> Icons.Rounded.Close
     "chevron_right" -> Icons.Rounded.ChevronRight
     "download" -> Icons.Rounded.Download
