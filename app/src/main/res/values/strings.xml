@@ -41,6 +41,9 @@
     <string name="dash_add_expense">Expense</string>
     <string name="dash_add_income">Income</string>
     <string name="dash_empty">Add your first transaction</string>
+    <string name="dash_rates">Rate</string>
+    <string name="dash_rates_updated">updated %1$s</string>
+    <string name="dash_rates_never">no data yet</string>
 
     <!-- transactions -->
     <string name="tx_title">Transactions</string>

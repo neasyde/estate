@@ -37,6 +37,9 @@
     <string name="dash_add_expense">Расход</string>
     <string name="dash_add_income">Доход</string>
     <string name="dash_empty">Добавьте первую транзакцию</string>
+    <string name="dash_rates">Курс</string>
+    <string name="dash_rates_updated">обновлено %1$s</string>
+    <string name="dash_rates_never">нет данных</string>
 
     <string name="tx_title">Транзакции</string>
     <string name="tx_search">Поиск</string>

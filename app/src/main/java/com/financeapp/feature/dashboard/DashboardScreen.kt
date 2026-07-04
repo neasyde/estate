@@ -5,6 +5,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -63,6 +64,7 @@ fun DashboardScreen(
 ) {
     val data by vm.state.collectAsStateWithLifecycle()
     val baseCurrency by vm.baseCurrency.collectAsStateWithLifecycle()
+    val rates by vm.rates.collectAsStateWithLifecycle()
     val hidden by vm.balanceHidden.collectAsStateWithLifecycle()
     val reminders by vm.upcomingReminders.collectAsStateWithLifecycle()
     var sheetOpen by remember { mutableStateOf(false) }
@@ -73,6 +75,8 @@ fun DashboardScreen(
         Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
             Spacer(Modifier.height(16.dp))
             Masthead(data.balanceBase, data.monthIncomeBase, data.monthExpenseBase, baseCurrency, hidden, vm::toggleBalanceHidden)
+
+            RatesGlance(rates, baseCurrency)
 
             Spacer(Modifier.height(28.dp))
             RemindersSection(
@@ -194,6 +198,50 @@ private fun ReminderGlance(r: Reminder, currency: Currency, onClick: () -> Unit)
                 style = MaterialTheme.typography.titleSmall.copy(fontFamily = FrauncesTitle),
             )
         }
+    }
+}
+
+@Composable
+private fun RatesGlance(rates: RatesUi, baseCurrency: Currency) {
+    // Rates are RUB per 1 USD/EUR — only meaningful while the base currency is RUB.
+    if (baseCurrency != Currency.RUB) return
+    Column(Modifier.fillMaxWidth().padding(horizontal = 20.dp)) {
+        Spacer(Modifier.height(18.dp))
+        val updated = if (rates.updatedAt <= 0L) {
+            stringResource(R.string.dash_rates_never)
+        } else {
+            val rel = remember(rates.updatedAt) {
+                android.text.format.DateUtils.getRelativeTimeSpanString(
+                    rates.updatedAt,
+                    System.currentTimeMillis(),
+                    android.text.format.DateUtils.MINUTE_IN_MILLIS,
+                ).toString()
+            }
+            stringResource(R.string.dash_rates_updated, rel)
+        }
+        Eyebrow("${stringResource(R.string.dash_rates)} · $updated")
+        Spacer(Modifier.height(8.dp))
+        Row(horizontalArrangement = Arrangement.spacedBy(24.dp)) {
+            RateItem("$", rates.usd)
+            RateItem("€", rates.eur)
+        }
+    }
+}
+
+@Composable
+private fun RateItem(symbol: String, rate: Double) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Text(
+            symbol,
+            style = MaterialTheme.typography.titleMedium.copy(fontFamily = FrauncesTitle),
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        Spacer(Modifier.width(6.dp))
+        Text(
+            text = CurrencyFormatter.format(rate, Currency.RUB),
+            style = MaterialTheme.typography.titleMedium.copy(fontFamily = FrauncesTitle),
+            color = MaterialTheme.colorScheme.onBackground,
+        )
     }
 }
 
