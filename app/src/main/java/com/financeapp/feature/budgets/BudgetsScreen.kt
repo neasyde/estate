@@ -54,6 +54,7 @@ import com.financeapp.core.ui.theme.BudgetAmber
 import com.financeapp.core.ui.theme.ExpenseRed
 import com.financeapp.core.ui.theme.IncomeGreen
 import com.financeapp.core.ui.theme.PillShape
+import com.financeapp.core.ui.LocalShowDecimals
 import com.financeapp.core.utils.CurrencyFormatter
 import kotlin.math.roundToInt
 
@@ -137,10 +138,10 @@ private fun BudgetCard(bp: BudgetProgress, onEdit: () -> Unit, onDelete: () -> U
         ProgressBar(bp.fraction, barColor)
         Spacer(Modifier.height(8.dp))
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(CurrencyFormatter.format(bp.spent, bp.budget.currency), style = MaterialTheme.typography.labelLarge)
+            Text(CurrencyFormatter.format(bp.spent, bp.budget.currency, LocalShowDecimals.current), style = MaterialTheme.typography.labelLarge)
             Spacer(Modifier.weight(1f))
             Text(
-                CurrencyFormatter.format(bp.budget.limitAmount, bp.budget.currency),
+                CurrencyFormatter.format(bp.budget.limitAmount, bp.budget.currency, LocalShowDecimals.current),
                 style = MaterialTheme.typography.labelMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )

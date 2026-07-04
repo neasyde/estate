@@ -38,6 +38,7 @@ import com.financeapp.core.ui.components.EmptyState
 import com.financeapp.core.ui.components.Hairline
 import com.financeapp.core.ui.icons.materialIcon
 import com.financeapp.core.ui.theme.FrauncesTitle
+import com.financeapp.core.ui.LocalShowDecimals
 import com.financeapp.core.utils.CurrencyFormatter
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -45,6 +46,7 @@ import com.financeapp.core.utils.CurrencyFormatter
 fun RemindersScreen(onBack: () -> Unit, vm: RemindersViewModel = hiltViewModel()) {
     val reminders by vm.reminders.collectAsStateWithLifecycle()
     val baseCurrency by vm.baseCurrency.collectAsStateWithLifecycle()
+    val reminderDefaults by vm.reminderDefaults.collectAsStateWithLifecycle()
     var sheetOpen by remember { mutableStateOf(false) }
     var editing by remember { mutableStateOf<Reminder?>(null) }
 
@@ -88,6 +90,8 @@ fun RemindersScreen(onBack: () -> Unit, vm: RemindersViewModel = hiltViewModel()
         AddEditReminderSheet(
             initial = editing,
             defaultCurrency = baseCurrency,
+            defaultNotifyHour = reminderDefaults.first,
+            defaultNotifyDays = reminderDefaults.second,
             onDismiss = { sheetOpen = false },
             onSave = { vm.save(it); sheetOpen = false },
         )
@@ -108,7 +112,7 @@ private fun ReminderCard(r: Reminder, onEdit: () -> Unit, onDelete: () -> Unit) 
         }
         r.amount?.let {
             Text(
-                text = CurrencyFormatter.format(it, r.currency ?: Currency.RUB),
+                text = CurrencyFormatter.format(it, r.currency ?: Currency.RUB, LocalShowDecimals.current),
                 style = MaterialTheme.typography.titleSmall.copy(fontFamily = FrauncesTitle),
             )
         }

@@ -67,6 +67,8 @@ import java.util.Locale
 fun AddEditReminderSheet(
     initial: Reminder?,
     defaultCurrency: Currency,
+    defaultNotifyHour: Int = 9,
+    defaultNotifyDays: Int = 0,
     onDismiss: () -> Unit,
     onSave: (Reminder) -> Unit,
 ) {
@@ -75,8 +77,8 @@ fun AddEditReminderSheet(
     var amountText by remember { mutableStateOf(initial?.amount?.toString() ?: "") }
     var currency by remember { mutableStateOf(initial?.currency ?: defaultCurrency) }
     var dueDate by remember { mutableStateOf(initial?.dueDate ?: DateUtils.startOfDay(System.currentTimeMillis())) }
-    var minuteOfDay by remember { mutableStateOf(initial?.notifyMinuteOfDay ?: 9 * 60) }
-    var notifyDays by remember { mutableStateOf(initial?.notifyDaysBefore ?: 0) }
+    var minuteOfDay by remember { mutableStateOf(initial?.notifyMinuteOfDay ?: defaultNotifyHour * 60) }
+    var notifyDays by remember { mutableStateOf(initial?.notifyDaysBefore ?: defaultNotifyDays) }
     var repeatType by remember { mutableStateOf(initial?.repeat ?: RepeatType.NONE) }
     var showDatePicker by remember { mutableStateOf(false) }
     var showTimePicker by remember { mutableStateOf(false) }

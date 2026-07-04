@@ -36,6 +36,11 @@ class RemindersViewModel @Inject constructor(
         .map { it.baseCurrency }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), Currency.RUB)
 
+    /** (default notify hour, default days-before) for new reminders. */
+    val reminderDefaults: StateFlow<Pair<Int, Int>> = settingsRepo.settings
+        .map { it.defaultReminderHour to it.defaultReminderLeadDays }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 9 to 1)
+
     fun save(reminder: Reminder) = viewModelScope.launch {
         val id = saveReminder(reminder)
         scheduler.schedule(reminder.copy(id = id))

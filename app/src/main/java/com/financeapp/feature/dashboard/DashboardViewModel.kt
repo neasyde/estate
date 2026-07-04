@@ -90,6 +90,11 @@ class DashboardViewModel @Inject constructor(
         .map { it.defaultTxType }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), TransactionType.EXPENSE)
 
+    /** (default notify hour, default days-before) for new reminders. */
+    val reminderDefaults: StateFlow<Pair<Int, Int>> = settingsRepo.settings
+        .map { it.defaultReminderHour to it.defaultReminderLeadDays }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 9 to 1)
+
     private val _balanceHidden = MutableStateFlow(false)
     val balanceHidden: StateFlow<Boolean> = _balanceHidden.asStateFlow()
 

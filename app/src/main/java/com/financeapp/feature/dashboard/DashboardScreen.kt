@@ -60,6 +60,7 @@ fun DashboardScreen(
     val baseCurrency by vm.baseCurrency.collectAsStateWithLifecycle()
     val defaultTxType by vm.defaultTxType.collectAsStateWithLifecycle()
     val rates by vm.rates.collectAsStateWithLifecycle()
+    val reminderDefaults by vm.reminderDefaults.collectAsStateWithLifecycle()
     val hidden by vm.balanceHidden.collectAsStateWithLifecycle()
     val reminders by vm.upcomingReminders.collectAsStateWithLifecycle()
     var sheetOpen by remember { mutableStateOf(false) }
@@ -124,6 +125,8 @@ fun DashboardScreen(
         AddEditReminderSheet(
             initial = editingReminder,
             defaultCurrency = baseCurrency,
+            defaultNotifyHour = reminderDefaults.first,
+            defaultNotifyDays = reminderDefaults.second,
             onDismiss = { reminderSheetOpen = false },
             onSave = { vm.saveReminder(it); reminderSheetOpen = false },
         )
@@ -189,7 +192,7 @@ private fun ReminderGlance(r: Reminder, currency: Currency, onClick: () -> Unit)
         }
         r.amount?.let {
             Text(
-                text = CurrencyFormatter.format(it, r.currency ?: currency),
+                text = CurrencyFormatter.format(it, r.currency ?: currency, LocalShowDecimals.current),
                 style = MaterialTheme.typography.titleSmall.copy(fontFamily = FrauncesTitle),
             )
         }

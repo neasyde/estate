@@ -40,6 +40,7 @@ import com.financeapp.core.domain.model.AnalyticsPeriod
 import com.financeapp.core.domain.model.CategorySlice
 import com.financeapp.core.domain.model.Currency
 import com.financeapp.core.domain.model.MonthTotals
+import com.financeapp.core.ui.LocalShowDecimals
 import com.financeapp.core.ui.anim.Motion
 import com.financeapp.core.ui.anim.Reveal
 import com.financeapp.core.ui.anim.reducedMotion
@@ -104,7 +105,7 @@ private fun Summary(data: AnalyticsData, currency: Currency) {
             Spacer(Modifier.weight(1f))
             val net = data.income - data.expense
             Text(
-                text = CurrencyFormatter.format(net, currency),
+                text = CurrencyFormatter.format(net, currency, LocalShowDecimals.current),
                 style = MaterialTheme.typography.titleLarge.copy(fontFamily = FrauncesTitle, fontSize = 18.sp),
                 color = if (net >= 0) IncomeGreen else ExpenseRed,
             )
@@ -142,7 +143,7 @@ private fun CategoryBar(slice: CategorySlice, currency: Currency) {
         }
         Spacer(Modifier.width(12.dp))
         Text(
-            text = CurrencyFormatter.format(slice.amount, currency),
+            text = CurrencyFormatter.format(slice.amount, currency, LocalShowDecimals.current),
             style = MaterialTheme.typography.titleSmall.copy(fontFamily = FrauncesTitle),
             color = MaterialTheme.colorScheme.onSurface,
         )
