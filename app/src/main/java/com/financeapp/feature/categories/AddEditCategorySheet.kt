@@ -1,7 +1,6 @@
 package com.financeapp.feature.categories
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -34,7 +33,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -43,9 +41,9 @@ import com.financeapp.R
 import com.financeapp.core.domain.model.Category
 import com.financeapp.core.domain.model.CategoryType
 import com.financeapp.core.ui.components.Eyebrow
+import com.financeapp.core.ui.icons.iconMatches
 import com.financeapp.core.ui.icons.materialIcon
 import com.financeapp.core.ui.icons.pickableIcons
-import com.financeapp.core.ui.theme.CategoryPalette
 import com.financeapp.core.utils.rememberHaptics
 import kotlinx.coroutines.launch
 
@@ -61,7 +59,6 @@ fun AddEditCategorySheet(
     val scope = rememberCoroutineScope()
     val haptics = rememberHaptics()
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-    val selectedColor = Color(form.color)
 
     LaunchedEffect(initial) { vm.load(initial, defaultType) }
 
@@ -95,7 +92,7 @@ fun AddEditCategorySheet(
                 singleLine = true,
             )
             Spacer(Modifier.height(12.dp))
-            val icons = pickableIcons.filter { form.iconQuery.isBlank() || it.contains(form.iconQuery, ignoreCase = true) }
+            val icons = pickableIcons.filter { iconMatches(it, form.iconQuery) }
             FlowRow(horizontalArrangement = Arrangement.spacedBy(10.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 icons.forEach { name ->
                     val sel = form.icon == name
@@ -103,7 +100,7 @@ fun AddEditCategorySheet(
                         modifier = Modifier
                             .size(46.dp)
                             .clip(CircleShape)
-                            .background(if (sel) selectedColor else MaterialTheme.colorScheme.surfaceVariant)
+                            .background(if (sel) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant)
                             .clickable { vm.setIcon(name) },
                         contentAlignment = Alignment.Center,
                     ) {
@@ -113,25 +110,6 @@ fun AddEditCategorySheet(
                             tint = if (sel) Color.White else MaterialTheme.colorScheme.onSurfaceVariant,
                             modifier = Modifier.size(24.dp),
                         )
-                    }
-                }
-            }
-            Spacer(Modifier.height(16.dp))
-
-            Eyebrow(stringResource(R.string.cat_field_color))
-            Spacer(Modifier.height(8.dp))
-            FlowRow(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                CategoryPalette.forEach { c ->
-                    val sel = form.color == c.toArgb()
-                    Box(
-                        modifier = Modifier
-                            .size(36.dp)
-                            .clip(CircleShape)
-                            .then(if (sel) Modifier.border(3.dp, MaterialTheme.colorScheme.onSurface, CircleShape) else Modifier)
-                            .clickable { vm.setColor(c.toArgb()) },
-                        contentAlignment = Alignment.Center,
-                    ) {
-                        Box(Modifier.size(if (sel) 26.dp else 36.dp).clip(CircleShape).background(c))
                     }
                 }
             }

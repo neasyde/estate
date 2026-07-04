@@ -163,13 +163,11 @@ fun materialIcon(name: String): ImageVector = when (name) {
     else -> Icons.Rounded.MoreHoriz
 }
 
-/** Icon names offered in the category icon picker. */
+/** Curated icon names offered in the category icon picker (finance-relevant set). */
 val pickableIcons: List<String> = listOf(
-    "restaurant", "fastfood", "local_cafe", "local_bar", "directions_car", "directions_bus",
-    "train", "local_gas_station", "medical_services", "local_hospital", "fitness_center", "spa",
-    "sports_esports", "sports_soccer", "movie", "music_note", "headphones", "celebration",
-    "checkroom", "phone", "wifi", "home", "bolt", "water_drop", "school", "menu_book",
-    "flight", "park", "pets", "cake", "redeem", "card_giftcard", "work", "laptop", "computer",
-    "trending_up", "account_balance", "credit_card", "savings", "wallet", "build", "brush",
-    "favorite", "star", "more_horiz",
+    "restaurant", "fastfood", "local_cafe", "directions_car", "directions_bus", "train",
+    "flight", "local_gas_station", "medical_services", "fitness_center", "sports_esports",
+    "movie", "music_note", "checkroom", "phone", "wifi", "home", "bolt", "school", "work",
+    "laptop", "trending_up", "account_balance", "credit_card", "savings", "wallet",
+    "card_giftcard", "redeem", "celebration", "pets", "favorite", "star", "build", "more_horiz",
 )
