@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -6,6 +8,13 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt)
 }
+
+// Read the default exchangerate-api key from local.properties (gitignored, never committed).
+val localProps = Properties().apply {
+    val f = rootProject.file("local.properties")
+    if (f.exists()) f.inputStream().use { load(it) }
+}
+val exchangeApiKey: String = localProps.getProperty("EXCHANGE_API_KEY") ?: ""
 
 android {
     namespace = "com.financeapp"
@@ -19,6 +28,16 @@ android {
         versionName = "1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables { useSupportLibrary = true }
+        buildConfigField("String", "EXCHANGE_API_KEY", "\"$exchangeApiKey\"")
+    }
+
+    // Name the installable debug APK "estate.apk".
+    applicationVariants.all {
+        if (buildType.name == "debug") {
+            outputs.all {
+                (this as com.android.build.gradle.internal.api.BaseVariantOutputImpl).outputFileName = "estate.apk"
+            }
+        }
     }
     buildTypes {
         debug { applicationIdSuffix = ".debug" }
@@ -35,7 +54,7 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions { jvmTarget = "17" }
-    buildFeatures { compose = true }
+    buildFeatures { compose = true; buildConfig = true }
     testOptions { unitTests { isIncludeAndroidResources = true } }
     packaging { resources { excludes += "/META-INF/{AL2.0,LGPL2.1}" } }
 }
