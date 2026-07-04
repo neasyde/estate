@@ -1,10 +1,7 @@
 package com.financeapp.feature.analytics
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -44,6 +41,7 @@ import com.financeapp.core.domain.model.CategorySlice
 import com.financeapp.core.domain.model.Currency
 import com.financeapp.core.domain.model.MonthTotals
 import com.financeapp.core.ui.anim.Motion
+import com.financeapp.core.ui.anim.Reveal
 import com.financeapp.core.ui.anim.reducedMotion
 import com.financeapp.core.ui.categoryDisplayName
 import com.financeapp.core.ui.components.AmountText
@@ -56,7 +54,6 @@ import com.financeapp.core.ui.theme.IncomeGreen
 import com.financeapp.core.ui.theme.PillShape
 import com.financeapp.core.utils.CurrencyFormatter
 import com.financeapp.core.utils.DateUtils
-import kotlinx.coroutines.delay
 import kotlin.math.max
 import kotlin.math.roundToInt
 
@@ -219,17 +216,3 @@ private fun PeriodSelector(selected: AnalyticsPeriod, onSelect: (AnalyticsPeriod
     }
 }
 
-@Composable
-private fun Reveal(index: Int, content: @Composable () -> Unit) {
-    val reduced = reducedMotion()
-    var visible by remember { mutableStateOf(false) }
-    LaunchedEffect(Unit) {
-        if (!reduced) delay(index * Motion.StaggerStep.toLong())
-        visible = true
-    }
-    AnimatedVisibility(
-        visible = visible,
-        enter = fadeIn(tween(Motion.Medium, easing = Motion.Emphasized)) +
-            slideInVertically(tween(Motion.Medium, easing = Motion.Emphasized)) { it / 4 },
-    ) { content() }
-}

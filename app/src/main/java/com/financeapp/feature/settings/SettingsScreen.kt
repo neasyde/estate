@@ -2,10 +2,6 @@ package com.financeapp.feature.settings
 
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -32,7 +28,6 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -60,8 +55,7 @@ import com.financeapp.core.domain.model.ColorScheme
 import com.financeapp.core.domain.model.Currency
 import com.financeapp.core.domain.model.ThemeMode
 import com.financeapp.core.domain.model.TransactionType
-import com.financeapp.core.ui.anim.Motion
-import com.financeapp.core.ui.anim.reducedMotion
+import com.financeapp.core.ui.anim.Reveal
 import com.financeapp.core.ui.components.Eyebrow
 import com.financeapp.core.ui.icons.materialIcon
 import com.financeapp.core.ui.theme.IndigoPrimary
@@ -74,7 +68,6 @@ import com.financeapp.core.ui.theme.PurpleGradStart
 import com.financeapp.core.ui.theme.TerracottaPrimary
 import com.financeapp.core.ui.theme.TerracottaSecondary
 import com.financeapp.core.utils.LocaleManager
-import kotlinx.coroutines.delay
 
 @Composable
 fun SettingsScreen(
@@ -527,21 +520,6 @@ private fun DisclosureRow(label: String, expanded: Boolean, onToggle: () -> Unit
 
 @Composable
 private fun GroupGap() = Spacer(Modifier.height(26.dp))
-
-@Composable
-private fun Reveal(index: Int, content: @Composable () -> Unit) {
-    val reduced = reducedMotion()
-    var visible by remember { mutableStateOf(false) }
-    LaunchedEffect(Unit) {
-        if (!reduced) delay(index * Motion.StaggerStep.toLong())
-        visible = true
-    }
-    AnimatedVisibility(
-        visible = visible,
-        enter = fadeIn(tween(Motion.Medium, easing = Motion.Emphasized)) +
-            slideInVertically(tween(Motion.Medium, easing = Motion.Emphasized)) { it / 4 },
-    ) { content() }
-}
 
 @Composable
 private fun SettingsGroup(eyebrow: String, content: @Composable ColumnScope.() -> Unit) {

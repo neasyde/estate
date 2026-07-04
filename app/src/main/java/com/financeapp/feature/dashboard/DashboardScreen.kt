@@ -1,9 +1,5 @@
 package com.financeapp.feature.dashboard
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -25,7 +21,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -40,11 +35,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.financeapp.R
 import com.financeapp.core.domain.model.Currency
 import com.financeapp.core.domain.model.Reminder
-import com.financeapp.core.domain.model.TransactionType
-import com.financeapp.core.ui.anim.Motion
-import com.financeapp.core.ui.anim.animatedCountUp
 import com.financeapp.core.ui.LocalShowDecimals
-import com.financeapp.core.ui.anim.reducedMotion
+import com.financeapp.core.ui.anim.Reveal
+import com.financeapp.core.ui.anim.animatedCountUp
 import com.financeapp.core.ui.components.AmountText
 import com.financeapp.core.ui.components.EmptyState
 import com.financeapp.core.ui.components.Eyebrow
@@ -96,7 +89,7 @@ fun DashboardScreen(
                     Eyebrow(stringResource(R.string.dash_recent), modifier = Modifier.padding(horizontal = 20.dp))
                     Spacer(Modifier.height(6.dp))
                     data.recent.forEachIndexed { i, item ->
-                        Staggered(i) { TransactionRow(item) }
+                        Reveal(i) { TransactionRow(item) }
                         if (i < data.recent.lastIndex) Hairline(Modifier.padding(horizontal = 20.dp))
                     }
                     TextButton(onClick = onSeeAll, modifier = Modifier.fillMaxWidth().padding(top = 6.dp)) {
@@ -292,17 +285,3 @@ private fun Masthead(
     }
 }
 
-@Composable
-private fun Staggered(index: Int, content: @Composable () -> Unit) {
-    val reduced = reducedMotion()
-    var visible by remember { mutableStateOf(false) }
-    LaunchedEffect(Unit) {
-        if (!reduced) delay(index * Motion.StaggerStep.toLong())
-        visible = true
-    }
-    AnimatedVisibility(
-        visible = visible,
-        enter = fadeIn(tween(Motion.Medium, easing = Motion.Emphasized)) +
-            slideInVertically(tween(Motion.Medium, easing = Motion.Emphasized)) { it / 3 },
-    ) { content() }
-}
