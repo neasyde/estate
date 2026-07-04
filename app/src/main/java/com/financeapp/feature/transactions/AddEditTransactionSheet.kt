@@ -108,7 +108,7 @@ fun AddEditTransactionSheet(
             Text(stringResource(R.string.form_category), style = androidx.compose.material3.MaterialTheme.typography.titleSmall)
             Spacer(Modifier.height(8.dp))
             LazyRow(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                items(categories) { cat ->
+                items(categories, key = { it.id }) { cat ->
                     val sel = form.categoryId == cat.id
                     Column(
                         modifier = Modifier.clickable { vm.setCategory(cat.id) }.padding(4.dp),
