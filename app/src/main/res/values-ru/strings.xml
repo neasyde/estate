@@ -84,8 +84,11 @@
     <string name="set_finance">Финансы</string>
     <string name="set_base_currency">Базовая валюта</string>
     <string name="set_api_key">Ключ exchangerate-api</string>
-    <string name="set_api_key_hint">Бесплатный ключ на exchangerate-api.com</string>
+    <string name="set_api_key_hint">Необязательно — ключ уже встроен. Свой бесплатный можно получить на exchangerate-api.com</string>
     <string name="set_refresh_rates">Обновить курс из интернета</string>
+    <string name="set_auto_refresh">Автообновление курсов</string>
+    <string name="set_interval_12h">12 ч</string>
+    <string name="set_interval_24h">24 ч</string>
     <string name="set_rates_manual">Курс вручную</string>
     <string name="set_rates_updated">Обновлено %1$s</string>
     <string name="set_rates_never">Ещё не обновлялось</string>

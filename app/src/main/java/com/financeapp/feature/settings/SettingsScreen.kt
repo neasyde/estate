@@ -146,6 +146,7 @@ fun SettingsScreen(
         GroupGap()
 
         Reveal(2) {
+            var manualOpen by remember { mutableStateOf(false) }
             SettingsGroup(stringResource(R.string.set_finance)) {
                 Eyebrow(stringResource(R.string.set_base_currency))
                 Spacer(Modifier.height(10.dp))
@@ -154,6 +155,19 @@ fun SettingsScreen(
                     selected = settings.baseCurrency,
                     onSelect = vm::setBaseCurrency,
                 )
+                Spacer(Modifier.height(6.dp))
+                SettingSwitch("autorenew", stringResource(R.string.set_auto_refresh), settings.autoRefreshRates, vm::setAutoRefresh)
+                if (settings.autoRefreshRates) {
+                    Spacer(Modifier.height(10.dp))
+                    PillSelector(
+                        options = listOf(
+                            12 to stringResource(R.string.set_interval_12h),
+                            24 to stringResource(R.string.set_interval_24h),
+                        ),
+                        selected = settings.ratesIntervalHours,
+                        onSelect = vm::setRatesInterval,
+                    )
+                }
                 Spacer(Modifier.height(16.dp))
                 ApiKeyField(settings.exchangeApiKey.orEmpty(), onChange = vm::setApiKey)
                 Spacer(Modifier.height(6.dp))
@@ -168,12 +182,14 @@ fun SettingsScreen(
                     loading = ratesLoading,
                     onClick = { vm.refreshRates() },
                 )
-                Spacer(Modifier.height(18.dp))
-                Eyebrow(stringResource(R.string.set_rates_manual))
-                Spacer(Modifier.height(10.dp))
-                RateField(stringResource(R.string.onb_rate_usd), settings.rateUsd) { vm.setRates(it, settings.rateEur) }
-                Spacer(Modifier.height(10.dp))
-                RateField(stringResource(R.string.onb_rate_eur), settings.rateEur) { vm.setRates(settings.rateUsd, it) }
+                Spacer(Modifier.height(14.dp))
+                DisclosureRow(stringResource(R.string.set_rates_manual), manualOpen) { manualOpen = !manualOpen }
+                if (manualOpen) {
+                    Spacer(Modifier.height(10.dp))
+                    RateField(stringResource(R.string.onb_rate_usd), settings.rateUsd) { vm.setRates(it, settings.rateEur) }
+                    Spacer(Modifier.height(10.dp))
+                    RateField(stringResource(R.string.onb_rate_eur), settings.rateEur) { vm.setRates(settings.rateUsd, it) }
+                }
             }
         }
         GroupGap()
@@ -329,6 +345,34 @@ private fun RefreshRatesButton(updatedAt: Long, loading: Boolean, onClick: () ->
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.fillMaxWidth(),
             textAlign = TextAlign.Center,
+        )
+    }
+}
+
+@Composable
+private fun SettingSwitch(icon: String, label: String, checked: Boolean, onChange: (Boolean) -> Unit) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp),
+    ) {
+        Icon(materialIcon(icon), null, tint = MaterialTheme.colorScheme.primary)
+        Spacer(Modifier.size(12.dp))
+        Text(label, style = MaterialTheme.typography.bodyLarge, modifier = Modifier.weight(1f))
+        Switch(checked = checked, onCheckedChange = onChange)
+    }
+}
+
+@Composable
+private fun DisclosureRow(label: String, expanded: Boolean, onToggle: () -> Unit) {
+    Row(
+        Modifier.fillMaxWidth().clip(MaterialTheme.shapes.medium).clickable { onToggle() }.padding(vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Eyebrow(label, modifier = Modifier.weight(1f))
+        Icon(
+            materialIcon(if (expanded) "expand_less" else "expand_more"),
+            null,
+            tint = MaterialTheme.colorScheme.onSurfaceVariant,
         )
     }
 }

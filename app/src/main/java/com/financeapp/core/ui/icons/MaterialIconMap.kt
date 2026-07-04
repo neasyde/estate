@@ -7,13 +7,24 @@ import androidx.compose.material.icons.automirrored.rounded.ReceiptLong
 import androidx.compose.material.icons.automirrored.rounded.TrendingUp
 import androidx.compose.material.icons.rounded.AccountBalance
 import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material.icons.rounded.Animation
 import androidx.compose.material.icons.rounded.ArrowDownward
 import androidx.compose.material.icons.rounded.ArrowUpward
+import androidx.compose.material.icons.rounded.Autorenew
 import androidx.compose.material.icons.rounded.BarChart
 import androidx.compose.material.icons.rounded.Bolt
 import androidx.compose.material.icons.rounded.Brush
 import androidx.compose.material.icons.rounded.Build
 import androidx.compose.material.icons.rounded.Cake
+import androidx.compose.material.icons.rounded.DeleteForever
+import androidx.compose.material.icons.rounded.ExpandLess
+import androidx.compose.material.icons.rounded.ExpandMore
+import androidx.compose.material.icons.rounded.Info
+import androidx.compose.material.icons.rounded.Lock
+import androidx.compose.material.icons.rounded.Palette
+import androidx.compose.material.icons.rounded.Schedule
+import androidx.compose.material.icons.rounded.Tune
+import androidx.compose.material.icons.rounded.Vibration
 import androidx.compose.material.icons.rounded.CardGiftcard
 import androidx.compose.material.icons.rounded.Celebration
 import androidx.compose.material.icons.rounded.Checkroom
@@ -98,6 +109,17 @@ fun materialIcon(name: String): ImageVector = when (name) {
     "search" -> Icons.Rounded.Search
     "notifications" -> Icons.Rounded.Notifications
     "refresh" -> Icons.Rounded.Refresh
+    "autorenew" -> Icons.Rounded.Autorenew
+    "expand_more" -> Icons.Rounded.ExpandMore
+    "expand_less" -> Icons.Rounded.ExpandLess
+    "lock" -> Icons.Rounded.Lock
+    "palette" -> Icons.Rounded.Palette
+    "vibration" -> Icons.Rounded.Vibration
+    "animation" -> Icons.Rounded.Animation
+    "schedule" -> Icons.Rounded.Schedule
+    "info" -> Icons.Rounded.Info
+    "tune" -> Icons.Rounded.Tune
+    "delete_forever" -> Icons.Rounded.DeleteForever
     "close" -> Icons.Rounded.Close
     "chevron_right" -> Icons.Rounded.ChevronRight
     "download" -> Icons.Rounded.Download

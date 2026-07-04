@@ -91,8 +91,11 @@
     <string name="set_finance">Finance</string>
     <string name="set_base_currency">Base currency</string>
     <string name="set_api_key">exchangerate-api key</string>
-    <string name="set_api_key_hint">Get a free key at exchangerate-api.com</string>
+    <string name="set_api_key_hint">Optional — a default key is built in. Get your own free at exchangerate-api.com</string>
     <string name="set_refresh_rates">Update rates online</string>
+    <string name="set_auto_refresh">Auto-update rates</string>
+    <string name="set_interval_12h">12 h</string>
+    <string name="set_interval_24h">24 h</string>
     <string name="set_rates_manual">Manual rates</string>
     <string name="set_rates_updated">Updated %1$s</string>
     <string name="set_rates_never">Not updated yet</string>
