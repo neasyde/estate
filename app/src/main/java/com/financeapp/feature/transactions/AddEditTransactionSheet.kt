@@ -66,6 +66,7 @@ fun AddEditTransactionSheet(
     val haptics = rememberHaptics()
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showDate by remember { mutableStateOf(false) }
+    var showTime by remember { mutableStateOf(false) }
 
     androidx.compose.runtime.LaunchedEffect(editId) { vm.load(editId, defaultCurrency, presetType) }
 
@@ -139,8 +140,17 @@ fun AddEditTransactionSheet(
                 Instant.ofEpochMilli(form.date).atZone(ZoneId.systemDefault()).toLocalDate()
                     .format(DateTimeFormatter.ofPattern("d MMM yyyy"))
             }
-            OutlinedButton(onClick = { showDate = true }, modifier = Modifier.fillMaxWidth()) {
-                Text("${stringResource(R.string.form_date)}: $dateText")
+            val timeText = remember(form.date) {
+                Instant.ofEpochMilli(form.date).atZone(ZoneId.systemDefault()).toLocalTime()
+                    .format(DateTimeFormatter.ofPattern("HH:mm"))
+            }
+            Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                OutlinedButton(onClick = { showDate = true }, modifier = Modifier.weight(1f)) {
+                    Text("${stringResource(R.string.form_date)}: $dateText")
+                }
+                OutlinedButton(onClick = { showTime = true }, modifier = Modifier.weight(1f)) {
+                    Text(timeText)
+                }
             }
             Spacer(Modifier.height(12.dp))
 
@@ -182,6 +192,27 @@ fun AddEditTransactionSheet(
             },
             dismissButton = { TextButton(onClick = { showDate = false }) { Text(stringResource(R.string.action_cancel)) } },
         ) { DatePicker(state = dateState) }
+    }
+
+    if (showTime) {
+        val zdt = Instant.ofEpochMilli(form.date).atZone(ZoneId.systemDefault())
+        val timeState = androidx.compose.material3.rememberTimePickerState(
+            initialHour = zdt.hour, initialMinute = zdt.minute, is24Hour = true,
+        )
+        androidx.compose.material3.AlertDialog(
+            onDismissRequest = { showTime = false },
+            confirmButton = {
+                TextButton(onClick = { vm.setTime(timeState.hour, timeState.minute); showTime = false }) {
+                    Text(stringResource(R.string.action_done))
+                }
+            },
+            dismissButton = { TextButton(onClick = { showTime = false }) { Text(stringResource(R.string.action_cancel)) } },
+            text = {
+                androidx.compose.foundation.layout.Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                    androidx.compose.material3.TimePicker(state = timeState)
+                }
+            },
+        )
     }
 }
 

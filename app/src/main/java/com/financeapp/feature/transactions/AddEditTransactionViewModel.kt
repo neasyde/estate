@@ -21,6 +21,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import java.time.Instant
+import java.time.ZoneId
 import javax.inject.Inject
 
 data class FormState(
@@ -72,7 +74,19 @@ class AddEditTransactionViewModel @Inject constructor(
     fun setCurrency(c: Currency) = _form.update { it.copy(currency = c) }
     fun setCategory(id: Long) = _form.update { it.copy(categoryId = id) }
     fun setNote(v: String) = _form.update { it.copy(note = v) }
-    fun setDate(d: Long) = _form.update { it.copy(date = d) }
+
+    /** [pickedUtcMillis] comes from M3 DatePicker (UTC midnight); keep the existing time-of-day. */
+    fun setDate(pickedUtcMillis: Long) = _form.update {
+        val zone = ZoneId.systemDefault()
+        val pickedDate = Instant.ofEpochMilli(pickedUtcMillis).atZone(ZoneId.of("UTC")).toLocalDate()
+        val currentTime = Instant.ofEpochMilli(it.date).atZone(zone).toLocalTime()
+        it.copy(date = pickedDate.atTime(currentTime).atZone(zone).toInstant().toEpochMilli())
+    }
+
+    fun setTime(hour: Int, minute: Int) = _form.update {
+        val zdt = Instant.ofEpochMilli(it.date).atZone(ZoneId.systemDefault())
+        it.copy(date = zdt.withHour(hour).withMinute(minute).withSecond(0).withNano(0).toInstant().toEpochMilli())
+    }
     fun setRecurring(b: Boolean) = _form.update { it.copy(recurring = b) }
     fun setInterval(i: IntervalType) = _form.update { it.copy(interval = i) }
     fun setAutoAdd(b: Boolean) = _form.update { it.copy(autoAdd = b) }
