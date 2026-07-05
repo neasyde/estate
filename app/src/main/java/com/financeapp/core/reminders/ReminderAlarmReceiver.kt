@@ -35,6 +35,9 @@ class ReminderAlarmReceiver : BroadcastReceiver() {
                 dueDate = intent.getLongExtra(ReminderIntent.EXTRA_DUE, 0L),
                 notifyDaysBefore = intent.getIntExtra(ReminderIntent.EXTRA_DAYS, 0),
                 repeat = repeat,
+                // Preserve the reminder's real time of day; without it the re-arm fell back to the
+                // 9:00 default and fired a second time the same day (the double-notification bug).
+                notifyMinuteOfDay = intent.getIntExtra(ReminderIntent.EXTRA_MINUTE, 9 * 60),
             )
             scheduleReminderAlarm(context, next)
         }

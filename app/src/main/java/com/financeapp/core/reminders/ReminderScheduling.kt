@@ -25,6 +25,7 @@ internal object ReminderIntent {
     const val EXTRA_REPEAT = "rem_repeat"
     const val EXTRA_DUE = "rem_due"
     const val EXTRA_DAYS = "rem_days"
+    const val EXTRA_MINUTE = "rem_minute"
 
     /** Next moment to fire: dueDate − notifyDaysBefore at the reminder's time of day, advanced past now for repeats. */
     fun triggerAt(r: Reminder, zone: ZoneId = ZoneId.systemDefault()): Long? {
@@ -65,6 +66,7 @@ internal object ReminderIntent {
             putExtra(EXTRA_REPEAT, r.repeat.name)
             putExtra(EXTRA_DUE, r.dueDate)
             putExtra(EXTRA_DAYS, r.notifyDaysBefore)
+            putExtra(EXTRA_MINUTE, r.notifyMinuteOfDay)
         }
 }
 
