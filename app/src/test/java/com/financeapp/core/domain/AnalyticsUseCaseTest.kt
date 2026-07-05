@@ -35,7 +35,7 @@ class AnalyticsUseCaseTest {
             FakeSettingsRepository(settings),
         )
 
-        val d = uc(now, AnalyticsPeriod.MONTH).first()
+        val d = uc(now, AnalyticsPeriod.MONTH, rolling = false).first()
 
         assertThat(d.income).isWithin(0.001).of(500.0)
         assertThat(d.expense).isWithin(0.001).of(200.0)
@@ -65,7 +65,7 @@ class AnalyticsUseCaseTest {
             FakeSettingsRepository(settings),
         )
 
-        assertThat(uc(now, AnalyticsPeriod.MONTH).first().expense).isWithin(0.001).of(0.0)
-        assertThat(uc(now, AnalyticsPeriod.ALL).first().expense).isWithin(0.001).of(300.0)
+        assertThat(uc(now, AnalyticsPeriod.MONTH, rolling = false).first().expense).isWithin(0.001).of(0.0)
+        assertThat(uc(now, AnalyticsPeriod.ALL, rolling = false).first().expense).isWithin(0.001).of(300.0)
     }
 }

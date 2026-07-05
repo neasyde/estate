@@ -15,21 +15,27 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import javax.inject.Inject
 
+private const val DAY_MS = 86_400_000L
+
+/** Start of the analytics range. Rolling = last N days; calendar = start of this week/month/year. */
+fun analyticsStart(now: Long, period: AnalyticsPeriod, rolling: Boolean): Long = when (period) {
+    AnalyticsPeriod.ALL -> Long.MIN_VALUE
+    AnalyticsPeriod.WEEK -> if (rolling) now - 7 * DAY_MS else DateUtils.startOfWeek(now)
+    AnalyticsPeriod.MONTH -> if (rolling) now - 30 * DAY_MS else DateUtils.startOfMonth(now)
+    AnalyticsPeriod.YEAR -> if (rolling) now - 365 * DAY_MS else DateUtils.startOfYear(now)
+}
+
 class GetAnalyticsDataUseCase @Inject constructor(
     private val txRepo: TransactionRepository,
     private val catRepo: CategoryRepository,
     private val settingsRepo: SettingsRepository,
 ) {
-    operator fun invoke(now: Long, period: AnalyticsPeriod): Flow<AnalyticsData> =
+    operator fun invoke(now: Long, period: AnalyticsPeriod, rolling: Boolean): Flow<AnalyticsData> =
         combine(txRepo.observeAll(), catRepo.observeAll(), settingsRepo.settings) { txs, cats, s ->
             val byId = cats.associateBy { it.id }
             fun base(t: Transaction) = CurrencyConverter.toBase(t.amount, t.currency, s)
 
-            val start = when (period) {
-                AnalyticsPeriod.MONTH -> DateUtils.startOfMonth(now)
-                AnalyticsPeriod.YEAR -> DateUtils.startOfYear(now)
-                AnalyticsPeriod.ALL -> Long.MIN_VALUE
-            }
+            val start = analyticsStart(now, period, rolling)
             val inPeriod = txs.filter { it.date in start..now }
             val income = inPeriod.filter { it.type == TransactionType.INCOME }.sumOf { base(it) }
             val expense = inPeriod.filter { it.type == TransactionType.EXPENSE }.sumOf { base(it) }

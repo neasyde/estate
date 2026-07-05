@@ -1,7 +1,7 @@
 package com.financeapp.core.domain.model
 
 /** Range the category breakdown and totals are computed over. */
-enum class AnalyticsPeriod { MONTH, YEAR, ALL }
+enum class AnalyticsPeriod { WEEK, MONTH, YEAR, ALL }
 
 /** One category's share of expenses in the selected period. */
 data class CategorySlice(

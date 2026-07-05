@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -27,9 +28,12 @@ class AnalyticsViewModel @Inject constructor(
     private val _period = MutableStateFlow(AnalyticsPeriod.MONTH)
     val period: StateFlow<AnalyticsPeriod> = _period.asStateFlow()
 
+    private val _rolling = MutableStateFlow(true)
+    val rolling: StateFlow<Boolean> = _rolling.asStateFlow()
+
     @OptIn(ExperimentalCoroutinesApi::class)
-    val data: StateFlow<AnalyticsData> = _period
-        .flatMapLatest { getAnalytics(System.currentTimeMillis(), it) }
+    val data: StateFlow<AnalyticsData> = combine(_period, _rolling) { p, r -> p to r }
+        .flatMapLatest { (p, r) -> getAnalytics(System.currentTimeMillis(), p, r) }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), AnalyticsData())
 
     val baseCurrency: StateFlow<Currency> = settingsRepo.settings
@@ -37,4 +41,5 @@ class AnalyticsViewModel @Inject constructor(
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), Currency.RUB)
 
     fun setPeriod(p: AnalyticsPeriod) = _period.update { p }
+    fun setRolling(r: Boolean) = _rolling.update { r }
 }
