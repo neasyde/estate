@@ -94,6 +94,7 @@ fun RemindersScreen(onBack: () -> Unit, vm: RemindersViewModel = hiltViewModel()
             defaultNotifyDays = reminderDefaults.second,
             onDismiss = { sheetOpen = false },
             onSave = { vm.save(it); sheetOpen = false },
+            onDelete = editing?.let { r -> { vm.delete(r); sheetOpen = false } },
         )
     }
 }

@@ -11,6 +11,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalView
@@ -40,15 +41,18 @@ val LocalAccentColors = staticCompositionLocalOf {
     AccentColors(PurplePrimary, PurpleGradStart, PurpleGradEnd)
 }
 
+// Nudge a neutral toward the accent so background/surfaces/hairlines carry the theme's hue.
+private fun tint(base: Color, accent: Color, fraction: Float) = lerp(base, accent, fraction)
+
 private fun lightScheme(a: Accent) = lightColorScheme(
     primary = a.primary, onPrimary = Color.White,
     secondary = a.secondary, onSecondary = Color.White,
     tertiary = a.tertiary, onTertiary = Color.White,
     primaryContainer = a.containerLight, onPrimaryContainer = a.primary,
-    background = PaperLight, onBackground = InkLight,
-    surface = SurfaceLight, onSurface = InkLight,
-    surfaceVariant = SurfaceVariantLight, onSurfaceVariant = InkMutedLight,
-    outline = LineLight, outlineVariant = LineLight,
+    background = tint(PaperLight, a.primary, 0.04f), onBackground = InkLight,
+    surface = tint(SurfaceLight, a.primary, 0.03f), onSurface = InkLight,
+    surfaceVariant = tint(SurfaceVariantLight, a.primary, 0.11f), onSurfaceVariant = InkMutedLight,
+    outline = tint(LineLight, a.primary, 0.11f), outlineVariant = tint(LineLight, a.primary, 0.11f),
     error = ExpenseRed, onError = Color.White,
 )
 
@@ -57,10 +61,10 @@ private fun darkScheme(a: Accent) = darkColorScheme(
     secondary = a.secondary, onSecondary = Color.White,
     tertiary = a.tertiary, onTertiary = Color.Black,
     primaryContainer = a.containerDark, onPrimaryContainer = Color.White,
-    background = PaperDark, onBackground = InkDark,
-    surface = SurfaceDark, onSurface = InkDark,
-    surfaceVariant = SurfaceVariantDark, onSurfaceVariant = InkMutedDark,
-    outline = LineDark, outlineVariant = LineDark,
+    background = tint(PaperDark, a.primary, 0.06f), onBackground = InkDark,
+    surface = tint(SurfaceDark, a.primary, 0.07f), onSurface = InkDark,
+    surfaceVariant = tint(SurfaceVariantDark, a.primary, 0.14f), onSurfaceVariant = InkMutedDark,
+    outline = tint(LineDark, a.primary, 0.16f), outlineVariant = tint(LineDark, a.primary, 0.16f),
     error = ExpenseRed, onError = Color.White,
 )
 

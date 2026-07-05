@@ -23,6 +23,7 @@ import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedButton
@@ -71,6 +72,7 @@ fun AddEditReminderSheet(
     defaultNotifyDays: Int = 0,
     onDismiss: () -> Unit,
     onSave: (Reminder) -> Unit,
+    onDelete: (() -> Unit)? = null,
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var title by remember { mutableStateOf(initial?.title ?: "") }
@@ -87,10 +89,23 @@ fun AddEditReminderSheet(
 
     ModalBottomSheet(onDismissRequest = onDismiss, sheetState = sheetState) {
         Column(Modifier.fillMaxWidth().padding(horizontal = 20.dp).padding(bottom = 28.dp)) {
-            Text(
-                text = stringResource(if (initial == null) R.string.rem_new else R.string.rem_title),
-                style = MaterialTheme.typography.titleLarge,
-            )
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    text = stringResource(if (initial == null) R.string.rem_new else R.string.rem_title),
+                    style = MaterialTheme.typography.titleLarge,
+                    modifier = Modifier.weight(1f),
+                )
+                // Delete is offered only when editing an existing reminder.
+                if (initial != null && onDelete != null) {
+                    IconButton(onClick = onDelete) {
+                        Icon(
+                            materialIcon("delete"),
+                            contentDescription = stringResource(R.string.action_delete),
+                            tint = MaterialTheme.colorScheme.error,
+                        )
+                    }
+                }
+            }
             Spacer(Modifier.height(16.dp))
 
             OutlinedTextField(

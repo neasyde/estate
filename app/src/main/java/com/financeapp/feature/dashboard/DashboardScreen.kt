@@ -136,6 +136,7 @@ fun DashboardScreen(
             defaultNotifyDays = reminderDefaults.second,
             onDismiss = { reminderSheetOpen = false },
             onSave = { vm.saveReminder(it); reminderSheetOpen = false },
+            onDelete = editingReminder?.let { r -> { vm.deleteReminder(r); reminderSheetOpen = false } },
         )
     }
 }

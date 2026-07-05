@@ -19,7 +19,6 @@ private const val DAY_MS = 86_400_000L
 
 /** Start of the analytics range. Rolling = last N days; calendar = start of this week/month/year. */
 fun analyticsStart(now: Long, period: AnalyticsPeriod, rolling: Boolean): Long = when (period) {
-    AnalyticsPeriod.ALL -> Long.MIN_VALUE
     AnalyticsPeriod.WEEK -> if (rolling) now - 7 * DAY_MS else DateUtils.startOfWeek(now)
     AnalyticsPeriod.MONTH -> if (rolling) now - 30 * DAY_MS else DateUtils.startOfMonth(now)
     AnalyticsPeriod.YEAR -> if (rolling) now - 365 * DAY_MS else DateUtils.startOfYear(now)
@@ -33,7 +32,6 @@ private fun trendSpec(period: AnalyticsPeriod): Pair<TrendUnit, Int> = when (per
     AnalyticsPeriod.WEEK -> TrendUnit.DAY to 7
     AnalyticsPeriod.MONTH -> TrendUnit.WEEK to 5
     AnalyticsPeriod.YEAR -> TrendUnit.MONTH to 12
-    AnalyticsPeriod.ALL -> TrendUnit.MONTH to 12
 }
 
 class GetAnalyticsDataUseCase @Inject constructor(

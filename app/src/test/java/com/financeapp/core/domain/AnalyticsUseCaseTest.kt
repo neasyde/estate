@@ -51,7 +51,7 @@ class AnalyticsUseCaseTest {
         assertThat(d.trend.last().expense).isWithin(0.001).of(200.0)
     }
 
-    @Test fun allPeriodIncludesTransactionsBeforeThisMonth() = runTest {
+    @Test fun calendarMonthExcludesTransactionsBeforeThisMonth() = runTest {
         val now = System.currentTimeMillis()
         val beforeMonth = DateUtils.startOfMonth(now) - 1_000L
         val settings = AppSettings(baseCurrency = Currency.RUB)
@@ -66,6 +66,7 @@ class AnalyticsUseCaseTest {
         )
 
         assertThat(uc(now, AnalyticsPeriod.MONTH, rolling = false).first().expense).isWithin(0.001).of(0.0)
-        assertThat(uc(now, AnalyticsPeriod.ALL, rolling = false).first().expense).isWithin(0.001).of(300.0)
+        // A rolling year still reaches back far enough to include it.
+        assertThat(uc(now, AnalyticsPeriod.YEAR, rolling = true).first().expense).isWithin(0.001).of(300.0)
     }
 }

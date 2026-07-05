@@ -27,6 +27,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -50,6 +51,7 @@ import com.financeapp.core.ui.components.CategoryIcon
 import com.financeapp.core.ui.components.Eyebrow
 import com.financeapp.core.ui.components.Hairline
 import com.financeapp.core.ui.icons.materialIcon
+import kotlin.math.roundToInt
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -89,7 +91,8 @@ fun CategoriesScreen(onBack: () -> Unit, vm: CategoriesViewModel = hiltViewModel
             }
             var order by remember(cats) { mutableStateOf(cats) }
             var draggingId by remember { mutableStateOf<Long?>(null) }
-            var dragOffsetY by remember { mutableFloatStateOf(0f) }
+            var startIndex by remember { mutableIntStateOf(-1) }
+            var dragTotalY by remember { mutableFloatStateOf(0f) }
             var itemHeightPx by remember { mutableFloatStateOf(0f) }
             LazyColumn(
                 Modifier.fillMaxSize(),
@@ -104,28 +107,39 @@ fun CategoriesScreen(onBack: () -> Unit, vm: CategoriesViewModel = hiltViewModel
                             .then(if (dragging) Modifier else Modifier.animateItem())
                             .onSizeChanged { itemHeightPx = it.height.toFloat() }
                             .zIndex(if (dragging) 1f else 0f)
-                            .graphicsLayer { translationY = if (dragging) dragOffsetY else 0f },
+                            .graphicsLayer {
+                                // Position from the absolute drag distance, not incremental swaps,
+                                // so the row never oscillates when it sits near a slot boundary.
+                                translationY = if (dragging && itemHeightPx > 0f) {
+                                    val cur = order.indexOfFirst { it.id == draggingId }
+                                    dragTotalY - (cur - startIndex) * itemHeightPx
+                                } else {
+                                    0f
+                                }
+                            },
                     ) {
                         CategoryManageRow(
                             category = c,
                             dragging = dragging,
                             handleModifier = Modifier.pointerInput(c.id) {
                                 detectDragGesturesAfterLongPress(
-                                    onDragStart = { draggingId = c.id; dragOffsetY = 0f },
-                                    onDragEnd = { vm.reorder(order.map { it.id }); draggingId = null; dragOffsetY = 0f },
-                                    onDragCancel = { draggingId = null; dragOffsetY = 0f },
+                                    onDragStart = {
+                                        draggingId = c.id
+                                        startIndex = order.indexOfFirst { it.id == c.id }
+                                        dragTotalY = 0f
+                                    },
+                                    onDragEnd = { vm.reorder(order.map { it.id }); draggingId = null },
+                                    onDragCancel = { draggingId = null },
                                     onDrag = { change, amt ->
                                         change.consume()
-                                        dragOffsetY += amt.y
+                                        dragTotalY += amt.y
                                         val h = itemHeightPx
-                                        if (h > 0f) {
+                                        if (h > 0f && startIndex >= 0) {
                                             val cur = order.indexOfFirst { it.id == draggingId }
-                                            if (cur >= 0 && dragOffsetY > h / 2 && cur < order.lastIndex) {
-                                                order = order.toMutableList().also { it.add(cur + 1, it.removeAt(cur)) }
-                                                dragOffsetY -= h
-                                            } else if (cur > 0 && dragOffsetY < -h / 2) {
-                                                order = order.toMutableList().also { it.add(cur - 1, it.removeAt(cur)) }
-                                                dragOffsetY += h
+                                            val target = (startIndex + (dragTotalY / h).roundToInt())
+                                                .coerceIn(0, order.lastIndex)
+                                            if (cur >= 0 && target != cur) {
+                                                order = order.toMutableList().also { it.add(target, it.removeAt(cur)) }
                                             }
                                         }
                                     },

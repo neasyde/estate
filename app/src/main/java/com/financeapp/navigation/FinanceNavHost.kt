@@ -1,5 +1,7 @@
 package com.financeapp.navigation
 
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -31,14 +33,28 @@ fun FinanceNavHost(
 ) {
     val enter = tween<Float>(Motion.Medium, easing = Motion.Emphasized)
     val exit = tween<Float>(Motion.Short, easing = Motion.Emphasized)
+    // Switching between bottom-bar tabs is instant: fading the whole screen in would blink each
+    // tab's "+" FAB out for a moment. Deeper push/pop navigation keeps the fade/scale motion.
+    fun androidx.navigation.NavBackStackEntry?.isTab() = this?.destination?.route in Routes.bottomBarRoutes
     NavHost(
         navController = navController,
         startDestination = Routes.SPLASH,
         modifier = modifier,
-        enterTransition = { fadeIn(enter) + scaleIn(initialScale = 0.98f, animationSpec = enter) },
-        exitTransition = { fadeOut(exit) },
-        popEnterTransition = { fadeIn(enter) },
-        popExitTransition = { fadeOut(exit) + scaleOut(targetScale = 0.98f, animationSpec = exit) },
+        enterTransition = {
+            if (initialState.isTab() && targetState.isTab()) EnterTransition.None
+            else fadeIn(enter) + scaleIn(initialScale = 0.98f, animationSpec = enter)
+        },
+        exitTransition = {
+            if (initialState.isTab() && targetState.isTab()) ExitTransition.None
+            else fadeOut(exit)
+        },
+        popEnterTransition = {
+            if (initialState.isTab() && targetState.isTab()) EnterTransition.None else fadeIn(enter)
+        },
+        popExitTransition = {
+            if (initialState.isTab() && targetState.isTab()) ExitTransition.None
+            else fadeOut(exit) + scaleOut(targetScale = 0.98f, animationSpec = exit)
+        },
     ) {
         composable(Routes.SPLASH) {
             SplashScreen(settings = settings) { dest ->

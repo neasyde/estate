@@ -72,10 +72,8 @@ fun AnalyticsScreen(vm: AnalyticsViewModel = hiltViewModel()) {
         Text(stringResource(R.string.nav_analytics), style = MaterialTheme.typography.headlineMedium, color = MaterialTheme.colorScheme.onBackground)
         Spacer(Modifier.height(16.dp))
         PeriodSelector(period, vm::setPeriod)
-        if (period != AnalyticsPeriod.ALL) {
-            Spacer(Modifier.height(10.dp))
-            RollingToggle(rolling, vm::setRolling)
-        }
+        Spacer(Modifier.height(10.dp))
+        RollingToggle(rolling, vm::setRolling)
         Spacer(Modifier.height(20.dp))
 
         if (!hasData) {
@@ -259,7 +257,6 @@ private fun PeriodSelector(selected: AnalyticsPeriod, onSelect: (AnalyticsPeriod
         AnalyticsPeriod.WEEK to stringResource(R.string.an_period_week),
         AnalyticsPeriod.MONTH to stringResource(R.string.an_period_month),
         AnalyticsPeriod.YEAR to stringResource(R.string.an_period_year),
-        AnalyticsPeriod.ALL to stringResource(R.string.an_period_all),
     )
     Row(Modifier.fillMaxWidth().clip(PillShape).background(MaterialTheme.colorScheme.surfaceVariant).padding(4.dp), horizontalArrangement = Arrangement.spacedBy(4.dp)) {
         options.forEach { (value, label) ->
