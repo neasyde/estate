@@ -14,8 +14,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.unit.Density
 import androidx.core.view.WindowCompat
+import com.financeapp.core.domain.model.AppFont
+import com.financeapp.core.domain.model.AppFontSize
 import com.financeapp.core.domain.model.ColorScheme as AppColorScheme
 import com.financeapp.core.domain.model.ThemeMode
 
@@ -81,6 +85,8 @@ private fun darkScheme(a: Accent) = darkColorScheme(
 fun FinanceTheme(
     themeMode: ThemeMode,
     colorScheme: AppColorScheme,
+    appFont: AppFont = AppFont.BRANDED,
+    fontSize: AppFontSize = AppFontSize.MEDIUM,
     content: @Composable () -> Unit,
 ) {
     val dark = when (themeMode) {
@@ -115,7 +121,19 @@ fun FinanceTheme(
     }
 
     val accentColors = AccentColors(accent.primary, accent.gradientStart, accent.gradientEnd)
-    CompositionLocalProvider(LocalAccentColors provides accentColors) {
-        MaterialTheme(colorScheme = scheme, typography = AppTypography, shapes = AppShapes, content = content)
+    val brand = if (appFont == AppFont.SYSTEM) systemType else brandedType
+
+    // Drive text sizing from the app's own scale instead of the device font setting, so type renders
+    // at the designed size on every phone regardless of the system accessibility font size, while
+    // still letting the user pick a size in Settings.
+    val baseDensity = LocalDensity.current
+    val appDensity = Density(density = baseDensity.density, fontScale = fontSize.scale)
+
+    CompositionLocalProvider(
+        LocalAccentColors provides accentColors,
+        LocalBrandType provides brand,
+        LocalDensity provides appDensity,
+    ) {
+        MaterialTheme(colorScheme = scheme, typography = appTypography(brand), shapes = AppShapes, content = content)
     }
 }

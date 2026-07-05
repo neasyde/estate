@@ -1,5 +1,7 @@
 package com.financeapp.testutil
 
+import com.financeapp.core.domain.model.AppFont
+import com.financeapp.core.domain.model.AppFontSize
 import com.financeapp.core.domain.model.AppLanguage
 import com.financeapp.core.domain.model.AppSettings
 import com.financeapp.core.domain.model.AutoLock
@@ -38,6 +40,8 @@ class FakeSettingsRepository(initial: AppSettings = AppSettings()) : SettingsRep
     override suspend fun setPinHash(hash: String?) = _s.update { it.copy(pinHash = hash) }
     override suspend fun setBiometricEnabled(b: Boolean) = _s.update { it.copy(biometricEnabled = b) }
     override suspend fun setOnboardingCompleted(b: Boolean) = _s.update { it.copy(onboardingCompleted = b) }
+    override suspend fun setAppFont(f: AppFont) = _s.update { it.copy(appFont = f) }
+    override suspend fun setFontSize(s: AppFontSize) = _s.update { it.copy(fontSize = s) }
     override suspend fun setShowDecimals(b: Boolean) = _s.update { it.copy(showDecimals = b) }
     override suspend fun setDefaultTxType(t: TransactionType) = _s.update { it.copy(defaultTxType = t) }
     override suspend fun setAnimationsEnabled(b: Boolean) = _s.update { it.copy(animationsEnabled = b) }

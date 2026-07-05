@@ -19,6 +19,8 @@ data class AppSettings(
     /** How old (hours) cached rates may get before an auto-refresh is attempted. */
     val ratesIntervalHours: Int = 12,
     // --- display & behaviour ---
+    val appFont: AppFont = AppFont.BRANDED,
+    val fontSize: AppFontSize = AppFontSize.MEDIUM,
     val showDecimals: Boolean = true,
     val defaultTxType: TransactionType = TransactionType.EXPENSE,
     val animationsEnabled: Boolean = true,

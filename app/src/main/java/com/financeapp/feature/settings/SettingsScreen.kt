@@ -49,6 +49,8 @@ import java.util.Locale
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.financeapp.BuildConfig
 import com.financeapp.R
+import com.financeapp.core.domain.model.AppFont
+import com.financeapp.core.domain.model.AppFontSize
 import com.financeapp.core.domain.model.AppLanguage
 import com.financeapp.core.domain.model.AutoLock
 import com.financeapp.core.domain.model.ColorScheme
@@ -143,6 +145,42 @@ fun SettingsScreen(
                         modifier = Modifier.weight(1f),
                     ) { vm.setScheme(ColorScheme.TERRACOTTA) }
                 }
+            }
+        }
+        GroupGap()
+
+        Reveal(1) {
+            SettingsGroup(stringResource(R.string.set_typography)) {
+                Eyebrow(stringResource(R.string.set_font_family))
+                Spacer(Modifier.height(10.dp))
+                PillSelector(
+                    options = listOf(
+                        AppFont.BRANDED to stringResource(R.string.set_font_branded),
+                        AppFont.SYSTEM to stringResource(R.string.set_font_system),
+                    ),
+                    selected = settings.appFont,
+                    onSelect = vm::setAppFont,
+                )
+                Spacer(Modifier.height(16.dp))
+                Eyebrow(stringResource(R.string.set_font_size))
+                Spacer(Modifier.height(10.dp))
+                PillSelector(
+                    options = listOf(
+                        AppFontSize.SMALL to stringResource(R.string.set_font_size_s),
+                        AppFontSize.MEDIUM to stringResource(R.string.set_font_size_m),
+                        AppFontSize.LARGE to stringResource(R.string.set_font_size_l),
+                        AppFontSize.HUGE to stringResource(R.string.set_font_size_xl),
+                    ),
+                    selected = settings.fontSize,
+                    onSelect = vm::setFontSize,
+                )
+                Spacer(Modifier.height(16.dp))
+                // Live preview: reflects both the chosen typeface and text size instantly.
+                Text(
+                    text = stringResource(R.string.set_font_preview),
+                    style = MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.onSurface,
+                )
             }
         }
         GroupGap()

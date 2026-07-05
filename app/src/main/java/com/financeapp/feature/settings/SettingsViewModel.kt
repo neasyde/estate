@@ -9,6 +9,8 @@ import com.financeapp.core.data.remote.ExchangeRateApi
 import com.financeapp.core.data.remote.ExchangeResult
 import com.financeapp.core.domain.usecase.resolveApiKey
 import com.financeapp.core.domain.usecase.shouldRefreshRates
+import com.financeapp.core.domain.model.AppFont
+import com.financeapp.core.domain.model.AppFontSize
 import com.financeapp.core.domain.model.AppLanguage
 import com.financeapp.core.domain.model.AppSettings
 import com.financeapp.core.domain.model.AutoLock
@@ -73,6 +75,8 @@ class SettingsViewModel @Inject constructor(
     fun setBiometric(b: Boolean) = viewModelScope.launch { settingsRepo.setBiometricEnabled(b) }
     fun changePin(pin: String) = viewModelScope.launch { setPin(pin) }
 
+    fun setAppFont(f: AppFont) = viewModelScope.launch { settingsRepo.setAppFont(f) }
+    fun setFontSize(s: AppFontSize) = viewModelScope.launch { settingsRepo.setFontSize(s) }
     fun setShowDecimals(b: Boolean) = viewModelScope.launch { settingsRepo.setShowDecimals(b) }
     fun setDefaultTxType(t: TransactionType) = viewModelScope.launch { settingsRepo.setDefaultTxType(t) }
     fun setAnimations(b: Boolean) = viewModelScope.launch { settingsRepo.setAnimationsEnabled(b) }

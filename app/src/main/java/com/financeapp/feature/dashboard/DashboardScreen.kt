@@ -44,7 +44,7 @@ import com.financeapp.core.ui.components.Eyebrow
 import com.financeapp.core.ui.components.Hairline
 import com.financeapp.core.ui.components.SwipeTransactionRow
 import com.financeapp.core.ui.icons.materialIcon
-import com.financeapp.core.ui.theme.FrauncesTitle
+import com.financeapp.core.ui.theme.LocalBrandType
 import com.financeapp.core.utils.CurrencyFormatter
 import com.financeapp.feature.reminders.AddEditReminderSheet
 import com.financeapp.feature.reminders.reminderSubtitle
@@ -201,7 +201,7 @@ private fun ReminderGlance(r: Reminder, currency: Currency, onClick: () -> Unit)
         r.amount?.let {
             Text(
                 text = CurrencyFormatter.format(it, r.currency ?: currency, LocalShowDecimals.current),
-                style = MaterialTheme.typography.titleSmall.copy(fontFamily = FrauncesTitle),
+                style = MaterialTheme.typography.titleSmall.copy(fontFamily = LocalBrandType.current.title),
             )
         }
     }
@@ -239,13 +239,13 @@ private fun RateItem(symbol: String, rate: Double) {
     Row(verticalAlignment = Alignment.CenterVertically) {
         Text(
             symbol,
-            style = MaterialTheme.typography.titleMedium.copy(fontFamily = FrauncesTitle),
+            style = MaterialTheme.typography.titleMedium.copy(fontFamily = LocalBrandType.current.title),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         Spacer(Modifier.width(6.dp))
         Text(
             text = CurrencyFormatter.format(rate, Currency.RUB),
-            style = MaterialTheme.typography.titleMedium.copy(fontFamily = FrauncesTitle),
+            style = MaterialTheme.typography.titleMedium.copy(fontFamily = LocalBrandType.current.title),
             color = MaterialTheme.colorScheme.onBackground,
         )
     }

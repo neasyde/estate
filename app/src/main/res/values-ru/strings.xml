@@ -83,6 +83,16 @@
     <string name="set_scheme_orange">Янтарная</string>
     <string name="set_scheme_indigo">Индиго</string>
     <string name="set_scheme_terracotta">Терракота</string>
+    <string name="set_typography">Шрифт</string>
+    <string name="set_font_family">Тип шрифта</string>
+    <string name="set_font_branded">Фирменный</string>
+    <string name="set_font_system">Системный</string>
+    <string name="set_font_size">Размер текста</string>
+    <string name="set_font_size_s">S</string>
+    <string name="set_font_size_m">M</string>
+    <string name="set_font_size_l">L</string>
+    <string name="set_font_size_xl">XL</string>
+    <string name="set_font_preview">Aa — Пример текста 123</string>
     <string name="set_language">Язык</string>
     <string name="set_finance">Финансы</string>
     <string name="set_base_currency">Базовая валюта</string>

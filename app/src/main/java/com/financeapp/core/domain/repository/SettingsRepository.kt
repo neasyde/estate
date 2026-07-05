@@ -1,5 +1,7 @@
 package com.financeapp.core.domain.repository
 
+import com.financeapp.core.domain.model.AppFont
+import com.financeapp.core.domain.model.AppFontSize
 import com.financeapp.core.domain.model.AppLanguage
 import com.financeapp.core.domain.model.AppSettings
 import com.financeapp.core.domain.model.AutoLock
@@ -22,6 +24,8 @@ interface SettingsRepository {
     suspend fun setPinHash(hash: String?)
     suspend fun setBiometricEnabled(b: Boolean)
     suspend fun setOnboardingCompleted(b: Boolean)
+    suspend fun setAppFont(f: AppFont)
+    suspend fun setFontSize(s: AppFontSize)
     suspend fun setShowDecimals(b: Boolean)
     suspend fun setDefaultTxType(t: TransactionType)
     suspend fun setAnimationsEnabled(b: Boolean)

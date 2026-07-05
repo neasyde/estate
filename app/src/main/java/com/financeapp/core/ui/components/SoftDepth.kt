@@ -27,7 +27,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.financeapp.core.ui.anim.pressScale
 import com.financeapp.core.ui.icons.materialIcon
-import com.financeapp.core.ui.theme.EyebrowStyle
+import com.financeapp.core.ui.theme.LocalBrandType
 import com.financeapp.core.ui.theme.PillShape
 
 /**
@@ -82,7 +82,7 @@ fun StatPill(
         Icon(materialIcon(icon), contentDescription = null, tint = contentColor, modifier = Modifier.size(18.dp))
         Spacer(Modifier.width(8.dp))
         Column {
-            Text(label.uppercase(), style = EyebrowStyle, color = contentColor.copy(alpha = 0.72f))
+            Text(label.uppercase(), style = LocalBrandType.current.eyebrow, color = contentColor.copy(alpha = 0.72f))
             Text(
                 text = value,
                 style = MaterialTheme.typography.titleSmall,

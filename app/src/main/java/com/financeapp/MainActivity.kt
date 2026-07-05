@@ -31,7 +31,12 @@ class MainActivity : AppCompatActivity() {
             val settings by vm.settings.collectAsStateWithLifecycle()
             val effective = settings ?: AppSettings()
 
-            FinanceTheme(themeMode = effective.themeMode, colorScheme = effective.colorScheme) {
+            FinanceTheme(
+                themeMode = effective.themeMode,
+                colorScheme = effective.colorScheme,
+                appFont = effective.appFont,
+                fontSize = effective.fontSize,
+            ) {
                 CompositionLocalProvider(
                     LocalShowDecimals provides effective.showDecimals,
                     LocalAnimationsEnabled provides effective.animationsEnabled,

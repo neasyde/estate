@@ -24,6 +24,8 @@ object SettingsKeys {
     val RATES_UPDATED_AT = longPreferencesKey("rates_updated_at")
     val AUTO_REFRESH = booleanPreferencesKey("auto_refresh_rates")
     val RATES_INTERVAL = intPreferencesKey("rates_interval_hours")
+    val APP_FONT = stringPreferencesKey("app_font")
+    val FONT_SIZE = stringPreferencesKey("font_size")
     val SHOW_DECIMALS = booleanPreferencesKey("show_decimals")
     val DEFAULT_TX_TYPE = stringPreferencesKey("default_tx_type")
     val ANIMATIONS = booleanPreferencesKey("animations_enabled")

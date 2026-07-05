@@ -8,8 +8,8 @@ import androidx.compose.ui.text.font.FontWeight
 import com.financeapp.core.domain.model.Currency
 import com.financeapp.core.ui.LocalShowDecimals
 import com.financeapp.core.ui.theme.ExpenseRed
-import com.financeapp.core.ui.theme.FrauncesTitle
 import com.financeapp.core.ui.theme.IncomeGreen
+import com.financeapp.core.ui.theme.LocalBrandType
 import com.financeapp.core.utils.CurrencyFormatter
 
 @Composable
@@ -23,7 +23,7 @@ fun AmountText(
     Text(
         text = sign + CurrencyFormatter.format(amount, currency, LocalShowDecimals.current),
         color = if (income) IncomeGreen else ExpenseRed,
-        style = style.copy(fontFamily = FrauncesTitle),
+        style = style.copy(fontFamily = LocalBrandType.current.title),
         fontWeight = FontWeight.Normal,
     )
 }

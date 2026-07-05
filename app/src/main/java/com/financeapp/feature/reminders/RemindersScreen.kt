@@ -37,7 +37,7 @@ import com.financeapp.core.ui.components.Eyebrow
 import com.financeapp.core.ui.components.EmptyState
 import com.financeapp.core.ui.components.Hairline
 import com.financeapp.core.ui.icons.materialIcon
-import com.financeapp.core.ui.theme.FrauncesTitle
+import com.financeapp.core.ui.theme.LocalBrandType
 import com.financeapp.core.ui.LocalShowDecimals
 import com.financeapp.core.utils.CurrencyFormatter
 
@@ -114,7 +114,7 @@ private fun ReminderCard(r: Reminder, onEdit: () -> Unit, onDelete: () -> Unit) 
         r.amount?.let {
             Text(
                 text = CurrencyFormatter.format(it, r.currency ?: Currency.RUB, LocalShowDecimals.current),
-                style = MaterialTheme.typography.titleSmall.copy(fontFamily = FrauncesTitle),
+                style = MaterialTheme.typography.titleSmall.copy(fontFamily = LocalBrandType.current.title),
             )
         }
         IconButton(onClick = onDelete) {

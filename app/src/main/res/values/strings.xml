@@ -90,6 +90,16 @@
     <string name="set_scheme_orange">Amber</string>
     <string name="set_scheme_indigo">Indigo</string>
     <string name="set_scheme_terracotta">Terracotta</string>
+    <string name="set_typography">Font</string>
+    <string name="set_font_family">Typeface</string>
+    <string name="set_font_branded">Branded</string>
+    <string name="set_font_system">System</string>
+    <string name="set_font_size">Text size</string>
+    <string name="set_font_size_s">S</string>
+    <string name="set_font_size_m">M</string>
+    <string name="set_font_size_l">L</string>
+    <string name="set_font_size_xl">XL</string>
+    <string name="set_font_preview">Aa — Sample text 123</string>
     <string name="set_language">Language</string>
     <string name="set_finance">Finance</string>
     <string name="set_base_currency">Base currency</string>

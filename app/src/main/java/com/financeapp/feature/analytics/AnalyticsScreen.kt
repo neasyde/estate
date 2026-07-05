@@ -51,8 +51,8 @@ import com.financeapp.core.ui.components.EmptyState
 import com.financeapp.core.ui.components.Eyebrow
 import com.financeapp.core.ui.components.Hairline
 import com.financeapp.core.ui.theme.ExpenseRed
-import com.financeapp.core.ui.theme.FrauncesTitle
 import com.financeapp.core.ui.theme.IncomeGreen
+import com.financeapp.core.ui.theme.LocalBrandType
 import com.financeapp.core.ui.theme.PillShape
 import com.financeapp.core.utils.CurrencyFormatter
 import kotlin.math.max
@@ -109,7 +109,7 @@ private fun Summary(data: AnalyticsData, currency: Currency) {
             val net = data.income - data.expense
             Text(
                 text = CurrencyFormatter.format(net, currency, LocalShowDecimals.current),
-                style = MaterialTheme.typography.titleLarge.copy(fontFamily = FrauncesTitle, fontSize = 18.sp),
+                style = MaterialTheme.typography.titleLarge.copy(fontFamily = LocalBrandType.current.title, fontSize = 18.sp),
                 color = if (net >= 0) IncomeGreen else ExpenseRed,
             )
         }
@@ -147,7 +147,7 @@ private fun CategoryBar(slice: CategorySlice, currency: Currency) {
         Spacer(Modifier.width(12.dp))
         Text(
             text = CurrencyFormatter.format(slice.amount, currency, LocalShowDecimals.current),
-            style = MaterialTheme.typography.titleSmall.copy(fontFamily = FrauncesTitle),
+            style = MaterialTheme.typography.titleSmall.copy(fontFamily = LocalBrandType.current.title),
             color = MaterialTheme.colorScheme.onSurface,
         )
     }
@@ -171,7 +171,7 @@ private fun Trend(buckets: List<TrendBucket>, currency: Currency) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
                     selected.label,
-                    style = MaterialTheme.typography.titleSmall.copy(fontFamily = FrauncesTitle),
+                    style = MaterialTheme.typography.titleSmall.copy(fontFamily = LocalBrandType.current.title),
                     color = MaterialTheme.colorScheme.onBackground,
                 )
                 Spacer(Modifier.weight(1f))

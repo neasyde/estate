@@ -10,7 +10,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.financeapp.R
-import com.financeapp.core.ui.theme.EyebrowStyle
+import com.financeapp.core.ui.theme.LocalBrandType
 
 /** Tracked-out uppercase label — the editorial layout's structural device. */
 @Composable
@@ -19,7 +19,7 @@ fun Eyebrow(
     modifier: Modifier = Modifier,
     color: Color = MaterialTheme.colorScheme.onSurfaceVariant,
 ) {
-    Text(text = text.uppercase(), style = EyebrowStyle, color = color, modifier = modifier)
+    Text(text = text.uppercase(), style = LocalBrandType.current.eyebrow, color = color, modifier = modifier)
 }
 
 /** 1px hairline rule. */

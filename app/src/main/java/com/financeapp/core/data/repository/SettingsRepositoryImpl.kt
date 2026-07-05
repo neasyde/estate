@@ -4,6 +4,8 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import com.financeapp.core.data.datastore.SettingsKeys
+import com.financeapp.core.domain.model.AppFont
+import com.financeapp.core.domain.model.AppFontSize
 import com.financeapp.core.domain.model.AppLanguage
 import com.financeapp.core.domain.model.AppSettings
 import com.financeapp.core.domain.model.AutoLock
@@ -36,6 +38,8 @@ class SettingsRepositoryImpl @Inject constructor(
             ratesUpdatedAt = p[SettingsKeys.RATES_UPDATED_AT] ?: def.ratesUpdatedAt,
             autoRefreshRates = p[SettingsKeys.AUTO_REFRESH] ?: def.autoRefreshRates,
             ratesIntervalHours = p[SettingsKeys.RATES_INTERVAL] ?: def.ratesIntervalHours,
+            appFont = p[SettingsKeys.APP_FONT]?.let { runCatching { AppFont.valueOf(it) }.getOrNull() } ?: def.appFont,
+            fontSize = p[SettingsKeys.FONT_SIZE]?.let { runCatching { AppFontSize.valueOf(it) }.getOrNull() } ?: def.fontSize,
             showDecimals = p[SettingsKeys.SHOW_DECIMALS] ?: def.showDecimals,
             defaultTxType = p[SettingsKeys.DEFAULT_TX_TYPE]?.let { TransactionType.valueOf(it) } ?: def.defaultTxType,
             animationsEnabled = p[SettingsKeys.ANIMATIONS] ?: def.animationsEnabled,
@@ -100,6 +104,14 @@ class SettingsRepositoryImpl @Inject constructor(
 
     override suspend fun setOnboardingCompleted(b: Boolean) {
         dataStore.edit { it[SettingsKeys.ONBOARDING] = b }
+    }
+
+    override suspend fun setAppFont(f: AppFont) {
+        dataStore.edit { it[SettingsKeys.APP_FONT] = f.name }
+    }
+
+    override suspend fun setFontSize(s: AppFontSize) {
+        dataStore.edit { it[SettingsKeys.FONT_SIZE] = s.name }
     }
 
     override suspend fun setShowDecimals(b: Boolean) {
