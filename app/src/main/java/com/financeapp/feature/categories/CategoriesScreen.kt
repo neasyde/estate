@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -27,7 +28,6 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -37,7 +37,6 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
@@ -51,7 +50,6 @@ import com.financeapp.core.ui.components.CategoryIcon
 import com.financeapp.core.ui.components.Eyebrow
 import com.financeapp.core.ui.components.Hairline
 import com.financeapp.core.ui.icons.materialIcon
-import kotlin.math.roundToInt
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -89,57 +87,59 @@ fun CategoriesScreen(onBack: () -> Unit, vm: CategoriesViewModel = hiltViewModel
                     text = { Text(stringResource(R.string.cat_tab_income)) },
                 )
             }
+            val listState = rememberLazyListState()
             var order by remember(cats) { mutableStateOf(cats) }
             var draggingId by remember { mutableStateOf<Long?>(null) }
-            var startIndex by remember { mutableIntStateOf(-1) }
-            var dragTotalY by remember { mutableFloatStateOf(0f) }
-            var itemHeightPx by remember { mutableFloatStateOf(0f) }
+            // Visual offset of the dragged row from its settled slot (follows the finger).
+            var dragDelta by remember { mutableFloatStateOf(0f) }
             LazyColumn(
-                Modifier.fillMaxSize(),
+                state = listState,
+                modifier = Modifier.fillMaxSize(),
                 contentPadding = PaddingValues(vertical = 8.dp),
             ) {
                 itemsIndexed(order, key = { _, c -> c.id }) { i, c ->
                     val dragging = c.id == draggingId
-                    // The whole item (row + hairline) is the drag unit: it lifts above the rest and
-                    // follows the finger, while the displaced rows glide via animateItem().
+                    // Dragged row: lift it and translate with the finger (no item animation).
+                    // Every other row keeps animateItem() so it glides when displaced.
                     Column(
-                        Modifier
-                            .then(if (dragging) Modifier else Modifier.animateItem())
-                            .onSizeChanged { itemHeightPx = it.height.toFloat() }
-                            .zIndex(if (dragging) 1f else 0f)
-                            .graphicsLayer {
-                                // Position from the absolute drag distance, not incremental swaps,
-                                // so the row never oscillates when it sits near a slot boundary.
-                                translationY = if (dragging && itemHeightPx > 0f) {
-                                    val cur = order.indexOfFirst { it.id == draggingId }
-                                    dragTotalY - (cur - startIndex) * itemHeightPx
-                                } else {
-                                    0f
-                                }
-                            },
+                        if (dragging) {
+                            Modifier.zIndex(1f).graphicsLayer { translationY = dragDelta }
+                        } else {
+                            Modifier.animateItem()
+                        },
                     ) {
                         CategoryManageRow(
                             category = c,
                             dragging = dragging,
                             handleModifier = Modifier.pointerInput(c.id) {
                                 detectDragGesturesAfterLongPress(
-                                    onDragStart = {
-                                        draggingId = c.id
-                                        startIndex = order.indexOfFirst { it.id == c.id }
-                                        dragTotalY = 0f
-                                    },
-                                    onDragEnd = { vm.reorder(order.map { it.id }); draggingId = null },
-                                    onDragCancel = { draggingId = null },
+                                    onDragStart = { draggingId = c.id; dragDelta = 0f },
+                                    onDragEnd = { vm.reorder(order.map { it.id }); draggingId = null; dragDelta = 0f },
+                                    onDragCancel = { draggingId = null; dragDelta = 0f },
                                     onDrag = { change, amt ->
                                         change.consume()
-                                        dragTotalY += amt.y
-                                        val h = itemHeightPx
-                                        if (h > 0f && startIndex >= 0) {
-                                            val cur = order.indexOfFirst { it.id == draggingId }
-                                            val target = (startIndex + (dragTotalY / h).roundToInt())
-                                                .coerceIn(0, order.lastIndex)
-                                            if (cur >= 0 && target != cur) {
-                                                order = order.toMutableList().also { it.add(target, it.removeAt(cur)) }
+                                        dragDelta += amt.y
+                                        // Swap based on real laid-out positions: reorder only when
+                                        // the dragged row's centre enters a neighbour's bounds. This
+                                        // has natural hysteresis, so it can't jitter at boundaries.
+                                        val info = listState.layoutInfo.visibleItemsInfo
+                                        val self = info.firstOrNull { it.key == c.id }
+                                        if (self != null) {
+                                            val center = self.offset + dragDelta + self.size / 2f
+                                            val over = info.firstOrNull { other ->
+                                                other.key != c.id &&
+                                                    center.toInt() in other.offset..(other.offset + other.size)
+                                            }
+                                            val toId = over?.key as? Long
+                                            if (toId != null) {
+                                                val from = order.indexOfFirst { it.id == c.id }
+                                                val to = order.indexOfFirst { it.id == toId }
+                                                if (from != -1 && to != -1 && from != to) {
+                                                    order = order.toMutableList().also { it.add(to, it.removeAt(from)) }
+                                                    // Keep the row under the finger: its settled slot
+                                                    // moves from self.offset to the neighbour's offset.
+                                                    dragDelta += (self.offset - over.offset).toFloat()
+                                                }
                                             }
                                         }
                                     },

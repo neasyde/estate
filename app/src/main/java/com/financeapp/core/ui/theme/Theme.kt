@@ -44,11 +44,17 @@ val LocalAccentColors = staticCompositionLocalOf {
 // Nudge a neutral toward the accent so background/surfaces/hairlines carry the theme's hue.
 private fun tint(base: Color, accent: Color, fraction: Float) = lerp(base, accent, fraction)
 
+// The secondary/tertiary containers, surface tint and inverse primary are set explicitly: left
+// unset they fall back to Material's baseline purple, which leaked into FilterChips (type/currency
+// chips), the time picker and snackbar actions. Tie them all to the accent so nothing reads violet.
 private fun lightScheme(a: Accent) = lightColorScheme(
     primary = a.primary, onPrimary = Color.White,
     secondary = a.secondary, onSecondary = Color.White,
     tertiary = a.tertiary, onTertiary = Color.White,
     primaryContainer = a.containerLight, onPrimaryContainer = a.primary,
+    secondaryContainer = a.containerLight, onSecondaryContainer = a.primary,
+    tertiaryContainer = a.containerLight, onTertiaryContainer = a.primary,
+    surfaceTint = a.primary, inversePrimary = a.tertiary,
     background = tint(PaperLight, a.primary, 0.04f), onBackground = InkLight,
     surface = tint(SurfaceLight, a.primary, 0.03f), onSurface = InkLight,
     surfaceVariant = tint(SurfaceVariantLight, a.primary, 0.11f), onSurfaceVariant = InkMutedLight,
@@ -61,6 +67,9 @@ private fun darkScheme(a: Accent) = darkColorScheme(
     secondary = a.secondary, onSecondary = Color.White,
     tertiary = a.tertiary, onTertiary = Color.Black,
     primaryContainer = a.containerDark, onPrimaryContainer = Color.White,
+    secondaryContainer = a.containerDark, onSecondaryContainer = Color.White,
+    tertiaryContainer = a.containerDark, onTertiaryContainer = Color.White,
+    surfaceTint = a.tertiary, inversePrimary = a.primary,
     background = tint(PaperDark, a.primary, 0.06f), onBackground = InkDark,
     surface = tint(SurfaceDark, a.primary, 0.07f), onSurface = InkDark,
     surfaceVariant = tint(SurfaceVariantDark, a.primary, 0.14f), onSurfaceVariant = InkMutedDark,

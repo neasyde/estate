@@ -1,6 +1,7 @@
 package com.financeapp.feature.transactions
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -111,8 +112,13 @@ fun AddEditTransactionSheet(
             LazyRow(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
                 items(categories, key = { it.id }) { cat ->
                     val sel = form.categoryId == cat.id
+                    val interaction = remember { MutableInteractionSource() }
                     Column(
-                        modifier = Modifier.clickable { vm.setCategory(cat.id) }.padding(4.dp),
+                        // No indication: a default ripple here draws an ugly rectangular hitbox
+                        // around the icon+label. Selection is shown by the icon growing instead.
+                        modifier = Modifier
+                            .clickable(interactionSource = interaction, indication = null) { vm.setCategory(cat.id) }
+                            .padding(4.dp),
                         horizontalAlignment = Alignment.CenterHorizontally,
                     ) {
                         CategoryIcon(cat, size = if (sel) 52.dp else 44.dp)
