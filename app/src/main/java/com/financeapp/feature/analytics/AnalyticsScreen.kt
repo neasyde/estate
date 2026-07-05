@@ -39,7 +39,7 @@ import com.financeapp.core.domain.model.AnalyticsData
 import com.financeapp.core.domain.model.AnalyticsPeriod
 import com.financeapp.core.domain.model.CategorySlice
 import com.financeapp.core.domain.model.Currency
-import com.financeapp.core.domain.model.MonthTotals
+import com.financeapp.core.domain.model.TrendBucket
 import com.financeapp.core.ui.LocalShowDecimals
 import com.financeapp.core.ui.anim.Motion
 import com.financeapp.core.ui.anim.Reveal
@@ -54,7 +54,6 @@ import com.financeapp.core.ui.theme.FrauncesTitle
 import com.financeapp.core.ui.theme.IncomeGreen
 import com.financeapp.core.ui.theme.PillShape
 import com.financeapp.core.utils.CurrencyFormatter
-import com.financeapp.core.utils.DateUtils
 import kotlin.math.max
 import kotlin.math.roundToInt
 
@@ -65,7 +64,7 @@ fun AnalyticsScreen(vm: AnalyticsViewModel = hiltViewModel()) {
     val rolling by vm.rolling.collectAsStateWithLifecycle()
     val currency by vm.baseCurrency.collectAsStateWithLifecycle()
 
-    val hasData = data.slices.isNotEmpty() || data.months.any { it.income > 0 || it.expense > 0 }
+    val hasData = data.slices.isNotEmpty() || data.trend.any { it.income > 0 || it.expense > 0 }
 
     Column(Modifier.fillMaxWidth().verticalScroll(rememberScrollState()).padding(horizontal = 20.dp)) {
         Spacer(Modifier.height(20.dp))
@@ -85,7 +84,7 @@ fun AnalyticsScreen(vm: AnalyticsViewModel = hiltViewModel()) {
             Spacer(Modifier.height(20.dp)); Hairline(); Spacer(Modifier.height(20.dp))
             Reveal(1) { CategoryBreakdown(data, currency) }
             Spacer(Modifier.height(20.dp)); Hairline(); Spacer(Modifier.height(20.dp))
-            Reveal(2) { Trend(data.months) }
+            Reveal(2) { Trend(data.trend) }
         }
         Spacer(Modifier.height(28.dp))
     }
@@ -156,8 +155,8 @@ private fun CategoryBar(slice: CategorySlice, currency: Currency) {
 }
 
 @Composable
-private fun Trend(months: List<MonthTotals>) {
-    val peak = months.maxOfOrNull { max(it.income, it.expense) } ?: 0.0
+private fun Trend(buckets: List<TrendBucket>) {
+    val peak = buckets.maxOfOrNull { max(it.income, it.expense) } ?: 0.0
     Column {
         Eyebrow(stringResource(R.string.an_trend))
         Spacer(Modifier.height(4.dp))
@@ -166,13 +165,13 @@ private fun Trend(months: List<MonthTotals>) {
         }
         Spacer(Modifier.height(16.dp))
         Row(Modifier.fillMaxWidth().height(150.dp), verticalAlignment = Alignment.Bottom) {
-            months.forEach { m ->
+            buckets.forEach { b ->
                 Column(Modifier.weight(1f), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Bottom) {
                     Row(verticalAlignment = Alignment.Bottom, horizontalArrangement = Arrangement.spacedBy(3.dp)) {
-                        Bar(m.income, peak, IncomeGreen); Bar(m.expense, peak, ExpenseRed)
+                        Bar(b.income, peak, IncomeGreen); Bar(b.expense, peak, ExpenseRed)
                     }
                     Spacer(Modifier.height(8.dp))
-                    Text(DateUtils.monthLabel(m.monthStart), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text(b.label, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 1)
                 }
             }
         }

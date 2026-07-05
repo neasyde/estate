@@ -22,6 +22,7 @@ import com.financeapp.R
 import com.financeapp.core.domain.model.TransactionType
 import com.financeapp.core.domain.model.TransactionWithCategory
 import com.financeapp.core.ui.categoryDisplayName
+import com.financeapp.core.utils.DateUtils
 
 @Composable
 fun TransactionRow(
@@ -48,15 +49,16 @@ fun TransactionRow(
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
-            if (!tx.note.isNullOrBlank()) {
-                Text(
-                    text = tx.note,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
-            }
+            // Always show the time; append the note after it when present.
+            val time = remember(tx.date) { DateUtils.timeLabel(tx.date) }
+            val subtitle = if (tx.note.isNullOrBlank()) time else "$time · ${tx.note}"
+            Text(
+                text = subtitle,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
         }
         Spacer(Modifier.width(8.dp))
         AmountText(

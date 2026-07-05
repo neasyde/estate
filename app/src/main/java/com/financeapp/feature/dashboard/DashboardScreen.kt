@@ -2,7 +2,6 @@ package com.financeapp.feature.dashboard
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -17,10 +16,12 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -67,8 +68,14 @@ fun DashboardScreen(
     var reminderSheetOpen by remember { mutableStateOf(false) }
     var editingReminder by remember { mutableStateOf<Reminder?>(null) }
 
-    Box(Modifier.fillMaxSize()) {
-        Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
+    Scaffold(
+        floatingActionButton = {
+            FloatingActionButton(onClick = { editTxId = null; sheetOpen = true }) {
+                Icon(materialIcon("add"), contentDescription = null)
+            }
+        },
+    ) { padding ->
+        Column(Modifier.fillMaxSize().padding(padding).verticalScroll(rememberScrollState())) {
             Spacer(Modifier.height(16.dp))
             Masthead(data.balanceBase, data.monthIncomeBase, data.monthExpenseBase, baseCurrency, hidden, vm::toggleBalanceHidden)
 
@@ -90,13 +97,17 @@ fun DashboardScreen(
                     Eyebrow(stringResource(R.string.dash_recent), modifier = Modifier.padding(horizontal = 20.dp))
                     Spacer(Modifier.height(6.dp))
                     data.recent.forEachIndexed { i, item ->
-                        Reveal(i) {
-                            SwipeTransactionRow(
-                                item = item,
-                                onDelete = { vm.deleteTransaction(item.transaction.id) },
-                                onDuplicate = { vm.duplicateTransaction(item.transaction.id) },
-                                onClick = { editTxId = item.transaction.id; sheetOpen = true },
-                            )
+                        // Key by transaction id so each row's swipe state follows its transaction
+                        // when the list mutates (delete/duplicate) instead of being reused by index.
+                        key(item.transaction.id) {
+                            Reveal(i) {
+                                SwipeTransactionRow(
+                                    item = item,
+                                    onDelete = { vm.deleteTransaction(item.transaction.id) },
+                                    onDuplicate = { vm.duplicateTransaction(item.transaction.id) },
+                                    onClick = { editTxId = item.transaction.id; sheetOpen = true },
+                                )
+                            }
                         }
                     }
                     TextButton(onClick = onSeeAll, modifier = Modifier.fillMaxWidth().padding(top = 6.dp)) {
@@ -105,13 +116,6 @@ fun DashboardScreen(
                 }
             }
             Spacer(Modifier.height(96.dp))
-        }
-
-        FloatingActionButton(
-            onClick = { editTxId = null; sheetOpen = true },
-            modifier = Modifier.align(Alignment.BottomEnd).padding(20.dp),
-        ) {
-            Icon(materialIcon("add"), contentDescription = null)
         }
     }
 

@@ -13,6 +13,7 @@ import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -34,15 +35,17 @@ fun SwipeTransactionRow(
     onDuplicate: () -> Unit,
     onClick: () -> Unit,
 ) {
-    val dismissState = rememberSwipeToDismissBoxState(
-        confirmValueChange = { value ->
-            when (value) {
-                SwipeToDismissBoxValue.EndToStart -> { onDelete(); false }
-                SwipeToDismissBoxValue.StartToEnd -> { onDuplicate(); false }
-                else -> false
-            }
-        },
-    )
+    val dismissState = rememberSwipeToDismissBoxState()
+    // Let the swipe fully settle, fire the action, then snap the row back to center. Returning
+    // false from confirmValueChange (the old approach) left a stale drag offset that jammed the
+    // row after a swipe or two — resetting from the settled value keeps every swipe responsive.
+    LaunchedEffect(dismissState.currentValue) {
+        when (dismissState.currentValue) {
+            SwipeToDismissBoxValue.EndToStart -> { onDelete(); dismissState.reset() }
+            SwipeToDismissBoxValue.StartToEnd -> { onDuplicate(); dismissState.reset() }
+            SwipeToDismissBoxValue.Settled -> {}
+        }
+    }
     SwipeToDismissBox(
         state = dismissState,
         backgroundContent = {

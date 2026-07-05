@@ -3,7 +3,7 @@ package com.financeapp.core.domain.usecase
 import com.financeapp.core.domain.model.AnalyticsData
 import com.financeapp.core.domain.model.AnalyticsPeriod
 import com.financeapp.core.domain.model.CategorySlice
-import com.financeapp.core.domain.model.MonthTotals
+import com.financeapp.core.domain.model.TrendBucket
 import com.financeapp.core.domain.model.Transaction
 import com.financeapp.core.domain.model.TransactionType
 import com.financeapp.core.domain.repository.CategoryRepository
@@ -23,6 +23,17 @@ fun analyticsStart(now: Long, period: AnalyticsPeriod, rolling: Boolean): Long =
     AnalyticsPeriod.WEEK -> if (rolling) now - 7 * DAY_MS else DateUtils.startOfWeek(now)
     AnalyticsPeriod.MONTH -> if (rolling) now - 30 * DAY_MS else DateUtils.startOfMonth(now)
     AnalyticsPeriod.YEAR -> if (rolling) now - 365 * DAY_MS else DateUtils.startOfYear(now)
+}
+
+/** The bucket unit the trend chart uses for each period. */
+private enum class TrendUnit { DAY, WEEK, MONTH }
+
+/** How many buckets of which unit the trend shows so it matches the selected period's scope. */
+private fun trendSpec(period: AnalyticsPeriod): Pair<TrendUnit, Int> = when (period) {
+    AnalyticsPeriod.WEEK -> TrendUnit.DAY to 7
+    AnalyticsPeriod.MONTH -> TrendUnit.WEEK to 5
+    AnalyticsPeriod.YEAR -> TrendUnit.MONTH to 12
+    AnalyticsPeriod.ALL -> TrendUnit.MONTH to 12
 }
 
 class GetAnalyticsDataUseCase @Inject constructor(
@@ -49,16 +60,31 @@ class GetAnalyticsDataUseCase @Inject constructor(
                 }
                 .sortedByDescending { it.amount }
 
-            val months = DateUtils.lastNMonthStarts(now, 6).map { m ->
-                val next = DateUtils.startOfNextMonth(m)
-                val monthTx = txs.filter { it.date in m until next }
-                MonthTotals(
-                    monthStart = m,
-                    income = monthTx.filter { it.type == TransactionType.INCOME }.sumOf { base(it) },
-                    expense = monthTx.filter { it.type == TransactionType.EXPENSE }.sumOf { base(it) },
+            val (unit, count) = trendSpec(period)
+            val starts = when (unit) {
+                TrendUnit.DAY -> DateUtils.lastNDayStarts(now, count)
+                TrendUnit.WEEK -> DateUtils.lastNWeekStarts(now, count)
+                TrendUnit.MONTH -> DateUtils.lastNMonthStarts(now, count)
+            }
+            val trend = starts.map { bucketStart ->
+                val next = when (unit) {
+                    TrendUnit.DAY -> DateUtils.startOfNextDay(bucketStart)
+                    TrendUnit.WEEK -> DateUtils.startOfNextWeek(bucketStart)
+                    TrendUnit.MONTH -> DateUtils.startOfNextMonth(bucketStart)
+                }
+                val bucketTx = txs.filter { it.date in bucketStart until next }
+                TrendBucket(
+                    start = bucketStart,
+                    label = when (unit) {
+                        TrendUnit.DAY -> DateUtils.weekdayLabel(bucketStart)
+                        TrendUnit.WEEK -> DateUtils.dayOfMonthLabel(bucketStart)
+                        TrendUnit.MONTH -> DateUtils.monthLabel(bucketStart)
+                    },
+                    income = bucketTx.filter { it.type == TransactionType.INCOME }.sumOf { base(it) },
+                    expense = bucketTx.filter { it.type == TransactionType.EXPENSE }.sumOf { base(it) },
                 )
             }
 
-            AnalyticsData(income, expense, slices, months)
+            AnalyticsData(income, expense, slices, trend)
         }
 }

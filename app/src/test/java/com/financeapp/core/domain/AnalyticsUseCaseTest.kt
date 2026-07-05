@@ -45,10 +45,10 @@ class AnalyticsUseCaseTest {
         assertThat(d.slices[0].amount).isWithin(0.001).of(190.0)
         assertThat(d.slices[0].fraction).isWithin(0.001).of(0.95)
         assertThat(d.slices[1].amount).isWithin(0.001).of(10.0)
-        // Six month buckets; current month holds this data.
-        assertThat(d.months).hasSize(6)
-        assertThat(d.months.last().income).isWithin(0.001).of(500.0)
-        assertThat(d.months.last().expense).isWithin(0.001).of(200.0)
+        // Month period => five weekly trend buckets; the current week holds this data.
+        assertThat(d.trend).hasSize(5)
+        assertThat(d.trend.last().income).isWithin(0.001).of(500.0)
+        assertThat(d.trend.last().expense).isWithin(0.001).of(200.0)
     }
 
     @Test fun allPeriodIncludesTransactionsBeforeThisMonth() = runTest {
