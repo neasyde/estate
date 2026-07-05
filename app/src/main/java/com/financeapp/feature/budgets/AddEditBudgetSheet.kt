@@ -1,6 +1,7 @@
 package com.financeapp.feature.budgets
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -22,6 +23,7 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -57,7 +59,11 @@ fun AddEditBudgetSheet(
 
     LaunchedEffect(initial) { vm.load(initial, defaultCurrency) }
 
-    ModalBottomSheet(onDismissRequest = onDismiss, sheetState = sheetState) {
+    ModalBottomSheet(
+        onDismissRequest = onDismiss,
+        sheetState = sheetState,
+        containerColor = MaterialTheme.colorScheme.background,
+    ) {
         Column(Modifier.padding(horizontal = 16.dp).padding(bottom = 24.dp)) {
             Text(
                 stringResource(if (form.id == null) R.string.budget_new else R.string.budget_edit),
@@ -70,8 +76,13 @@ fun AddEditBudgetSheet(
             LazyRow(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
                 items(categories, key = { it.id }) { cat ->
                     val sel = form.categoryId == cat.id
+                    val interaction = remember { MutableInteractionSource() }
                     Column(
-                        modifier = Modifier.clickable { vm.setCategory(cat.id) }.padding(4.dp),
+                        // No indication: the default ripple draws an ugly rectangular hitbox around
+                        // the icon+label. Selection is shown by the icon growing instead.
+                        modifier = Modifier
+                            .clickable(interactionSource = interaction, indication = null) { vm.setCategory(cat.id) }
+                            .padding(4.dp),
                         horizontalAlignment = Alignment.CenterHorizontally,
                     ) {
                         CategoryIcon(cat, size = if (sel) 52.dp else 44.dp)

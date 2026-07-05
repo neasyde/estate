@@ -211,6 +211,7 @@ fun AddEditTransactionSheet(
         )
         androidx.compose.material3.AlertDialog(
             onDismissRequest = { showTime = false },
+            containerColor = androidx.compose.material3.MaterialTheme.colorScheme.background,
             confirmButton = {
                 TextButton(onClick = { vm.setTime(timeState.hour, timeState.minute); showTime = false }) {
                     Text(stringResource(R.string.action_done))

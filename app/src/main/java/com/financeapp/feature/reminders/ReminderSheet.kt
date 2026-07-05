@@ -228,6 +228,7 @@ fun AddEditReminderSheet(
         )
         androidx.compose.material3.AlertDialog(
             onDismissRequest = { showTimePicker = false },
+            containerColor = MaterialTheme.colorScheme.background,
             confirmButton = {
                 TextButton(onClick = {
                     minuteOfDay = state.hour * 60 + state.minute

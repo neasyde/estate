@@ -136,19 +136,20 @@ fun CategoriesScreen(onBack: () -> Unit, vm: CategoriesViewModel = hiltViewModel
                                     onDrag = { change, amt ->
                                         change.consume()
                                         draggedDistance += amt.y
-                                        // Swap when the dragged row's centre — pinned to the finger,
-                                        // not to the shifting layout — enters another row's bounds.
+                                        // Centre of the dragged row, pinned to the finger (not to the
+                                        // shifting layout). Swap one step only once it passes the
+                                        // neighbour's MIDPOINT — that half-row hysteresis means small
+                                        // finger tremor at a boundary can't flip the order back and forth.
                                         val center = startOffset + draggedDistance + startSize / 2f
-                                        val over = listState.layoutInfo.visibleItemsInfo.firstOrNull { other ->
-                                            other.key != c.id &&
-                                                center.toInt() in other.offset..(other.offset + other.size)
-                                        }
-                                        val toId = over?.key as? Long
-                                        if (toId != null) {
-                                            val from = order.indexOfFirst { it.id == c.id }
-                                            val to = order.indexOfFirst { it.id == toId }
-                                            if (from != -1 && to != -1 && from != to) {
-                                                order = order.toMutableList().also { it.add(to, it.removeAt(from)) }
+                                        val visible = listState.layoutInfo.visibleItemsInfo
+                                        val from = order.indexOfFirst { it.id == c.id }
+                                        if (from != -1) {
+                                            val below = order.getOrNull(from + 1)?.id?.let { id -> visible.firstOrNull { it.key == id } }
+                                            val above = order.getOrNull(from - 1)?.id?.let { id -> visible.firstOrNull { it.key == id } }
+                                            if (below != null && center > below.offset + below.size / 2f) {
+                                                order = order.toMutableList().also { it.add(from + 1, it.removeAt(from)) }
+                                            } else if (above != null && center < above.offset + above.size / 2f) {
+                                                order = order.toMutableList().also { it.add(from - 1, it.removeAt(from)) }
                                             }
                                         }
                                     },
