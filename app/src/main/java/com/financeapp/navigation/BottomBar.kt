@@ -21,7 +21,7 @@ private val bottomItems = listOf(
     BottomItem(Routes.TRANSACTIONS, "receipt_long", R.string.nav_transactions),
     BottomItem(Routes.BUDGETS, "savings", R.string.nav_budgets),
     BottomItem(Routes.ANALYTICS, "bar_chart", R.string.nav_analytics),
-    BottomItem(Routes.SETTINGS, "more_horiz", R.string.nav_more),
+    BottomItem(Routes.SETTINGS, "settings", R.string.nav_more),
 )
 
 @Composable

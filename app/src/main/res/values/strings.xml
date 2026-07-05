@@ -196,7 +196,7 @@
     <string name="restore_ok">Data restored</string>
     <string name="restore_fail">Couldn\'t read that backup file</string>
     <string name="action_ok">OK</string>
-    <string name="nav_more">More</string>
+    <string name="nav_more">Settings</string>
 
     <!-- expanded settings -->
     <string name="set_display">Display</string>

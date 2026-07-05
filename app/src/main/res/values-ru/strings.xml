@@ -187,7 +187,7 @@
     <string name="restore_ok">Данные восстановлены</string>
     <string name="restore_fail">Не удалось прочитать файл копии</string>
     <string name="action_ok">OK</string>
-    <string name="nav_more">Ещё</string>
+    <string name="nav_more">Настройки</string>
 
     <!-- expanded settings -->
     <string name="set_display">Отображение</string>

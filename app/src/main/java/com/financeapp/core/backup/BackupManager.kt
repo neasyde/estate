@@ -2,6 +2,7 @@ package com.financeapp.core.backup
 
 import android.content.Context
 import android.net.Uri
+import com.financeapp.core.data.local.DatabaseSeed
 import com.financeapp.core.data.local.FinanceDatabase
 import com.financeapp.core.domain.model.AppLanguage
 import com.financeapp.core.domain.model.ColorScheme
@@ -84,9 +85,13 @@ class BackupManager @Inject constructor(
         }.getOrDefault(false)
     }
 
-    /** Wipes all user data (all Room tables). Settings/PIN are left untouched. */
+    /** Wipes all user data (all Room tables), then re-seeds the default categories. Settings/PIN untouched. */
     suspend fun clearAllData(): Boolean = withContext(Dispatchers.IO) {
-        runCatching { db.clearAllTables(); true }.getOrDefault(false)
+        runCatching {
+            db.clearAllTables()
+            db.categoryDao().insertAll(DatabaseSeed.categories())
+            true
+        }.getOrDefault(false)
     }
 
     private suspend fun restoreSettings(s: SettingsBackup) {
