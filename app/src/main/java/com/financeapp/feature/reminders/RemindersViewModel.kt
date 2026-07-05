@@ -42,8 +42,9 @@ class RemindersViewModel @Inject constructor(
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 9 to 1)
 
     fun save(reminder: Reminder) = viewModelScope.launch {
-        val id = saveReminder(reminder)
-        scheduler.schedule(reminder.copy(id = id))
+        // Scheduling is handled by the reminders flow (onEach scheduleAll); scheduling here too
+        // would am.set the same near-now alarm twice and could deliver it twice.
+        saveReminder(reminder)
     }
 
     fun delete(reminder: Reminder) = viewModelScope.launch {

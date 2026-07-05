@@ -105,8 +105,9 @@ class DashboardViewModel @Inject constructor(
     fun toggleBalanceHidden() = _balanceHidden.update { !it }
 
     fun saveReminder(reminder: Reminder) = viewModelScope.launch {
-        val id = saveReminderUseCase(reminder)
-        scheduler.schedule(reminder.copy(id = id))
+        // The reminders flow re-arms every alarm on each change (onEach scheduleAll), so we do NOT
+        // schedule here as well — a second am.set for a near-now trigger can deliver the alarm twice.
+        saveReminderUseCase(reminder)
     }
 
     fun deleteReminder(reminder: Reminder) = viewModelScope.launch {

@@ -51,6 +51,9 @@ object ReminderNotifications {
             .setAutoCancel(true)
             .setContentIntent(contentIntent)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            // Guard against a re-alert if the same reminder id is posted twice (e.g. the alarm is
+            // delivered more than once): the notification updates silently instead of buzzing again.
+            .setOnlyAlertOnce(true)
             .build()
 
         try {
