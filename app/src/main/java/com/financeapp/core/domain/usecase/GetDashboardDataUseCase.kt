@@ -26,8 +26,13 @@ class GetDashboardDataUseCase @Inject constructor(
 
             val balance = txs.sumOf { if (it.type == TransactionType.INCOME) base(it) else -base(it) }
 
+            // Whole current calendar month (not monthStart..now): [now] is captured once when the
+            // ViewModel is created, so a transaction added a moment later is dated just past it and
+            // would be dropped from the totals until the screen is recreated. Bounding by the month
+            // instead keeps income/expense live as transactions change.
             val monthStart = DateUtils.startOfMonth(now)
-            val monthTx = txs.filter { it.date in monthStart..now }
+            val monthEnd = DateUtils.startOfNextMonth(now)
+            val monthTx = txs.filter { it.date in monthStart until monthEnd }
             val income = monthTx.filter { it.type == TransactionType.INCOME }.sumOf { base(it) }
             val expense = monthTx.filter { it.type == TransactionType.EXPENSE }.sumOf { base(it) }
 

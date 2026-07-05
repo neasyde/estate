@@ -26,6 +26,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -88,46 +89,54 @@ fun CategoriesScreen(onBack: () -> Unit, vm: CategoriesViewModel = hiltViewModel
             }
             var order by remember(cats) { mutableStateOf(cats) }
             var draggingId by remember { mutableStateOf<Long?>(null) }
-            var dragOffsetY by remember { mutableStateOf(0f) }
-            var rowHeightPx by remember { mutableStateOf(0f) }
+            var dragOffsetY by remember { mutableFloatStateOf(0f) }
+            var itemHeightPx by remember { mutableFloatStateOf(0f) }
             LazyColumn(
                 Modifier.fillMaxSize(),
                 contentPadding = PaddingValues(vertical = 8.dp),
             ) {
                 itemsIndexed(order, key = { _, c -> c.id }) { i, c ->
                     val dragging = c.id == draggingId
-                    CategoryManageRow(
-                        category = c,
-                        dragging = dragging,
-                        modifier = Modifier
-                            .onSizeChanged { if (rowHeightPx == 0f) rowHeightPx = it.height.toFloat() }
+                    // The whole item (row + hairline) is the drag unit: it lifts above the rest and
+                    // follows the finger, while the displaced rows glide via animateItem().
+                    Column(
+                        Modifier
+                            .then(if (dragging) Modifier else Modifier.animateItem())
+                            .onSizeChanged { itemHeightPx = it.height.toFloat() }
                             .zIndex(if (dragging) 1f else 0f)
                             .graphicsLayer { translationY = if (dragging) dragOffsetY else 0f },
-                        handleModifier = Modifier.pointerInput(c.id) {
-                            detectDragGesturesAfterLongPress(
-                                onDragStart = { draggingId = c.id; dragOffsetY = 0f },
-                                onDragEnd = { vm.reorder(order.map { it.id }); draggingId = null; dragOffsetY = 0f },
-                                onDragCancel = { draggingId = null; dragOffsetY = 0f },
-                                onDrag = { change, amt ->
-                                    change.consume()
-                                    dragOffsetY += amt.y
-                                    val cur = order.indexOfFirst { it.id == draggingId }
-                                    val h = if (rowHeightPx > 0f) rowHeightPx else 1f
-                                    if (cur in 0 until order.lastIndex && dragOffsetY > h / 2) {
-                                        order = order.toMutableList().also { it.add(cur + 1, it.removeAt(cur)) }
-                                        dragOffsetY -= h
-                                    } else if (cur > 0 && dragOffsetY < -h / 2) {
-                                        order = order.toMutableList().also { it.add(cur - 1, it.removeAt(cur)) }
-                                        dragOffsetY += h
-                                    }
-                                },
-                            )
-                        },
-                        onEdit = { if (c.isCustom) { editing = c; sheetOpen = true } },
-                        onToggleHidden = { vm.toggleHidden(c) },
-                        onDelete = { vm.delete(c.id) },
-                    )
-                    if (i < order.lastIndex) Hairline(Modifier.padding(horizontal = 20.dp))
+                    ) {
+                        CategoryManageRow(
+                            category = c,
+                            dragging = dragging,
+                            handleModifier = Modifier.pointerInput(c.id) {
+                                detectDragGesturesAfterLongPress(
+                                    onDragStart = { draggingId = c.id; dragOffsetY = 0f },
+                                    onDragEnd = { vm.reorder(order.map { it.id }); draggingId = null; dragOffsetY = 0f },
+                                    onDragCancel = { draggingId = null; dragOffsetY = 0f },
+                                    onDrag = { change, amt ->
+                                        change.consume()
+                                        dragOffsetY += amt.y
+                                        val h = itemHeightPx
+                                        if (h > 0f) {
+                                            val cur = order.indexOfFirst { it.id == draggingId }
+                                            if (cur >= 0 && dragOffsetY > h / 2 && cur < order.lastIndex) {
+                                                order = order.toMutableList().also { it.add(cur + 1, it.removeAt(cur)) }
+                                                dragOffsetY -= h
+                                            } else if (cur > 0 && dragOffsetY < -h / 2) {
+                                                order = order.toMutableList().also { it.add(cur - 1, it.removeAt(cur)) }
+                                                dragOffsetY += h
+                                            }
+                                        }
+                                    },
+                                )
+                            },
+                            onEdit = { if (c.isCustom) { editing = c; sheetOpen = true } },
+                            onToggleHidden = { vm.toggleHidden(c) },
+                            onDelete = { vm.delete(c.id) },
+                        )
+                        if (i < order.lastIndex) Hairline(Modifier.padding(horizontal = 20.dp))
+                    }
                 }
             }
         }
@@ -157,13 +166,14 @@ private fun CategoryManageRow(
             .alpha(if (category.isHidden) 0.45f else 1f),
         verticalAlignment = Alignment.CenterVertically,
     ) {
+        // Extra padding widens the long-press-drag target so the handle is easy to grab.
         Icon(
             materialIcon("drag_handle"),
             contentDescription = null,
             tint = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = handleModifier.size(24.dp),
+            modifier = handleModifier.padding(vertical = 8.dp, horizontal = 4.dp).size(24.dp),
         )
-        Spacer(Modifier.width(12.dp))
+        Spacer(Modifier.width(8.dp))
         CategoryIcon(category)
         Spacer(Modifier.width(12.dp))
         Column(Modifier.weight(1f)) {

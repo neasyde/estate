@@ -47,7 +47,11 @@ class GetAnalyticsDataUseCase @Inject constructor(
             fun base(t: Transaction) = CurrencyConverter.toBase(t.amount, t.currency, s)
 
             val start = analyticsStart(now, period, rolling)
-            val inPeriod = txs.filter { it.date in start..now }
+            // Upper-bound at the live clock, not the [now] captured when the flow was built, so a
+            // transaction added while Analytics is open (dated just past that [now]) is counted at
+            // once instead of only after the period is toggled.
+            val upper = maxOf(now, System.currentTimeMillis())
+            val inPeriod = txs.filter { it.date in start..upper }
             val income = inPeriod.filter { it.type == TransactionType.INCOME }.sumOf { base(it) }
             val expense = inPeriod.filter { it.type == TransactionType.EXPENSE }.sumOf { base(it) }
 

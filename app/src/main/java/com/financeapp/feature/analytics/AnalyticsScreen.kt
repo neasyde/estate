@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -84,7 +85,7 @@ fun AnalyticsScreen(vm: AnalyticsViewModel = hiltViewModel()) {
             Spacer(Modifier.height(20.dp)); Hairline(); Spacer(Modifier.height(20.dp))
             Reveal(1) { CategoryBreakdown(data, currency) }
             Spacer(Modifier.height(20.dp)); Hairline(); Spacer(Modifier.height(20.dp))
-            Reveal(2) { Trend(data.trend) }
+            Reveal(2) { Trend(data.trend, currency) }
         }
         Spacer(Modifier.height(28.dp))
     }
@@ -155,23 +156,55 @@ private fun CategoryBar(slice: CategorySlice, currency: Currency) {
 }
 
 @Composable
-private fun Trend(buckets: List<TrendBucket>) {
+private fun Trend(buckets: List<TrendBucket>, currency: Currency) {
     val peak = buckets.maxOfOrNull { max(it.income, it.expense) } ?: 0.0
+    // Default the readout to the latest bucket; tapping any column selects it.
+    var selectedStart by remember(buckets) { mutableStateOf(buckets.lastOrNull()?.start) }
+    val selected = buckets.firstOrNull { it.start == selectedStart } ?: buckets.lastOrNull()
     Column {
-        Eyebrow(stringResource(R.string.an_trend))
-        Spacer(Modifier.height(4.dp))
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Dot(IncomeGreen, stringResource(R.string.dash_income)); Spacer(Modifier.width(16.dp)); Dot(ExpenseRed, stringResource(R.string.dash_expense))
+            Eyebrow(stringResource(R.string.an_trend))
+            Spacer(Modifier.weight(1f))
+            Dot(IncomeGreen, stringResource(R.string.dash_income)); Spacer(Modifier.width(12.dp)); Dot(ExpenseRed, stringResource(R.string.dash_expense))
         }
-        Spacer(Modifier.height(16.dp))
+        Spacer(Modifier.height(10.dp))
+        // Detail readout for the tapped/last column: what was earned and spent in that bucket.
+        if (selected != null) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    selected.label,
+                    style = MaterialTheme.typography.titleSmall.copy(fontFamily = FrauncesTitle),
+                    color = MaterialTheme.colorScheme.onBackground,
+                )
+                Spacer(Modifier.weight(1f))
+                AmountText(selected.income, currency, income = true, style = MaterialTheme.typography.titleSmall)
+                Spacer(Modifier.width(14.dp))
+                AmountText(selected.expense, currency, income = false, style = MaterialTheme.typography.titleSmall)
+            }
+            Spacer(Modifier.height(12.dp))
+        }
         Row(Modifier.fillMaxWidth().height(150.dp), verticalAlignment = Alignment.Bottom) {
             buckets.forEach { b ->
-                Column(Modifier.weight(1f), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Bottom) {
+                val isSelected = selected != null && b.start == selected.start
+                Column(
+                    Modifier.weight(1f).fillMaxHeight()
+                        .clip(RoundedCornerShape(10.dp))
+                        .background(if (isSelected) MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f) else Color.Transparent)
+                        .clickable { selectedStart = b.start }
+                        .padding(vertical = 4.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Bottom,
+                ) {
                     Row(verticalAlignment = Alignment.Bottom, horizontalArrangement = Arrangement.spacedBy(3.dp)) {
                         Bar(b.income, peak, IncomeGreen); Bar(b.expense, peak, ExpenseRed)
                     }
                     Spacer(Modifier.height(8.dp))
-                    Text(b.label, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 1)
+                    Text(
+                        b.label,
+                        style = MaterialTheme.typography.labelSmall,
+                        color = if (isSelected) MaterialTheme.colorScheme.onBackground else MaterialTheme.colorScheme.onSurfaceVariant,
+                        maxLines = 1,
+                    )
                 }
             }
         }
