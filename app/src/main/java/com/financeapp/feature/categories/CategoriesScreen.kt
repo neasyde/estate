@@ -26,8 +26,10 @@ import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -88,10 +90,14 @@ fun CategoriesScreen(onBack: () -> Unit, vm: CategoriesViewModel = hiltViewModel
                 )
             }
             val listState = rememberLazyListState()
-            var order by remember(cats) { mutableStateOf(cats) }
             var draggingId by remember { mutableStateOf<Long?>(null) }
-            // Visual offset of the dragged row from its settled slot (follows the finger).
-            var dragDelta by remember { mutableFloatStateOf(0f) }
+            var order by remember { mutableStateOf(cats) }
+            // Adopt DB order except mid-drag, so a background emission can't reset the list under the finger.
+            LaunchedEffect(cats) { if (draggingId == null) order = cats }
+            // Total finger travel since the drag began + the dragged row's slot/size at that moment.
+            var draggedDistance by remember { mutableFloatStateOf(0f) }
+            var startOffset by remember { mutableIntStateOf(0) }
+            var startSize by remember { mutableIntStateOf(0) }
             LazyColumn(
                 state = listState,
                 modifier = Modifier.fillMaxSize(),
@@ -103,7 +109,12 @@ fun CategoriesScreen(onBack: () -> Unit, vm: CategoriesViewModel = hiltViewModel
                     // Every other row keeps animateItem() so it glides when displaced.
                     Column(
                         if (dragging) {
-                            Modifier.zIndex(1f).graphicsLayer { translationY = dragDelta }
+                            Modifier.zIndex(1f).graphicsLayer {
+                                // Stay glued to the finger regardless of row heights: cancel out
+                                // however far the layout has shifted this row since the drag began.
+                                val cur = listState.layoutInfo.visibleItemsInfo.firstOrNull { it.key == c.id }
+                                translationY = draggedDistance + startOffset - (cur?.offset ?: startOffset)
+                            }
                         } else {
                             Modifier.animateItem()
                         },
@@ -113,33 +124,31 @@ fun CategoriesScreen(onBack: () -> Unit, vm: CategoriesViewModel = hiltViewModel
                             dragging = dragging,
                             handleModifier = Modifier.pointerInput(c.id) {
                                 detectDragGesturesAfterLongPress(
-                                    onDragStart = { draggingId = c.id; dragDelta = 0f },
-                                    onDragEnd = { vm.reorder(order.map { it.id }); draggingId = null; dragDelta = 0f },
-                                    onDragCancel = { draggingId = null; dragDelta = 0f },
+                                    onDragStart = {
+                                        val self = listState.layoutInfo.visibleItemsInfo.firstOrNull { it.key == c.id }
+                                        startOffset = self?.offset ?: 0
+                                        startSize = self?.size ?: 0
+                                        draggedDistance = 0f
+                                        draggingId = c.id
+                                    },
+                                    onDragEnd = { vm.reorder(order.map { it.id }); draggingId = null },
+                                    onDragCancel = { draggingId = null },
                                     onDrag = { change, amt ->
                                         change.consume()
-                                        dragDelta += amt.y
-                                        // Swap based on real laid-out positions: reorder only when
-                                        // the dragged row's centre enters a neighbour's bounds. This
-                                        // has natural hysteresis, so it can't jitter at boundaries.
-                                        val info = listState.layoutInfo.visibleItemsInfo
-                                        val self = info.firstOrNull { it.key == c.id }
-                                        if (self != null) {
-                                            val center = self.offset + dragDelta + self.size / 2f
-                                            val over = info.firstOrNull { other ->
-                                                other.key != c.id &&
-                                                    center.toInt() in other.offset..(other.offset + other.size)
-                                            }
-                                            val toId = over?.key as? Long
-                                            if (toId != null) {
-                                                val from = order.indexOfFirst { it.id == c.id }
-                                                val to = order.indexOfFirst { it.id == toId }
-                                                if (from != -1 && to != -1 && from != to) {
-                                                    order = order.toMutableList().also { it.add(to, it.removeAt(from)) }
-                                                    // Keep the row under the finger: its settled slot
-                                                    // moves from self.offset to the neighbour's offset.
-                                                    dragDelta += (self.offset - over.offset).toFloat()
-                                                }
+                                        draggedDistance += amt.y
+                                        // Swap when the dragged row's centre — pinned to the finger,
+                                        // not to the shifting layout — enters another row's bounds.
+                                        val center = startOffset + draggedDistance + startSize / 2f
+                                        val over = listState.layoutInfo.visibleItemsInfo.firstOrNull { other ->
+                                            other.key != c.id &&
+                                                center.toInt() in other.offset..(other.offset + other.size)
+                                        }
+                                        val toId = over?.key as? Long
+                                        if (toId != null) {
+                                            val from = order.indexOfFirst { it.id == c.id }
+                                            val to = order.indexOfFirst { it.id == toId }
+                                            if (from != -1 && to != -1 && from != to) {
+                                                order = order.toMutableList().also { it.add(to, it.removeAt(from)) }
                                             }
                                         }
                                     },

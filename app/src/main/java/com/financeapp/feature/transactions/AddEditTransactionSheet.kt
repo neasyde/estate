@@ -71,7 +71,11 @@ fun AddEditTransactionSheet(
 
     androidx.compose.runtime.LaunchedEffect(editId) { vm.load(editId, defaultCurrency, presetType) }
 
-    ModalBottomSheet(onDismissRequest = onDismiss, sheetState = sheetState) {
+    ModalBottomSheet(
+        onDismissRequest = onDismiss,
+        sheetState = sheetState,
+        containerColor = androidx.compose.material3.MaterialTheme.colorScheme.background,
+    ) {
         Column(Modifier.padding(horizontal = 16.dp).padding(bottom = 24.dp)) {
             Text(
                 stringResource(if (form.id == null) R.string.form_new_tx else R.string.form_edit_tx),
