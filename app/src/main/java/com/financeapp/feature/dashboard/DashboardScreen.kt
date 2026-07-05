@@ -41,7 +41,7 @@ import com.financeapp.core.ui.components.AmountText
 import com.financeapp.core.ui.components.EmptyState
 import com.financeapp.core.ui.components.Eyebrow
 import com.financeapp.core.ui.components.Hairline
-import com.financeapp.core.ui.components.TransactionRow
+import com.financeapp.core.ui.components.SwipeTransactionRow
 import com.financeapp.core.ui.icons.materialIcon
 import com.financeapp.core.ui.theme.FrauncesTitle
 import com.financeapp.core.utils.CurrencyFormatter
@@ -63,6 +63,7 @@ fun DashboardScreen(
     val hidden by vm.balanceHidden.collectAsStateWithLifecycle()
     val reminders by vm.upcomingReminders.collectAsStateWithLifecycle()
     var sheetOpen by remember { mutableStateOf(false) }
+    var editTxId by remember { mutableStateOf<Long?>(null) }
     var reminderSheetOpen by remember { mutableStateOf(false) }
     var editingReminder by remember { mutableStateOf<Reminder?>(null) }
 
@@ -89,8 +90,14 @@ fun DashboardScreen(
                     Eyebrow(stringResource(R.string.dash_recent), modifier = Modifier.padding(horizontal = 20.dp))
                     Spacer(Modifier.height(6.dp))
                     data.recent.forEachIndexed { i, item ->
-                        Reveal(i) { TransactionRow(item) }
-                        if (i < data.recent.lastIndex) Hairline(Modifier.padding(horizontal = 20.dp))
+                        Reveal(i) {
+                            SwipeTransactionRow(
+                                item = item,
+                                onDelete = { vm.deleteTransaction(item.transaction.id) },
+                                onDuplicate = { vm.duplicateTransaction(item.transaction.id) },
+                                onClick = { editTxId = item.transaction.id; sheetOpen = true },
+                            )
+                        }
                     }
                     TextButton(onClick = onSeeAll, modifier = Modifier.fillMaxWidth().padding(top = 6.dp)) {
                         Text(stringResource(R.string.dash_see_all))
@@ -101,7 +108,7 @@ fun DashboardScreen(
         }
 
         FloatingActionButton(
-            onClick = { sheetOpen = true },
+            onClick = { editTxId = null; sheetOpen = true },
             modifier = Modifier.align(Alignment.BottomEnd).padding(20.dp),
         ) {
             Icon(materialIcon("add"), contentDescription = null)
@@ -110,8 +117,8 @@ fun DashboardScreen(
 
     if (sheetOpen) {
         AddEditTransactionSheet(
-            editId = null,
-            presetType = defaultTxType,
+            editId = editTxId,
+            presetType = if (editTxId == null) defaultTxType else null,
             defaultCurrency = baseCurrency,
             onDismiss = { sheetOpen = false },
         )

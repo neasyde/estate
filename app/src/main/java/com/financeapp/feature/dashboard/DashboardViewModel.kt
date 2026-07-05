@@ -11,6 +11,8 @@ import com.financeapp.core.domain.model.Reminder
 import com.financeapp.core.domain.model.TransactionType
 import com.financeapp.core.domain.repository.SettingsRepository
 import com.financeapp.core.domain.usecase.DeleteReminderUseCase
+import com.financeapp.core.domain.usecase.DeleteTransactionUseCase
+import com.financeapp.core.domain.usecase.DuplicateTransactionUseCase
 import com.financeapp.core.domain.usecase.GetDashboardDataUseCase
 import com.financeapp.core.domain.usecase.ObserveRemindersUseCase
 import com.financeapp.core.domain.usecase.SaveReminderUseCase
@@ -41,6 +43,8 @@ class DashboardViewModel @Inject constructor(
     observeReminders: ObserveRemindersUseCase,
     private val saveReminderUseCase: SaveReminderUseCase,
     private val deleteReminderUseCase: DeleteReminderUseCase,
+    private val deleteTransactionUseCase: DeleteTransactionUseCase,
+    private val duplicateTransactionUseCase: DuplicateTransactionUseCase,
     private val scheduler: ReminderScheduler,
     private val settingsRepo: SettingsRepository,
     private val exchangeApi: ExchangeRateApi,
@@ -109,4 +113,7 @@ class DashboardViewModel @Inject constructor(
         scheduler.cancel(reminder.id)
         deleteReminderUseCase(reminder.id)
     }
+
+    fun deleteTransaction(id: Long) = viewModelScope.launch { deleteTransactionUseCase(id) }
+    fun duplicateTransaction(id: Long) = viewModelScope.launch { duplicateTransactionUseCase(id, System.currentTimeMillis()) }
 }

@@ -45,8 +45,7 @@ import com.financeapp.core.domain.model.TransactionType
 import com.financeapp.core.domain.model.TransactionWithCategory
 import com.financeapp.core.ui.components.EmptyState
 import com.financeapp.core.ui.components.Eyebrow
-import com.financeapp.core.ui.components.Hairline
-import com.financeapp.core.ui.components.TransactionRow
+import com.financeapp.core.ui.components.SwipeTransactionRow
 import com.financeapp.core.ui.icons.materialIcon
 import com.financeapp.core.ui.theme.ExpenseRed
 import com.financeapp.core.ui.theme.IncomeGreen
@@ -111,7 +110,7 @@ fun TransactionsScreen(vm: TransactionsViewModel = hiltViewModel()) {
                     grouped.forEach { (day, items) ->
                         item(key = "header_$day") { DayHeader(day, now) }
                         items(items, key = { it.transaction.id }) { item ->
-                            SwipeRow(
+                            SwipeTransactionRow(
                                 item = item,
                                 onDelete = {
                                     vm.delete(item.transaction)
@@ -157,44 +156,3 @@ private fun DayHeader(dayStart: Long, now: Long) {
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun SwipeRow(
-    item: TransactionWithCategory,
-    onDelete: () -> Unit,
-    onDuplicate: () -> Unit,
-    onClick: () -> Unit,
-) {
-    val dismissState = rememberSwipeToDismissBoxState(
-        confirmValueChange = { value ->
-            when (value) {
-                SwipeToDismissBoxValue.EndToStart -> { onDelete(); false }
-                SwipeToDismissBoxValue.StartToEnd -> { onDuplicate(); false }
-                else -> false
-            }
-        },
-    )
-    SwipeToDismissBox(
-        state = dismissState,
-        backgroundContent = {
-            val color = when (dismissState.dismissDirection) {
-                SwipeToDismissBoxValue.EndToStart -> ExpenseRed
-                SwipeToDismissBoxValue.StartToEnd -> IncomeGreen
-                else -> Color.Transparent
-            }
-            val align = if (dismissState.dismissDirection == SwipeToDismissBoxValue.EndToStart) Alignment.CenterEnd else Alignment.CenterStart
-            val icon = if (dismissState.dismissDirection == SwipeToDismissBoxValue.EndToStart) "delete" else "content_copy"
-            Box(
-                Modifier.fillMaxSize().background(color).padding(horizontal = 24.dp),
-                contentAlignment = align,
-            ) {
-                Icon(materialIcon(icon), contentDescription = null, tint = Color.White)
-            }
-        },
-    ) {
-        Column(Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.background)) {
-            TransactionRow(item = item, onClick = onClick)
-            Hairline(Modifier.padding(horizontal = 20.dp))
-        }
-    }
-}
