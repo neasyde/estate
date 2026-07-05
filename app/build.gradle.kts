@@ -31,12 +31,12 @@ android {
         buildConfigField("String", "EXCHANGE_API_KEY", "\"$exchangeApiKey\"")
     }
 
-    // Name the installable debug APK "estate.apk".
+    // Name the installable APKs: debug -> estate.apk, release -> estate-<versionName>.apk.
     applicationVariants.all {
-        if (buildType.name == "debug") {
-            outputs.all {
-                (this as com.android.build.gradle.internal.api.BaseVariantOutputImpl).outputFileName = "estate.apk"
-            }
+        val variant = this
+        outputs.all {
+            val name = if (variant.buildType.name == "release") "estate-${variant.versionName}.apk" else "estate.apk"
+            (this as com.android.build.gradle.internal.api.BaseVariantOutputImpl).outputFileName = name
         }
     }
     buildTypes {
