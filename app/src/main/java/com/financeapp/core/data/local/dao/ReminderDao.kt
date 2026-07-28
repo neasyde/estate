@@ -11,6 +11,12 @@ interface ReminderDao {
     @Query("SELECT * FROM reminders ORDER BY dueDate")
     fun observeAll(): Flow<List<ReminderEntity>>
 
+    @Query("SELECT * FROM reminders ORDER BY dueDate")
+    suspend fun allOnce(): List<ReminderEntity>
+
+    @Query("DELETE FROM reminders")
+    suspend fun deleteAll()
+
     @Upsert
     suspend fun upsert(e: ReminderEntity): Long
 

@@ -4,15 +4,16 @@ import com.financeapp.core.data.local.entity.ReminderEntity
 import com.financeapp.core.domain.model.Currency
 import com.financeapp.core.domain.model.Reminder
 import com.financeapp.core.domain.model.RepeatType
+import com.financeapp.core.utils.safeValueOf
 
 fun ReminderEntity.toDomain() = Reminder(
     id = id,
     title = title,
     amount = amount,
-    currency = currency?.let { Currency.valueOf(it) },
+    currency = currency?.let { safeValueOf(it, Currency.RUB) },
     dueDate = dueDate,
     notifyDaysBefore = notifyDaysBefore,
-    repeat = RepeatType.valueOf(repeatType),
+    repeat = safeValueOf(repeatType, RepeatType.NONE),
     notifyMinuteOfDay = notifyMinuteOfDay,
 )
 

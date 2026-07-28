@@ -8,16 +8,46 @@ build/
 .cxx/
 captures/
 .kotlin/
+**/generated/
 
 # Build outputs
 *.apk
 *.aab
 *.ap_
 *.dex
+*.hprof
 
-# Logs
+# Signing
+*.jks
+*.keystore
+key.properties
+
+# Google Services (Firebase)
+google-services.json
+
+# Logs & debug output
 *.log
+*.txt
 
-# OS
+# Debug / diagnostic files
+ui_dump.xml
+ui_dump.txt
+ui*.xml
+uixml.txt
+screen*.png
+clean_test.png
+*.png
+
+# AI / IDE tool directories
+.claude/
+.serena/
+
+# Dev docs / specs
+docs/superpowers/
+verify/
+
+# OS files
 .DS_Store
 Thumbs.db
+Desktop.ini
+ehthumbs.db

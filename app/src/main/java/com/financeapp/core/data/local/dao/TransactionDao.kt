@@ -11,6 +11,12 @@ interface TransactionDao {
     @Query("SELECT * FROM transactions ORDER BY date DESC")
     fun observeAll(): Flow<List<TransactionEntity>>
 
+    @Query("SELECT * FROM transactions ORDER BY date DESC")
+    suspend fun allOnce(): List<TransactionEntity>
+
+    @Query("DELETE FROM transactions")
+    suspend fun deleteAll()
+
     @Query("SELECT * FROM transactions ORDER BY date DESC LIMIT :limit")
     fun observeRecent(limit: Int): Flow<List<TransactionEntity>>
 

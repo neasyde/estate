@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
+import com.financeapp.core.ui.anim.Motion
 import com.financeapp.core.ui.anim.reducedMotion
 import com.financeapp.core.ui.theme.ExpenseRed
 
@@ -33,7 +34,7 @@ fun PinDots(filled: Int, total: Int = 4, error: Boolean, modifier: Modifier = Mo
                 on -> MaterialTheme.colorScheme.primary
                 else -> MaterialTheme.colorScheme.outline
             }
-            val color by animateColorAsState(targetColor, tween(160), label = "pinColor")
+            val color by animateColorAsState(targetColor, tween(Motion.Short), label = "pinColor")
             // Filled/error dots spring in with a little overshoot; empty dots sit slightly smaller.
             val scale by animateFloatAsState(
                 targetValue = if (on || error) 1f else 0.72f,

@@ -70,7 +70,12 @@ class AddEditTransactionViewModel @Inject constructor(
     }
 
     fun setType(t: TransactionType) = _form.update { it.copy(type = t, categoryId = null) }
-    fun setAmount(v: String) = _form.update { it.copy(amount = v.filter { c -> c.isDigit() || c == '.' }) }
+    fun setAmount(v: String) = _form.update {
+        // Only allow digits and at most one decimal point.
+        val filtered = v.filter { c -> c.isDigit() || c == '.' }
+        val firstDot = filtered.indexOf('.')
+        it.copy(amount = if (firstDot == -1) filtered else filtered.substring(0, firstDot + 1) + filtered.substring(firstDot + 1).replace(".", ""))
+    }
     fun setCurrency(c: Currency) = _form.update { it.copy(currency = c) }
     fun setCategory(id: Long) = _form.update { it.copy(categoryId = id) }
     fun setNote(v: String) = _form.update { it.copy(note = v) }
@@ -102,8 +107,17 @@ class AddEditTransactionViewModel @Inject constructor(
         )
         save(tx)
         if (f.recurring) {
+            // Pass the transaction id so the use case can find & update the existing rule
+            // for the same source transaction (instead of creating a duplicate).
             addRecurring(
-                RecurringTemplate(amount, f.currency.name, f.type.name, f.categoryId, f.note.ifBlank { null }),
+                RecurringTemplate(
+                    amount = amount,
+                    currency = f.currency.name,
+                    type = f.type.name,
+                    categoryId = f.categoryId,
+                    note = f.note.ifBlank { null },
+                    linkedTransactionId = tx.id.takeIf { it != 0L },
+                ),
                 f.interval, f.date, f.autoAdd,
             )
         }

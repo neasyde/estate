@@ -19,7 +19,7 @@ fun AmountText(
     income: Boolean,
     style: TextStyle = LocalTextStyle.current,
 ) {
-    val sign = if (income) "+" else "−"
+    val sign = if (income) "+" else "-"
     Text(
         text = sign + CurrencyFormatter.format(amount, currency, LocalShowDecimals.current),
         color = if (income) IncomeGreen else ExpenseRed,

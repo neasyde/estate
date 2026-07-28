@@ -31,11 +31,10 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.util.concurrent.atomic.AtomicBoolean
 import javax.inject.Inject
 
 /** Currency rates shown on Home. [updatedAt] == 0 means "never fetched". */
-data class RatesUi(val usd: Double = 0.0, val eur: Double = 0.0, val updatedAt: Long = 0L)
+data class RatesUi(val usd: Double = 0.0, val eur: Double = 0.0, val cny: Double = 0.0, val kzt: Double = 0.0, val updatedAt: Long = 0L)
 
 @HiltViewModel
 class DashboardViewModel @Inject constructor(
@@ -54,27 +53,33 @@ class DashboardViewModel @Inject constructor(
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), DashboardData())
 
     val rates: StateFlow<RatesUi> = settingsRepo.settings
-        .map { RatesUi(it.rateUsd, it.rateEur, it.ratesUpdatedAt) }
+        .map { RatesUi(it.rateUsd, it.rateEur, it.rateCny, it.rateKzt, it.ratesUpdatedAt) }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), RatesUi())
 
-    private val refreshedOnce = AtomicBoolean(false)
+    private var refreshedOnce = false
 
     init {
         // Silent one-shot auto-refresh when Home opens: fetch fresh rates if a key resolves,
         // auto-refresh is on, and the cached rates are stale. Failures stay silent on Home.
         viewModelScope.launch {
-            val s = settingsRepo.settings.first()
-            _balanceHidden.value = s.hideBalanceByDefault
-            val key = resolveApiKey(s.exchangeApiKey, appConfig) ?: return@launch
-            val intervalMs = s.ratesIntervalHours * 3_600_000L
-            if (s.autoRefreshRates &&
-                shouldRefreshRates(System.currentTimeMillis(), s.ratesUpdatedAt, intervalMs, hasKey = true) &&
-                refreshedOnce.compareAndSet(false, true)
-            ) {
-                when (val r = exchangeApi.fetchRates(key)) {
-                    is ExchangeResult.Success -> settingsRepo.setRates(r.usdRate, r.eurRate)
-                    is ExchangeResult.Failure -> Unit
+            try {
+                val s = settingsRepo.settings.first()
+                _balanceHidden.value = s.hideBalanceByDefault
+                val key = resolveApiKey(s.exchangeApiKey, appConfig) ?: return@launch
+                val intervalMs = s.ratesIntervalHours * 3_600_000L
+                if (s.autoRefreshRates &&
+                    shouldRefreshRates(System.currentTimeMillis(), s.ratesUpdatedAt, intervalMs, hasKey = true) &&
+                    !refreshedOnce
+                ) {
+                    refreshedOnce = true
+                    when (val r = exchangeApi.fetchRates(key)) {
+                        is ExchangeResult.Success -> settingsRepo.setRates(r.usdRate, r.eurRate, r.cnyRate, r.kztRate)
+                        is ExchangeResult.Failure -> Unit
+                    }
                 }
+            } catch (e: Exception) {
+                if (e is kotlinx.coroutines.CancellationException) throw e
+                // Silent failure — dashboard shows cached/default rates
             }
         }
     }

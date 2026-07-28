@@ -1,6 +1,6 @@
 package com.financeapp.feature.reminders
 
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -11,12 +11,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -33,10 +34,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.financeapp.R
 import com.financeapp.core.domain.model.Currency
 import com.financeapp.core.domain.model.Reminder
+import com.financeapp.core.ui.anim.pressScale
 import com.financeapp.core.ui.components.Eyebrow
 import com.financeapp.core.ui.components.EmptyState
-import com.financeapp.core.ui.components.Hairline
-import com.financeapp.core.ui.icons.materialIcon
+import com.financeapp.core.ui.icons.MaterialIcon
+import com.financeapp.core.ui.icons.symbol
 import com.financeapp.core.ui.theme.LocalBrandType
 import com.financeapp.core.ui.LocalShowDecimals
 import com.financeapp.core.utils.CurrencyFormatter
@@ -55,13 +57,17 @@ fun RemindersScreen(onBack: () -> Unit, vm: RemindersViewModel = hiltViewModel()
             TopAppBar(
                 title = { Text(stringResource(R.string.rem_title)) },
                 navigationIcon = {
-                    IconButton(onClick = onBack) { Icon(materialIcon("arrow_back"), contentDescription = null) }
+                    IconButton(onClick = onBack) { MaterialIcon(symbol("arrow_back"), contentDescription = stringResource(R.string.action_back)) }
                 },
             )
         },
         floatingActionButton = {
-            FloatingActionButton(onClick = { editing = null; sheetOpen = true }) {
-                Icon(materialIcon("add"), contentDescription = null)
+            FloatingActionButton(
+                onClick = { editing = null; sheetOpen = true },
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.onPrimary,
+            ) {
+                MaterialIcon(symbol("add"), contentDescription = stringResource(R.string.action_add))
             }
         },
     ) { padding ->
@@ -78,9 +84,8 @@ fun RemindersScreen(onBack: () -> Unit, vm: RemindersViewModel = hiltViewModel()
                 Modifier.fillMaxSize().padding(padding),
                 contentPadding = PaddingValues(vertical = 8.dp),
             ) {
-                itemsIndexed(reminders, key = { _, r -> r.id }) { i, r ->
+                itemsIndexed(reminders, key = { _, r -> r.id }) { _, r ->
                     ReminderCard(r, onEdit = { editing = r; sheetOpen = true }, onDelete = { vm.delete(r) })
-                    if (i < reminders.lastIndex) Hairline(Modifier.padding(horizontal = 20.dp))
                 }
             }
         }
@@ -99,26 +104,41 @@ fun RemindersScreen(onBack: () -> Unit, vm: RemindersViewModel = hiltViewModel()
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ReminderCard(r: Reminder, onEdit: () -> Unit, onDelete: () -> Unit) {
-    Row(
-        Modifier.fillMaxWidth().clickable(onClick = onEdit).padding(horizontal = 20.dp, vertical = 16.dp),
-        verticalAlignment = Alignment.CenterVertically,
+    val interaction = remember { MutableInteractionSource() }
+    Surface(
+        onClick = onEdit,
+        shape = RoundedCornerShape(16.dp),
+        color = MaterialTheme.colorScheme.surface,
+        tonalElevation = 0.dp,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 6.dp)
+            .pressScale(interaction),
     ) {
-        Icon(materialIcon("notifications"), null, tint = MaterialTheme.colorScheme.primary)
-        Spacer(Modifier.width(14.dp))
-        Column(Modifier.weight(1f)) {
-            Text(r.title, style = MaterialTheme.typography.titleMedium)
-            Eyebrow(reminderSubtitle(r))
-        }
-        r.amount?.let {
-            Text(
-                text = CurrencyFormatter.format(it, r.currency ?: Currency.RUB, LocalShowDecimals.current),
-                style = MaterialTheme.typography.titleSmall.copy(fontFamily = LocalBrandType.current.title),
-            )
-        }
-        IconButton(onClick = onDelete) {
-            Icon(materialIcon("delete"), contentDescription = stringResource(R.string.action_delete), tint = MaterialTheme.colorScheme.onSurfaceVariant)
+        Row(
+            Modifier.padding(start = 16.dp, end = 4.dp, top = 12.dp, bottom = 12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            MaterialIcon(symbol("notifications"), tint = MaterialTheme.colorScheme.primary)
+            Spacer(Modifier.width(14.dp))
+            Column(Modifier.fillMaxWidth(0.7f)) {
+                Text(r.title, style = MaterialTheme.typography.titleMedium)
+                Spacer(Modifier.padding(2.dp))
+                Eyebrow(reminderSubtitle(r))
+            }
+            r.amount?.let {
+                Spacer(Modifier.width(8.dp))
+                Text(
+                    text = CurrencyFormatter.format(it, r.currency ?: Currency.RUB, LocalShowDecimals.current),
+                    style = MaterialTheme.typography.titleSmall.copy(fontFamily = LocalBrandType.current.title),
+                )
+            }
+            IconButton(onClick = onDelete) {
+                MaterialIcon(symbol("delete"), contentDescription = stringResource(R.string.action_delete), tint = MaterialTheme.colorScheme.error)
+            }
         }
     }
 }

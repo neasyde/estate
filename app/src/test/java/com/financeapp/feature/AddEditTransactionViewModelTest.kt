@@ -1,5 +1,6 @@
 package com.financeapp.feature
 
+import com.financeapp.core.achievements.AchievementChecker
 import com.financeapp.core.domain.model.Category
 import com.financeapp.core.domain.model.CategoryType
 import com.financeapp.core.domain.model.Currency
@@ -8,6 +9,7 @@ import com.financeapp.core.domain.usecase.AddRecurringRuleUseCase
 import com.financeapp.core.domain.usecase.ObserveCategoriesUseCase
 import com.financeapp.core.domain.usecase.SaveTransactionUseCase
 import com.financeapp.feature.transactions.AddEditTransactionViewModel
+import com.financeapp.testutil.FakeAchievementRepository
 import com.financeapp.testutil.FakeCategoryRepository
 import com.financeapp.testutil.FakeRecurringRuleRepository
 import com.financeapp.testutil.FakeTransactionRepository
@@ -36,6 +38,7 @@ class AddEditTransactionViewModelTest {
             AddRecurringRuleUseCase(FakeRecurringRuleRepository()),
             txRepo,
             ObserveCategoriesUseCase(cats),
+            AchievementChecker(FakeAchievementRepository()),
         )
     }
 

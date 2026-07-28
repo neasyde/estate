@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -15,10 +16,10 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
@@ -46,9 +47,11 @@ import com.financeapp.core.domain.model.TransactionWithCategory
 import com.financeapp.core.ui.components.EmptyState
 import com.financeapp.core.ui.components.Eyebrow
 import com.financeapp.core.ui.components.SwipeTransactionRow
-import com.financeapp.core.ui.icons.materialIcon
+import com.financeapp.core.ui.icons.MaterialIcon
+import com.financeapp.core.ui.icons.symbol
 import com.financeapp.core.ui.theme.ExpenseRed
 import com.financeapp.core.ui.theme.IncomeGreen
+import com.financeapp.core.ui.theme.accentChipColors
 import com.financeapp.core.utils.DateUtils
 import com.financeapp.core.utils.rememberHaptics
 import kotlinx.coroutines.launch
@@ -72,10 +75,24 @@ fun TransactionsScreen(vm: TransactionsViewModel = hiltViewModel()) {
     val undoLabel = stringResource(R.string.action_undo)
 
     Scaffold(
-        snackbarHost = { SnackbarHost(snackbarHost) },
+        snackbarHost = {
+            SnackbarHost(snackbarHost) { data ->
+                Snackbar(
+                    snackbarData = data,
+                    containerColor = MaterialTheme.colorScheme.surface,
+                    contentColor = MaterialTheme.colorScheme.onSurface,
+                    shape = RoundedCornerShape(12.dp),
+                    actionColor = MaterialTheme.colorScheme.primary,
+                )
+            }
+        },
         floatingActionButton = {
-            FloatingActionButton(onClick = { editId = null; sheetOpen = true }) {
-                Icon(materialIcon("add"), contentDescription = null)
+            FloatingActionButton(
+                onClick = { editId = null; sheetOpen = true },
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.onPrimary,
+            ) {
+                MaterialIcon(symbol("add"), contentDescription = stringResource(R.string.action_add))
             }
         },
     ) { padding ->
@@ -85,16 +102,16 @@ fun TransactionsScreen(vm: TransactionsViewModel = hiltViewModel()) {
                 onValueChange = vm::setQuery,
                 modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
                 label = { Text(stringResource(R.string.tx_search)) },
-                leadingIcon = { Icon(materialIcon("search"), null) },
+                leadingIcon = { MaterialIcon(symbol("search")) },
                 singleLine = true,
             )
             Row(
                 Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                FilterChip(filter.type == null, { vm.setTypeFilter(null) }, { Text(stringResource(R.string.tx_filter_all)) })
-                FilterChip(filter.type == TransactionType.INCOME, { vm.setTypeFilter(TransactionType.INCOME) }, { Text(stringResource(R.string.tx_filter_income)) })
-                FilterChip(filter.type == TransactionType.EXPENSE, { vm.setTypeFilter(TransactionType.EXPENSE) }, { Text(stringResource(R.string.tx_filter_expense)) })
+                FilterChip(filter.type == null, { vm.setTypeFilter(null) }, { Text(stringResource(R.string.tx_filter_all)) }, modifier = Modifier.weight(1f), colors = accentChipColors())
+                FilterChip(filter.type == TransactionType.INCOME, { vm.setTypeFilter(TransactionType.INCOME) }, { Text(stringResource(R.string.tx_filter_income)) }, modifier = Modifier.weight(1f), colors = accentChipColors())
+                FilterChip(filter.type == TransactionType.EXPENSE, { vm.setTypeFilter(TransactionType.EXPENSE) }, { Text(stringResource(R.string.tx_filter_expense)) }, modifier = Modifier.weight(1f), colors = accentChipColors())
             }
             Spacer(Modifier.padding(4.dp))
 
@@ -110,9 +127,11 @@ fun TransactionsScreen(vm: TransactionsViewModel = hiltViewModel()) {
                     grouped.forEach { (day, items) ->
                         item(key = "header_$day") { DayHeader(day, now) }
                         items(items, key = { it.transaction.id }) { item ->
-                            SwipeTransactionRow(
+                            com.financeapp.core.ui.components.TransactionWithContextMenu(
                                 item = item,
+                                onEdit = { editId = item.transaction.id; sheetOpen = true },
                                 onDelete = {
+                                    haptics(true)
                                     vm.delete(item.transaction)
                                     scope.launch {
                                         val r = snackbarHost.showSnackbar(deletedMsg, undoLabel)
@@ -124,8 +143,26 @@ fun TransactionsScreen(vm: TransactionsViewModel = hiltViewModel()) {
                                     vm.duplicate(item.transaction.id)
                                     scope.launch { snackbarHost.showSnackbar(copiedMsg) }
                                 },
-                                onClick = { editId = item.transaction.id; sheetOpen = true },
-                            )
+                            ) {
+                                SwipeTransactionRow(
+                                    item = item,
+                                    onDelete = {
+                                        haptics(true)
+                                        vm.delete(item.transaction)
+                                        scope.launch {
+                                            val r = snackbarHost.showSnackbar(deletedMsg, undoLabel)
+                                            if (r == SnackbarResult.ActionPerformed) vm.undoDelete()
+                                        }
+                                    },
+                                    onDuplicate = {
+                                        haptics(true)
+                                        vm.duplicate(item.transaction.id)
+                                        scope.launch { snackbarHost.showSnackbar(copiedMsg) }
+                                    },
+                                    onClick = { editId = item.transaction.id; sheetOpen = true },
+                                )
+                            }
+                            com.financeapp.core.ui.components.Hairline(Modifier.padding(horizontal = 20.dp))
                         }
                     }
                 }

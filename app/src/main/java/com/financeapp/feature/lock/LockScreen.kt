@@ -1,8 +1,10 @@
 package com.financeapp.feature.lock
 
 import android.content.Context
+import android.content.ContextWrapper
 import androidx.biometric.BiometricManager
-import androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_WEAK
+import androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_STRONG
+import androidx.biometric.BiometricManager.Authenticators.DEVICE_CREDENTIAL
 import androidx.biometric.BiometricPrompt
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.keyframes
@@ -17,7 +19,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Icon
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -35,6 +37,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
@@ -43,7 +46,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.financeapp.R
 import com.financeapp.core.ui.components.Eyebrow
 import com.financeapp.core.ui.components.PinDots
-import com.financeapp.core.ui.icons.materialIcon
+import com.financeapp.core.ui.icons.MaterialIcon
+import com.financeapp.core.ui.icons.symbol
+import com.financeapp.core.ui.anim.reducedMotion
 import com.financeapp.core.utils.rememberHaptics
 import kotlinx.coroutines.delay
 
@@ -56,6 +61,7 @@ fun LockScreen(
 ) {
     val state by vm.state.collectAsStateWithLifecycle()
     val haptics = rememberHaptics()
+    val reduced = reducedMotion()
     val context = androidx.compose.ui.platform.LocalContext.current
 
     var now by remember { mutableLongStateOf(System.currentTimeMillis()) }
@@ -70,22 +76,39 @@ fun LockScreen(
     val locked = state.lockedUntil > now
 
     // Auto-present the biometric prompt once on entry when enabled and available (not during a lockout).
-    var biometricTried by rememberSaveable { mutableStateOf(false) }
-    LaunchedEffect(Unit) {
-        if (biometricEnabled && autoBiometric && !locked && !biometricTried &&
-            BiometricManager.from(context).canAuthenticate(BIOMETRIC_WEAK) == BiometricManager.BIOMETRIC_SUCCESS
-        ) {
+    var biometricTried by remember { mutableStateOf(false) }
+    val biometricAvailable = remember {
+        val result = BiometricManager.from(context).canAuthenticate(BIOMETRIC_STRONG or DEVICE_CREDENTIAL)
+        result != BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE &&
+            result != BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED
+    }
+    LaunchedEffect(locked, biometricEnabled, autoBiometric) {
+        biometricTried = false
+        if (biometricEnabled && autoBiometric && !locked && biometricAvailable) {
             biometricTried = true
-            showBiometricPrompt(context, onUnlocked)
+            try {
+                showBiometricPrompt(
+                    context = context,
+                    onSuccess = onUnlocked,
+                    onCancelled = { biometricTried = false },
+                )
+            } catch (_: IllegalStateException) { }
         }
     }
 
     LaunchedEffect(state.entered) {
         if (state.entered.length == 4 && !locked) {
-            if (vm.submit(System.currentTimeMillis())) {
-                haptics(true)
-                onUnlocked()
-            } else {
+            try {
+                val ok = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Default) {
+                    vm.submit(System.currentTimeMillis())
+                }
+                if (ok) {
+                    haptics(true)
+                    onUnlocked()
+                } else {
+                    haptics(false)
+                }
+            } catch (_: Exception) {
                 haptics(false)
             }
         }
@@ -95,13 +118,15 @@ fun LockScreen(
     LaunchedEffect(state.error) {
         if (state.error) {
             shake.snapTo(0f)
-            shake.animateTo(
-                targetValue = 0f,
-                animationSpec = keyframes {
-                    durationMillis = 400
-                    0f at 0; 16f at 100; -16f at 200; 8f at 300; 0f at 400
-                },
-            )
+            if (!reduced) {
+                shake.animateTo(
+                    targetValue = 0f,
+                    animationSpec = keyframes {
+                        durationMillis = 400
+                        0f at 0; 16f at 100; -16f at 200; 8f at 300; 0f at 400
+                    },
+                )
+            }
         }
     }
 
@@ -119,11 +144,18 @@ fun LockScreen(
             Spacer(Modifier.height(16.dp))
             Eyebrow(stringResource(R.string.lock_enter_pin))
             Spacer(Modifier.height(32.dp))
-            PinDots(
-                filled = state.entered.length,
-                error = state.error,
-                modifier = Modifier.offset(x = shake.value.dp),
-            )
+            if (state.loading) {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(48.dp),
+                    color = MaterialTheme.colorScheme.primary,
+                )
+            } else {
+                PinDots(
+                    filled = state.entered.length,
+                    error = state.error,
+                    modifier = Modifier.graphicsLayer { translationX = shake.value * density },
+                )
+            }
             Spacer(Modifier.height(16.dp))
             if (locked) {
                 Text(stringResource(R.string.lock_locked_seconds, remaining), color = MaterialTheme.colorScheme.error)
@@ -134,11 +166,19 @@ fun LockScreen(
             }
             Spacer(Modifier.height(24.dp))
             Keypad(
-                enabled = !locked,
+                enabled = !locked && !state.loading,
                 biometricEnabled = biometricEnabled && !locked,
                 onDigit = { vm.onDigit(it) },
                 onDelete = { vm.onDelete() },
-                onBiometric = { showBiometricPrompt(context, onUnlocked) },
+                onBiometric = {
+                    try {
+                        showBiometricPrompt(
+                            context = context,
+                            onSuccess = onUnlocked,
+                            onCancelled = { biometricTried = false },
+                        )
+                    } catch (_: IllegalStateException) { }
+                },
             )
         }
     }
@@ -168,13 +208,13 @@ private fun Keypad(
             Box(Modifier.size(72.dp), contentAlignment = Alignment.Center) {
                 if (biometricEnabled) {
                     IconButton(onClick = onBiometric) {
-                        Icon(materialIcon("fingerprint"), stringResource(R.string.lock_use_biometric), tint = MaterialTheme.colorScheme.primary)
+                        MaterialIcon(symbol("fingerprint"), tint = MaterialTheme.colorScheme.primary, contentDescription = stringResource(R.string.lock_use_biometric))
                     }
                 }
             }
             KeyButton("0") { if (enabled) onDigit('0') }
             Box(Modifier.size(72.dp), contentAlignment = Alignment.Center) {
-                IconButton(onClick = onDelete) { Icon(materialIcon("arrow_back"), stringResource(R.string.action_delete)) }
+                IconButton(onClick = onDelete) { MaterialIcon(symbol("arrow_back"), contentDescription = stringResource(R.string.action_delete)) }
             }
         }
     }
@@ -187,9 +227,20 @@ private fun KeyButton(label: String, onClick: () -> Unit) {
     }
 }
 
-private fun showBiometricPrompt(context: Context, onSuccess: () -> Unit) {
-    val activity = context as? FragmentActivity ?: return
-    if (BiometricManager.from(context).canAuthenticate(BIOMETRIC_WEAK) != BiometricManager.BIOMETRIC_SUCCESS) return
+private fun resolveActivity(context: Context): FragmentActivity? {
+    var ctx = context
+    while (ctx is ContextWrapper && ctx !is FragmentActivity) {
+        ctx = ctx.baseContext
+    }
+    return ctx as? FragmentActivity
+}
+
+private fun showBiometricPrompt(
+    context: Context,
+    onSuccess: () -> Unit,
+    onCancelled: () -> Unit = {},
+) {
+    val activity = resolveActivity(context) ?: return
     val prompt = BiometricPrompt(
         activity,
         ContextCompat.getMainExecutor(context),
@@ -197,14 +248,23 @@ private fun showBiometricPrompt(context: Context, onSuccess: () -> Unit) {
             override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
                 onSuccess()
             }
+            override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
+                // User-cancelable errors — re-arm so the prompt can show again.
+                if (errorCode == BiometricPrompt.ERROR_USER_CANCELED ||
+                    errorCode == BiometricPrompt.ERROR_NEGATIVE_BUTTON ||
+                    errorCode == BiometricPrompt.ERROR_CANCELED
+                ) {
+                    onCancelled()
+                }
+            }
+            override fun onAuthenticationFailed() { }
         },
     )
     prompt.authenticate(
         BiometricPrompt.PromptInfo.Builder()
             .setTitle(context.getString(R.string.app_name))
             .setSubtitle(context.getString(R.string.lock_use_biometric))
-            .setNegativeButtonText(context.getString(R.string.action_cancel))
-            .setAllowedAuthenticators(BIOMETRIC_WEAK)
+            .setAllowedAuthenticators(BIOMETRIC_STRONG or DEVICE_CREDENTIAL)
             .build(),
     )
 }

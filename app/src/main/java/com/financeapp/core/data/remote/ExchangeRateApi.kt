@@ -13,7 +13,7 @@ import javax.inject.Singleton
  * currency (the convention used by [com.financeapp.core.utils.CurrencyConverter]).
  */
 sealed interface ExchangeResult {
-    data class Success(val usdRate: Double, val eurRate: Double) : ExchangeResult
+    data class Success(val usdRate: Double, val eurRate: Double, val cnyRate: Double = 0.0, val kztRate: Double = 0.0) : ExchangeResult
     /** [type] mirrors the API's `error-type` (e.g. "invalid-key") or "network"/"parse". */
     data class Failure(val type: String) : ExchangeResult
 }
@@ -46,8 +46,15 @@ class ExchangeRateApi @Inject constructor() {
             val rates = json.getJSONObject("conversion_rates")
             val usdPerRub = rates.optDouble("USD", 0.0)
             val eurPerRub = rates.optDouble("EUR", 0.0)
+            val cnyPerRub = rates.optDouble("CNY", 0.0)
+            val kztPerRub = rates.optDouble("KZT", 0.0)
             if (usdPerRub <= 0.0 || eurPerRub <= 0.0) return@withContext ExchangeResult.Failure("parse")
-            ExchangeResult.Success(usdRate = 1.0 / usdPerRub, eurRate = 1.0 / eurPerRub)
+            ExchangeResult.Success(
+                usdRate = 1.0 / usdPerRub,
+                eurRate = 1.0 / eurPerRub,
+                cnyRate = if (cnyPerRub > 0.0) 1.0 / cnyPerRub else 0.0,
+                kztRate = if (kztPerRub > 0.0) 1.0 / kztPerRub else 0.0,
+            )
         } catch (e: Exception) {
             ExchangeResult.Failure("network")
         } finally {

@@ -22,4 +22,29 @@ class RecurringRuleRepositoryImpl @Inject constructor(
             autoAdd = autoAdd,
         ),
     )
+
+    override suspend fun findByLinkedTransactionId(linkedTransactionId: Long): RecurringRuleEntity? =
+        dao.findByLinkedTransactionId(
+            pattern1 = "%\"linkedTransactionId\":$linkedTransactionId,%",
+            pattern2 = "%\"linkedTransactionId\":$linkedTransactionId}%",
+        )
+
+    override suspend fun update(
+        id: Long,
+        templateJson: String,
+        interval: IntervalType,
+        nextDate: Long,
+        autoAdd: Boolean,
+    ) {
+        // Preserve the existing row's `enabled` flag and any future fields by round-tripping.
+        val current = dao.getById(id) ?: return
+        dao.upsert(
+            current.copy(
+                templateJson = templateJson,
+                intervalType = interval.name,
+                nextDate = nextDate,
+                autoAdd = autoAdd,
+            ),
+        )
+    }
 }

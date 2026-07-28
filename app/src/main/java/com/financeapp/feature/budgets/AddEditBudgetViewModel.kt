@@ -46,7 +46,11 @@ class AddEditBudgetViewModel @Inject constructor(
     }
 
     fun setCategory(id: Long) = _form.update { it.copy(categoryId = id) }
-    fun setLimit(v: String) = _form.update { it.copy(limit = v.filter { c -> c.isDigit() || c == '.' }) }
+    fun setLimit(v: String) = _form.update {
+        val filtered = v.filter { c -> c.isDigit() || c == '.' }
+        val firstDot = filtered.indexOf('.')
+        it.copy(limit = if (firstDot == -1) filtered else filtered.substring(0, firstDot + 1) + filtered.substring(firstDot + 1).replace(".", ""))
+    }
     fun setCurrency(c: Currency) = _form.update { it.copy(currency = c) }
     fun setPeriod(p: BudgetPeriod) = _form.update { it.copy(period = p) }
 

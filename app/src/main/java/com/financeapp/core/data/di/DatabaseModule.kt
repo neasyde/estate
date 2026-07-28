@@ -13,6 +13,8 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.serialization.json.Json
+import javax.inject.Named
 import javax.inject.Singleton
 
 @Module
@@ -28,4 +30,27 @@ object DatabaseModule {
     @Provides fun budgetDao(db: FinanceDatabase): BudgetDao = db.budgetDao()
     @Provides fun reminderDao(db: FinanceDatabase): ReminderDao = db.reminderDao()
     @Provides fun recurringDao(db: FinanceDatabase): RecurringRuleDao = db.recurringRuleDao()
+
+    /** Default — used for hot-path parsing (recurring rules). Compact output. */
+    @Provides
+    @Singleton
+    @Named("default")
+    fun defaultJson(): Json = Json {
+        prettyPrint = false
+        ignoreUnknownKeys = true
+        isLenient = true
+        encodeDefaults = true
+    }
+
+    /** Pretty — used for human-readable backup EXPORT. Slower but the file opens nicely in Notepad. */
+    @Provides
+    @Singleton
+    @Named("pretty")
+    fun prettyJson(): Json = Json {
+        prettyPrint = true
+        prettyPrintIndent = "  "
+        ignoreUnknownKeys = true
+        isLenient = true
+        encodeDefaults = true
+    }
 }

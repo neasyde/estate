@@ -3,13 +3,14 @@ package com.financeapp.core.data.mapper
 import com.financeapp.core.data.local.entity.CategoryEntity
 import com.financeapp.core.domain.model.Category
 import com.financeapp.core.domain.model.CategoryType
+import com.financeapp.core.utils.safeValueOf
 
 fun CategoryEntity.toDomain() = Category(
     id = id,
     name = name,
     icon = icon,
     color = color,
-    type = CategoryType.valueOf(type),
+    type = safeValueOf(type, CategoryType.BOTH),
     isCustom = isCustom,
     isHidden = isHidden,
     sortOrder = sortOrder,

@@ -80,7 +80,7 @@ internal fun scheduleReminderAlarm(context: Context, r: Reminder) {
         PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
     )
     // Inexact alarm — reminders don't need exact timing, so no SCHEDULE_EXACT_ALARM permission.
-    am.set(AlarmManager.RTC_WAKEUP, triggerAt, pi)
+    am.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAt, pi)
 }
 
 internal fun cancelReminderAlarm(context: Context, id: Long) {

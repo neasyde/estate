@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
@@ -28,7 +27,9 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.financeapp.core.ui.anim.Motion
-import com.financeapp.core.ui.icons.materialIcon
+import com.financeapp.core.ui.anim.reducedMotion
+import com.financeapp.core.ui.icons.MaterialIcon
+import com.financeapp.core.ui.icons.symbol
 
 /**
  * Empty-state placeholder. Lottie assets are deferred to a later phase; per the
@@ -44,14 +45,15 @@ fun EmptyState(
 ) {
     var shown by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) { shown = true }
+    val reduced = reducedMotion()
     val scale by animateFloatAsState(
         targetValue = if (shown) 1f else 0.92f,
-        animationSpec = spring(dampingRatio = 0.6f, stiffness = Spring.StiffnessLow),
+        animationSpec = if (reduced) tween(0) else Motion.springPress,
         label = "emptyScale",
     )
     val appearAlpha by animateFloatAsState(
         targetValue = if (shown) 1f else 0f,
-        animationSpec = tween(Motion.Medium),
+        animationSpec = if (reduced) tween(0) else tween(Motion.Medium),
         label = "emptyAlpha",
     )
     Column(
@@ -61,9 +63,8 @@ fun EmptyState(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
-        Icon(
-            imageVector = materialIcon(iconName),
-            contentDescription = null,
+        MaterialIcon(
+            name = iconName,
             tint = MaterialTheme.colorScheme.primary,
             modifier = Modifier.size(96.dp),
         )

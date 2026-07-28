@@ -45,10 +45,12 @@ class AnalyticsUseCaseTest {
         assertThat(d.slices[0].amount).isWithin(0.001).of(190.0)
         assertThat(d.slices[0].fraction).isWithin(0.001).of(0.95)
         assertThat(d.slices[1].amount).isWithin(0.001).of(10.0)
-        // Month period => five weekly trend buckets; the current week holds this data.
-        assertThat(d.trend).hasSize(5)
-        assertThat(d.trend.last().income).isWithin(0.001).of(500.0)
-        assertThat(d.trend.last().expense).isWithin(0.001).of(200.0)
+        // Month period => four weekly trend buckets (1-7, 8-14, 15-21, 22-end).
+        // The transactions at 'now' fall into one of the buckets.
+        assertThat(d.trend).hasSize(4)
+        val bucketWithNow = d.trend.first { it.income > 0.0 || it.expense > 0.0 }
+        assertThat(bucketWithNow.income).isWithin(0.001).of(500.0)
+        assertThat(bucketWithNow.expense).isWithin(0.001).of(200.0)
     }
 
     @Test fun calendarMonthExcludesTransactionsBeforeThisMonth() = runTest {

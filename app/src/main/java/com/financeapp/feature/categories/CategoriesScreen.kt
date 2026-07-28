@@ -17,7 +17,6 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -50,8 +49,10 @@ import com.financeapp.core.domain.model.CategoryType
 import com.financeapp.core.ui.categoryDisplayName
 import com.financeapp.core.ui.components.CategoryIcon
 import com.financeapp.core.ui.components.Eyebrow
+import com.financeapp.core.ui.components.EmptyState
 import com.financeapp.core.ui.components.Hairline
-import com.financeapp.core.ui.icons.materialIcon
+import com.financeapp.core.ui.icons.MaterialIcon
+import com.financeapp.core.ui.icons.symbol
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -66,13 +67,17 @@ fun CategoriesScreen(onBack: () -> Unit, vm: CategoriesViewModel = hiltViewModel
             TopAppBar(
                 title = { Text(stringResource(R.string.cat_manage_title)) },
                 navigationIcon = {
-                    IconButton(onClick = onBack) { Icon(materialIcon("arrow_back"), contentDescription = null) }
+                    IconButton(onClick = onBack) { MaterialIcon(symbol("arrow_back"), contentDescription = stringResource(R.string.action_back)) }
                 },
             )
         },
         floatingActionButton = {
-            FloatingActionButton(onClick = { editing = null; sheetOpen = true }) {
-                Icon(materialIcon("add"), contentDescription = null)
+            FloatingActionButton(
+                onClick = { editing = null; sheetOpen = true },
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.onPrimary,
+            ) {
+                MaterialIcon(symbol("add"), contentDescription = stringResource(R.string.action_add))
             }
         },
     ) { padding ->
@@ -98,68 +103,75 @@ fun CategoriesScreen(onBack: () -> Unit, vm: CategoriesViewModel = hiltViewModel
             var draggedDistance by remember { mutableFloatStateOf(0f) }
             var startOffset by remember { mutableIntStateOf(0) }
             var startSize by remember { mutableIntStateOf(0) }
-            LazyColumn(
-                state = listState,
-                modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(vertical = 8.dp),
-            ) {
-                itemsIndexed(order, key = { _, c -> c.id }) { i, c ->
-                    val dragging = c.id == draggingId
-                    // Dragged row: lift it and translate with the finger (no item animation).
-                    // Every other row keeps animateItem() so it glides when displaced.
-                    Column(
-                        if (dragging) {
-                            Modifier.zIndex(1f).graphicsLayer {
-                                // Stay glued to the finger regardless of row heights: cancel out
-                                // however far the layout has shifted this row since the drag began.
-                                val cur = listState.layoutInfo.visibleItemsInfo.firstOrNull { it.key == c.id }
-                                translationY = draggedDistance + startOffset - (cur?.offset ?: startOffset)
-                            }
-                        } else {
-                            Modifier.animateItem()
-                        },
-                    ) {
-                        CategoryManageRow(
-                            category = c,
-                            dragging = dragging,
-                            handleModifier = Modifier.pointerInput(c.id) {
-                                detectDragGesturesAfterLongPress(
-                                    onDragStart = {
-                                        val self = listState.layoutInfo.visibleItemsInfo.firstOrNull { it.key == c.id }
-                                        startOffset = self?.offset ?: 0
-                                        startSize = self?.size ?: 0
-                                        draggedDistance = 0f
-                                        draggingId = c.id
-                                    },
-                                    onDragEnd = { vm.reorder(order.map { it.id }); draggingId = null },
-                                    onDragCancel = { draggingId = null },
-                                    onDrag = { change, amt ->
-                                        change.consume()
-                                        draggedDistance += amt.y
-                                        // Centre of the dragged row, pinned to the finger (not to the
-                                        // shifting layout). Swap one step only once it passes the
-                                        // neighbour's MIDPOINT — that half-row hysteresis means small
-                                        // finger tremor at a boundary can't flip the order back and forth.
-                                        val center = startOffset + draggedDistance + startSize / 2f
-                                        val visible = listState.layoutInfo.visibleItemsInfo
-                                        val from = order.indexOfFirst { it.id == c.id }
-                                        if (from != -1) {
-                                            val below = order.getOrNull(from + 1)?.id?.let { id -> visible.firstOrNull { it.key == id } }
-                                            val above = order.getOrNull(from - 1)?.id?.let { id -> visible.firstOrNull { it.key == id } }
-                                            if (below != null && center > below.offset + below.size / 2f) {
-                                                order = order.toMutableList().also { it.add(from + 1, it.removeAt(from)) }
-                                            } else if (above != null && center < above.offset + above.size / 2f) {
-                                                order = order.toMutableList().also { it.add(from - 1, it.removeAt(from)) }
-                                            }
-                                        }
-                                    },
-                                )
+            if (order.isEmpty()) {
+                EmptyState(
+                    iconName = "category",
+                    title = stringResource(R.string.cat_empty),
+                )
+            } else {
+                LazyColumn(
+                    state = listState,
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(vertical = 8.dp),
+                ) {
+                    itemsIndexed(order, key = { _, c -> c.id }) { i, c ->
+                        val dragging = remember(c.id, draggingId) { c.id == draggingId }
+                        // Dragged row: lift it and translate with the finger (no item animation).
+                        // Every other row keeps animateItem() so it glides when displaced.
+                        Column(
+                            if (dragging) {
+                                Modifier.zIndex(1f).graphicsLayer {
+                                    // Stay glued to the finger regardless of row heights: cancel out
+                                    // however far the layout has shifted this row since the drag began.
+                                    val cur = listState.layoutInfo.visibleItemsInfo.firstOrNull { it.key == c.id }
+                                    translationY = draggedDistance + startOffset - (cur?.offset ?: startOffset)
+                                }
+                            } else {
+                                Modifier.animateItem()
                             },
-                            onEdit = { if (c.isCustom) { editing = c; sheetOpen = true } },
-                            onToggleHidden = { vm.toggleHidden(c) },
-                            onDelete = { vm.delete(c.id) },
-                        )
-                        if (i < order.lastIndex) Hairline(Modifier.padding(horizontal = 20.dp))
+                        ) {
+                            CategoryManageRow(
+                                category = c,
+                                dragging = dragging,
+                                handleModifier = Modifier.pointerInput(c.id) {
+                                    detectDragGesturesAfterLongPress(
+                                        onDragStart = {
+                                            val self = listState.layoutInfo.visibleItemsInfo.firstOrNull { it.key == c.id }
+                                            startOffset = self?.offset ?: 0
+                                            startSize = self?.size ?: 0
+                                            draggedDistance = 0f
+                                            draggingId = c.id
+                                        },
+                                        onDragEnd = { vm.reorder(order.map { it.id }); draggingId = null },
+                                        onDragCancel = { draggingId = null },
+                                        onDrag = { change, amt ->
+                                            change.consume()
+                                            draggedDistance += amt.y
+                                            // Centre of the dragged row, pinned to the finger (not to the
+                                            // shifting layout). Swap one step only once it passes the
+                                            // neighbour's MIDPOINT — that half-row hysteresis means small
+                                            // finger tremor at a boundary can't flip the order back and forth.
+                                            val center = startOffset + draggedDistance + startSize / 2f
+                                            val visible = listState.layoutInfo.visibleItemsInfo
+                                            val from = order.indexOfFirst { it.id == c.id }
+                                            if (from != -1) {
+                                                val below = order.getOrNull(from + 1)?.id?.let { id -> visible.firstOrNull { it.key == id } }
+                                                val above = order.getOrNull(from - 1)?.id?.let { id -> visible.firstOrNull { it.key == id } }
+                                                if (below != null && center > below.offset + below.size / 2f) {
+                                                    order = order.toMutableList().also { it.add(from + 1, it.removeAt(from)) }
+                                                } else if (above != null && center < above.offset + above.size / 2f) {
+                                                    order = order.toMutableList().also { it.add(from - 1, it.removeAt(from)) }
+                                                }
+                                            }
+                                        },
+                                    )
+                                },
+                                onEdit = { if (c.isCustom) { editing = c; sheetOpen = true } },
+                                onToggleHidden = { vm.toggleHidden(c) },
+                                onDelete = { vm.delete(c.id) },
+                            )
+                            if (i < order.lastIndex) Hairline(Modifier.padding(horizontal = 20.dp))
+                        }
                     }
                 }
             }
@@ -191,8 +203,8 @@ private fun CategoryManageRow(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         // Extra padding widens the long-press-drag target so the handle is easy to grab.
-        Icon(
-            materialIcon("drag_handle"),
+        MaterialIcon(
+            symbol("drag_handle"),
             contentDescription = null,
             tint = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = handleModifier.padding(vertical = 8.dp, horizontal = 4.dp).size(24.dp),
@@ -206,12 +218,12 @@ private fun CategoryManageRow(
         }
         if (category.isCustom) {
             IconButton(onClick = onDelete) {
-                Icon(materialIcon("delete"), contentDescription = stringResource(R.string.action_delete), tint = MaterialTheme.colorScheme.onSurfaceVariant)
+                MaterialIcon(symbol("delete"), contentDescription = stringResource(R.string.action_delete), tint = MaterialTheme.colorScheme.error)
             }
         } else {
             IconButton(onClick = onToggleHidden) {
-                Icon(
-                    materialIcon(if (category.isHidden) "visibility_off" else "visibility"),
+                MaterialIcon(
+                    symbol(if (category.isHidden) "visibility_off" else "visibility"),
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
                 )

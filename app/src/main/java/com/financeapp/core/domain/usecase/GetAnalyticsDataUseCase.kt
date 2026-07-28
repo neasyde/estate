@@ -11,6 +11,7 @@ import com.financeapp.core.domain.repository.SettingsRepository
 import com.financeapp.core.domain.repository.TransactionRepository
 import com.financeapp.core.utils.CurrencyConverter
 import com.financeapp.core.utils.DateUtils
+import java.time.Instant
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import javax.inject.Inject
@@ -30,7 +31,7 @@ private enum class TrendUnit { DAY, WEEK, MONTH }
 /** How many buckets of which unit the trend shows so it matches the selected period's scope. */
 private fun trendSpec(period: AnalyticsPeriod): Pair<TrendUnit, Int> = when (period) {
     AnalyticsPeriod.WEEK -> TrendUnit.DAY to 7
-    AnalyticsPeriod.MONTH -> TrendUnit.WEEK to 5
+    AnalyticsPeriod.MONTH -> TrendUnit.WEEK to 4
     AnalyticsPeriod.YEAR -> TrendUnit.MONTH to 12
 }
 
@@ -63,25 +64,103 @@ class GetAnalyticsDataUseCase @Inject constructor(
                 .sortedByDescending { it.amount }
 
             val (unit, count) = trendSpec(period)
-            val starts = when (unit) {
-                TrendUnit.DAY -> DateUtils.lastNDayStarts(now, count)
-                TrendUnit.WEEK -> DateUtils.lastNWeekStarts(now, count)
-                TrendUnit.MONTH -> DateUtils.lastNMonthStarts(now, count)
-            }
-            val trend = starts.map { bucketStart ->
-                val next = when (unit) {
-                    TrendUnit.DAY -> DateUtils.startOfNextDay(bucketStart)
-                    TrendUnit.WEEK -> DateUtils.startOfNextWeek(bucketStart)
-                    TrendUnit.MONTH -> DateUtils.startOfNextMonth(bucketStart)
+            val zone = java.time.ZoneId.systemDefault()
+
+            val starts: List<Long>
+            val ends: List<Long>
+            val labels: List<String>
+
+            when {
+                // --- WEEK: 7 daily buckets ---
+                unit == TrendUnit.DAY -> {
+                    val anchors = if (!rolling) {
+                        val weekStart = DateUtils.startOfWeek(now)
+                        (0 until count).map { i ->
+                            Instant.ofEpochMilli(weekStart).atZone(zone).toLocalDate()
+                                .plusDays(i.toLong()).atStartOfDay(zone).toInstant().toEpochMilli()
+                        }
+                    } else {
+                        DateUtils.lastNDayStarts(now, count)
+                    }
+                    starts = anchors
+                    ends = anchors.map { DateUtils.startOfNextDay(it) }
+                    labels = anchors.map { DateUtils.weekdayLabel(it) }
                 }
-                val bucketTx = txs.filter { it.date in bucketStart until next }
+                // --- MONTH: 4 weekly buckets ---
+                unit == TrendUnit.WEEK -> {
+                    if (!rolling) {
+                        // Calendar month: 1–7, 8–14, 15–21, 22–end
+                        val monthStart = DateUtils.startOfMonth(now)
+                        val monthEnd = DateUtils.startOfNextMonth(now)
+                        val firstOfMonth = Instant.ofEpochMilli(monthStart).atZone(zone).toLocalDate()
+                        val daysInMonth = firstOfMonth.lengthOfMonth()
+                        val ranges = listOf(1..7, 8..14, 15..21, 22..daysInMonth)
+                        starts = ranges.map { range ->
+                            val day = range.first.coerceAtMost(daysInMonth)
+                            firstOfMonth.withDayOfMonth(day).atStartOfDay(zone).toInstant().toEpochMilli()
+                        }
+                        ends = starts.mapIndexed { index, s ->
+                            if (index < starts.lastIndex) starts[index + 1] else monthEnd
+                        }
+                        labels = starts.mapIndexed { index, s ->
+                            val day = Instant.ofEpochMilli(s).atZone(zone).toLocalDate().dayOfMonth
+                            val endDay = if (index < starts.lastIndex) {
+                                Instant.ofEpochMilli(starts[index + 1]).atZone(zone).toLocalDate().dayOfMonth - 1
+                            } else {
+                                daysInMonth
+                            }
+                            "$day-$endDay"
+                        }
+                    } else {
+                        // Rolling month: 4 × 7 days from start
+                        starts = (0 until count).map { i ->
+                            DateUtils.startOfDay(start + i * 7L * DAY_MS)
+                        }
+                        ends = starts.mapIndexed { index, s ->
+                            if (index < starts.lastIndex) starts[index + 1] else start + 30L * DAY_MS
+                        }
+                        labels = starts.mapIndexed { index, s ->
+                            val startDate = Instant.ofEpochMilli(s).atZone(zone).toLocalDate()
+                            val day = startDate.dayOfMonth
+                            val endDay = if (index < starts.lastIndex) {
+                                val nextDate = Instant.ofEpochMilli(starts[index + 1]).atZone(zone).toLocalDate()
+                                if (nextDate.month == startDate.month && nextDate.year == startDate.year) {
+                                    nextDate.dayOfMonth - 1
+                                } else {
+                                    startDate.lengthOfMonth()
+                                }
+                            } else {
+                                Instant.ofEpochMilli(ends[index]).atZone(zone).toLocalDate().dayOfMonth
+                            }
+                            "$day-$endDay"
+                        }
+                    }
+                }
+                // --- YEAR: 12 monthly buckets ---
+                unit == TrendUnit.MONTH -> {
+                    if (!rolling) {
+                        // Calendar year: Jan–Dec of current year
+                        val yearStart = DateUtils.startOfYear(now)
+                        starts = (0 until count).map { i ->
+                            Instant.ofEpochMilli(yearStart).atZone(zone).toLocalDate()
+                                .plusMonths(i.toLong()).atStartOfDay(zone).toInstant().toEpochMilli()
+                        }
+                    } else {
+                        // Rolling year: last 12 months
+                        starts = DateUtils.lastNMonthStarts(now, count)
+                    }
+                    ends = starts.map { DateUtils.startOfNextMonth(it) }
+                    labels = starts.map { DateUtils.monthLabel(it) }
+                }
+                else -> { starts = emptyList(); ends = emptyList(); labels = emptyList() }
+            }
+
+            val trend = starts.mapIndexed { index, bucketStart ->
+                val bucketEnd = ends[index]
+                val bucketTx = inPeriod.filter { it.date in bucketStart until bucketEnd }
                 TrendBucket(
                     start = bucketStart,
-                    label = when (unit) {
-                        TrendUnit.DAY -> DateUtils.weekdayLabel(bucketStart)
-                        TrendUnit.WEEK -> DateUtils.dayOfMonthLabel(bucketStart)
-                        TrendUnit.MONTH -> DateUtils.monthLabel(bucketStart)
-                    },
+                    label = labels[index],
                     income = bucketTx.filter { it.type == TransactionType.INCOME }.sumOf { base(it) },
                     expense = bucketTx.filter { it.type == TransactionType.EXPENSE }.sumOf { base(it) },
                 )

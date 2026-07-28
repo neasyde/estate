@@ -19,7 +19,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -43,13 +42,15 @@ import com.financeapp.R
 import com.financeapp.core.domain.model.Budget
 import com.financeapp.core.domain.model.BudgetPeriod
 import com.financeapp.core.domain.model.BudgetProgress
+import com.financeapp.core.ui.anim.Motion
 import com.financeapp.core.ui.anim.reducedMotion
 import com.financeapp.core.ui.categoryDisplayName
 import com.financeapp.core.ui.components.CategoryIcon
 import com.financeapp.core.ui.components.EmptyState
 import com.financeapp.core.ui.components.Eyebrow
 import com.financeapp.core.ui.components.SoftCard
-import com.financeapp.core.ui.icons.materialIcon
+import com.financeapp.core.ui.icons.MaterialIcon
+import com.financeapp.core.ui.icons.symbol
 import com.financeapp.core.ui.theme.BudgetAmber
 import com.financeapp.core.ui.theme.ExpenseRed
 import com.financeapp.core.ui.theme.IncomeGreen
@@ -67,8 +68,12 @@ fun BudgetsScreen(vm: BudgetsViewModel = hiltViewModel()) {
 
     Scaffold(
         floatingActionButton = {
-            FloatingActionButton(onClick = { editing = null; sheetOpen = true }) {
-                Icon(materialIcon("add"), contentDescription = null)
+            FloatingActionButton(
+                onClick = { editing = null; sheetOpen = true },
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.onPrimary,
+            ) {
+                MaterialIcon(symbol("add"), contentDescription = stringResource(R.string.action_add))
             }
         },
     ) { padding ->
@@ -131,7 +136,7 @@ private fun BudgetCard(bp: BudgetProgress, onEdit: () -> Unit, onDelete: () -> U
                 )
             }
             IconButton(onClick = onDelete) {
-                Icon(materialIcon("delete"), contentDescription = stringResource(R.string.action_delete), tint = MaterialTheme.colorScheme.onSurfaceVariant)
+                MaterialIcon(symbol("delete"), contentDescription = stringResource(R.string.action_delete), tint = MaterialTheme.colorScheme.error)
             }
         }
         Spacer(Modifier.height(12.dp))
@@ -149,7 +154,7 @@ private fun BudgetCard(bp: BudgetProgress, onEdit: () -> Unit, onDelete: () -> U
         if (over) {
             Spacer(Modifier.height(6.dp))
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(materialIcon("warning"), null, tint = ExpenseRed, modifier = Modifier.size(16.dp))
+                MaterialIcon(symbol("warning"), tint = ExpenseRed, modifier = Modifier.size(16.dp))
                 Spacer(Modifier.width(6.dp))
                 Text(stringResource(R.string.budget_over), style = MaterialTheme.typography.labelMedium, color = ExpenseRed)
             }
@@ -164,7 +169,7 @@ private fun ProgressBar(fraction: Double, color: Color) {
     val anim = remember { Animatable(0f) }
     LaunchedEffect(target, reduced) {
         if (reduced) anim.snapTo(target)
-        else anim.animateTo(target, spring(dampingRatio = 0.8f, stiffness = Spring.StiffnessLow))
+        else anim.animateTo(target, Motion.springPress)
     }
     Box(
         Modifier.fillMaxWidth().height(8.dp).clip(RoundedCornerShape(4.dp))

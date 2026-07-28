@@ -1,15 +1,24 @@
 package com.financeapp.core.domain.model
 
+import java.util.Locale
+
 enum class TransactionType { INCOME, EXPENSE }
 enum class CategoryType { INCOME, EXPENSE, BOTH }
 enum class BudgetPeriod { WEEKLY, MONTHLY, YEARLY }
 enum class RepeatType { NONE, WEEKLY, MONTHLY, YEARLY }
 enum class IntervalType { DAILY, WEEKLY, MONTHLY, YEARLY }
-enum class Currency(val code: String, val symbol: String) {
-    RUB("RUB", "₽"),
-    USD("USD", "$"),
-    EUR("EUR", "€"),
+enum class Currency(val code: String, val symbol: String, val displayName: String, val displayNameRu: String) {
+    RUB("RUB", "₽", "Russian Ruble", "Российский рубль"),
+    USD("USD", "$", "US Dollar", "Доллар США"),
+    EUR("EUR", "€", "Euro", "Евро"),
+    CNY("CNY", "¥", "Chinese Yuan", "Китайский юань"),
+    KZT("KZT", "₸", "Kazakhstani Tenge", "Казахстанский тенге");
+
+    fun localeDisplayName(): String =
+        if (Locale.getDefault().language == "ru") displayNameRu else displayName
 }
+
+enum class DashboardLayout { DEFAULT }
 enum class ThemeMode { SYSTEM, LIGHT, DARK }
 // NOTE: PURPLE = green accent (default), ORANGE = amber alt — names kept stable to limit churn.
 enum class ColorScheme { PURPLE, ORANGE, INDIGO, TERRACOTTA }

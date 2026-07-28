@@ -4,6 +4,10 @@ data class AppSettings(
     val baseCurrency: Currency = Currency.RUB,
     val rateUsd: Double = 90.0,
     val rateEur: Double = 100.0,
+    val rateCny: Double = 12.0,
+    val rateKzt: Double = 0.19,
+    /** Rates for currencies not among the four above. Key = currency code, value = RUB per 1 unit. */
+    val customRates: Map<String, Double> = emptyMap(),
     val themeMode: ThemeMode = ThemeMode.SYSTEM,
     val colorScheme: ColorScheme = ColorScheme.PURPLE,
     val pinHash: String? = null,
@@ -24,13 +28,26 @@ data class AppSettings(
     val showDecimals: Boolean = true,
     val defaultTxType: TransactionType = TransactionType.EXPENSE,
     val animationsEnabled: Boolean = true,
-    val hapticsEnabled: Boolean = true,
+    val hapticsEnabled: Boolean = false,
     val hideBalanceByDefault: Boolean = false,
     // --- security ---
     val requirePinOnLaunch: Boolean = true,
     val autoBiometric: Boolean = true,
-    val autoLock: AutoLock = AutoLock.IMMEDIATE,
+    val autoLock: AutoLock = AutoLock.FIVE_MIN,
     // --- reminders defaults ---
     val defaultReminderHour: Int = 9,
     val defaultReminderLeadDays: Int = 1,
+    // --- customization v2 ---
+    val amoledMode: Boolean = false,
+    val autoSwitchTheme: Boolean = false,
+    val autoSwitchStart: Int = 22,
+    val autoSwitchEnd: Int = 7,
+    val customAccentColor: Int? = null,
+    val dashboardLayout: DashboardLayout = DashboardLayout.DEFAULT,
+    val dashboardBlocks: String = "all",
+    /** Comma-separated list of visible quick action types on dashboard (e.g. "goals,projects,recurring"). Empty = all. */
+    val dashboardQuickActions: String = "",
+    // --- brute-force protection ---
+    val failedAttempts: Int = 0,
+    val lockoutUntil: Long = 0L,
 )

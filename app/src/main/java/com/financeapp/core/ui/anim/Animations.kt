@@ -4,6 +4,8 @@ import android.provider.Settings
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.CubicBezierEasing
 import androidx.compose.animation.core.Easing
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -18,6 +20,7 @@ object Motion {
     const val Medium = 350
     const val Long = 450
     const val StaggerStep = 55
+    val springPress = spring<Float>(dampingRatio = 0.85f, stiffness = Spring.StiffnessMedium)
 }
 
 /**

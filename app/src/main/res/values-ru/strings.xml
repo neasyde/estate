@@ -1,5 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="lang_ru">Русский</string>
+    <string name="lang_en">English</string>
+
     <string name="app_name">estate</string>
     <string name="brand_tagline">Личные финансы</string>
 
@@ -9,6 +12,7 @@
     <string name="nav_analytics">Аналитика</string>
     <string name="nav_settings">Настройки</string>
 
+
     <string name="onb_welcome_title">Добро пожаловать в estate</string>
     <string name="onb_welcome_subtitle">Учитывайте доходы и расходы легко.</string>
     <string name="onb_language">Язык</string>
@@ -17,12 +21,20 @@
     <string name="onb_rates_auto">Курсы берутся из интернета автоматически. При желании их можно задать вручную ниже.</string>
     <string name="onb_rate_usd">Рублей за 1 USD</string>
     <string name="onb_rate_eur">Рублей за 1 EUR</string>
+    <string name="onb_rate_cny">Рублей за 1 CNY</string>
+    <string name="onb_rate_kzt">Рублей за 1 KZT</string>
     <string name="onb_security_title">Безопасность</string>
     <string name="onb_security_subtitle">Защитите приложение PIN-кодом.</string>
     <string name="onb_enable_biometric">Включить биометрию</string>
     <string name="action_skip">Пропустить</string>
     <string name="action_next">Далее</string>
     <string name="action_done">Готово</string>
+    <string name="action_search">Поиск</string>
+    <string name="action_add">Добавить</string>
+    <string name="action_back">Назад</string>
+    <string name="action_toggle_balance">Показать/скрыть баланс</string>
+    <string name="action_backspace">Удалить</string>
+
 
     <string name="lock_enter_pin">Введите PIN</string>
     <string name="lock_wrong_pin">Неверный PIN</string>
@@ -32,7 +44,6 @@
     <string name="dash_balance">Общий баланс</string>
     <string name="dash_income">Доходы</string>
     <string name="dash_expense">Расходы</string>
-    <string name="dash_last7">Последние 7 дней</string>
     <string name="dash_recent">Последние транзакции</string>
     <string name="dash_see_all">Все транзакции</string>
     <string name="dash_add_expense">Расход</string>
@@ -42,7 +53,6 @@
     <string name="dash_rates_updated">обновлено %1$s</string>
     <string name="dash_rates_never">нет данных</string>
 
-    <string name="tx_title">Транзакции</string>
     <string name="tx_search">Поиск</string>
     <string name="tx_filter_all">Все</string>
     <string name="tx_filter_income">Доходы</string>
@@ -52,7 +62,6 @@
     <string name="tx_empty">Нет транзакций за выбранный период</string>
     <string name="tx_deleted">Транзакция удалена</string>
     <string name="tx_copied">Транзакция скопирована</string>
-    <string name="tx_all_categories">Все категории</string>
     <string name="action_undo">Отменить</string>
     <string name="action_edit">Изменить</string>
     <string name="action_duplicate">Дублировать</string>
@@ -61,19 +70,18 @@
     <string name="form_new_tx">Новая транзакция</string>
     <string name="form_edit_tx">Изменить транзакцию</string>
     <string name="form_amount">Сумма</string>
+    <string name="form_amount_required">Введите сумму</string>
     <string name="form_note">Заметка</string>
     <string name="form_category">Категория</string>
-    <string name="form_date">Дата</string>
     <string name="form_recurring">Повторяющаяся</string>
     <string name="form_interval_daily">Ежедневно</string>
     <string name="form_interval_weekly">Еженедельно</string>
     <string name="form_interval_monthly">Ежемесячно</string>
     <string name="form_interval_yearly">Ежегодно</string>
-    <string name="form_auto_add">Добавлять автоматически</string>
     <string name="action_save">Сохранить</string>
     <string name="action_cancel">Отмена</string>
+    <string name="action_ok">OK</string>
 
-    <string name="set_appearance">Внешний вид</string>
     <string name="set_theme">Тема</string>
     <string name="set_theme_system">Системная</string>
     <string name="set_theme_light">Светлая</string>
@@ -83,7 +91,7 @@
     <string name="set_scheme_orange">Янтарная</string>
     <string name="set_scheme_indigo">Индиго</string>
     <string name="set_scheme_terracotta">Терракота</string>
-    <string name="set_typography">Шрифт</string>
+
     <string name="set_font_family">Тип шрифта</string>
     <string name="set_font_branded">Фирменный</string>
     <string name="set_font_system">Системный</string>
@@ -94,15 +102,11 @@
     <string name="set_font_size_xl">XL</string>
     <string name="set_font_preview">Aa — Пример текста 123</string>
     <string name="set_language">Язык</string>
-    <string name="set_finance">Финансы</string>
     <string name="set_base_currency">Базовая валюта</string>
     <string name="set_api_key">Ключ exchangerate-api</string>
-    <string name="set_api_key_hint">Необязательно — ключ уже встроен. Свой бесплатный можно получить на exchangerate-api.com</string>
-    <string name="set_refresh_rates">Обновить курс из интернета</string>
     <string name="set_auto_refresh">Автообновление курсов</string>
     <string name="set_interval_12h">12 ч</string>
     <string name="set_interval_24h">24 ч</string>
-    <string name="set_rates_manual">Курс вручную</string>
     <string name="set_rates_updated">Обновлено %1$s</string>
     <string name="set_rates_never">Ещё не обновлялось</string>
     <string name="rates_updated_ok">Курс обновлён</string>
@@ -114,9 +118,7 @@
     <string name="set_biometric">Биометрия</string>
 
     <string name="ph_budgets">Контролируйте расходы с помощью бюджетов</string>
-    <string name="ph_analytics">Здесь появится ваша статистика</string>
 
-    <!-- budgets -->
     <string name="budget_new">Новый бюджет</string>
     <string name="budget_edit">Изменить бюджет</string>
     <string name="budget_limit">Лимит</string>
@@ -126,21 +128,19 @@
     <string name="budget_period_monthly">Месяц</string>
     <string name="budget_period_yearly">Год</string>
 
-    <!-- categories management -->
     <string name="cat_manage_title">Категории</string>
+    <string name="cat_empty">Нет категорий</string>
     <string name="cat_tab_expense">Расходы</string>
     <string name="cat_tab_income">Доходы</string>
     <string name="cat_new">Новая категория</string>
     <string name="cat_edit">Изменить категорию</string>
     <string name="cat_field_name">Название</string>
     <string name="cat_field_icon">Иконка</string>
-    <string name="cat_field_color">Цвет</string>
     <string name="cat_field_type">Тип</string>
     <string name="cat_type_expense">Расход</string>
     <string name="cat_type_income">Доход</string>
     <string name="cat_type_both">Оба</string>
     <string name="cat_badge_system">Системная</string>
-    <string name="cat_search_icon">Поиск иконки</string>
 
     <string name="cat_food">Еда и продукты</string>
     <string name="cat_transport">Транспорт</string>
@@ -162,12 +162,14 @@
     <string name="an_period_week">Неделя</string>
     <string name="an_period_month">Месяц</string>
     <string name="an_period_year">Год</string>
-    <string name="an_period_all">Всё</string>
     <string name="an_rolling">Скользящий</string>
     <string name="an_calendar">Календарный</string>
     <string name="an_net">Итого</string>
-    <string name="an_spent">Потрачено</string>
     <string name="an_empty">Пока нет данных для аналитики</string>
+    <string name="an_savings_rate">Остаток</string>
+    <string name="an_this_month">Этот месяц</string>
+    <string name="an_last_month">Прошлый месяц</string>
+    <string name="an_income_label">Доход %1$s</string>
 
     <string name="rem_title">Напоминания</string>
     <string name="rem_new">Новое напоминание</string>
@@ -176,7 +178,12 @@
     <string name="rem_due_date">Дата</string>
     <string name="rem_notify_before">Напомнить за</string>
     <string name="rem_on_day">В день</string>
-    <string name="rem_days_abbrev">%1$d дн</string>
+    <plurals name="rem_days">
+        <item quantity="one">%1$d день</item>
+        <item quantity="few">%1$d дня</item>
+        <item quantity="many">%1$d дней</item>
+        <item quantity="other">%1$d дней</item>
+    </plurals>
     <string name="rem_repeat">Повтор</string>
     <string name="rem_repeat_none">Нет</string>
     <string name="rem_time">Время</string>
@@ -187,7 +194,6 @@
     <string name="dash_reminders">Напоминания</string>
     <string name="dash_reminders_empty">Создайте первое напоминание</string>
 
-    <string name="set_data">Данные</string>
     <string name="set_backup">Экспорт (резервная копия)</string>
     <string name="set_restore">Восстановить из копии</string>
     <string name="restore_confirm_title">Восстановить данные?</string>
@@ -196,16 +202,17 @@
     <string name="backup_fail">Не удалось сохранить копию</string>
     <string name="restore_ok">Данные восстановлены</string>
     <string name="restore_fail">Не удалось прочитать файл копии</string>
-    <string name="action_ok">OK</string>
-    <string name="nav_more">Настройки</string>
+    <string name="nav_more">Ещё</string>
 
-    <!-- expanded settings -->
     <string name="set_display">Отображение</string>
     <string name="set_show_decimals">Показывать копейки</string>
     <string name="set_default_tx">Тип по умолчанию для «+»</string>
-    <string name="set_feedback">Отклик</string>
     <string name="set_animations">Анимации</string>
     <string name="set_haptics">Вибро-отклик</string>
+    <string name="set_amoled_mode">AMOLED темный</string>
+    <string name="set_auto_switch_theme">Авто-переключение темы</string>
+    <string name="set_auto_switch_start">Переключить на тёмную в</string>
+    <string name="set_auto_switch_end">Переключить на светлую в</string>
     <string name="set_hide_balance">Скрывать баланс по умолчанию</string>
     <string name="set_require_pin">Запрашивать PIN при запуске</string>
     <string name="set_auto_biometric">Биометрия при запуске</string>
@@ -213,12 +220,81 @@
     <string name="set_lock_immediate">Сразу</string>
     <string name="set_lock_1min">1 мин</string>
     <string name="set_lock_5min">5 мин</string>
-    <string name="set_reminder_time">Время по умолчанию</string>
-    <string name="set_reminder_lead">Напоминать за, дней</string>
     <string name="set_clear_data">Стереть все данные</string>
     <string name="set_clear_title">Стереть все данные?</string>
     <string name="set_clear_msg">Это навсегда удалит все транзакции, категории, бюджеты и напоминания. Настройки сохранятся. Отменить нельзя.</string>
     <string name="backup_cleared">Все данные стёрты</string>
-    <string name="set_about">О приложении</string>
     <string name="set_version">Версия %1$s</string>
+
+    <string name="recurring_title">Регулярные</string>
+    <string name="recurring_new">Новая регулярная</string>
+    <string name="recurring_empty">Нет регулярных транзакций</string>
+    <string name="recurring_calendar">Календарь</string>
+    <string name="recurring_edit">Редактировать</string>
+    <string name="recurring_next_date">Следующий</string>
+    <string name="recurring_delete_confirm">Удалить это правило?</string>
+    <string name="recurring_active">Активные</string>
+    <string name="recurring_monthly">Итого в месяц</string>
+    <string name="tx_amount">Сумма</string>
+    <string name="tx_note">Заметка</string>
+    <string name="dash_add_type">Тип</string>
+    <string name="recurring_interval">Интервал</string>
+    <string name="interval_weekly">Еженедельно</string>
+    <string name="interval_monthly">Ежемесячно</string>
+    <string name="interval_yearly">Ежегодно</string>
+    <string name="interval_daily">Ежедневно</string>
+
+    <string name="more_finance">Финансы</string>
+    <string name="more_management">Управление</string>
+    <string name="more_app">Приложение</string>
+    <string name="more_support">Поддержка</string>
+    <string name="an_show_all">Показать все</string>
+    <string name="an_show_less">Свернуть</string>
+
+    <string name="day_short_mon">Пн</string>
+    <string name="day_short_tue">Вт</string>
+    <string name="day_short_wed">Ср</string>
+    <string name="day_short_thu">Чт</string>
+    <string name="day_short_fri">Пт</string>
+    <string name="day_short_sat">Сб</string>
+    <string name="day_short_sun">Вс</string>
+    <string name="set_section_appearance">Внешний вид</string>
+    <string name="set_section_finance">Деньги</string>
+    <string name="set_section_security">Безопасность</string>
+    <string name="set_section_data">Данные</string>
+    <string name="set_section_danger">Опасная зона</string>
+    <string name="set_section_about">О приложении</string>
+    <string name="set_amoled_sub">Чисто чёрный фон для OLED</string>
+    <string name="set_auto_switch_sub">Авто-переключение на тёмную тему ночью</string>
+    <string name="set_animations_sub">Плавные переходы и эффекты</string>
+    <string name="set_haptics_sub">Вибрация при действиях</string>
+    <string name="set_hide_balance_sub">Скрывать цифры на главной</string>
+    <string name="set_show_decimals_sub">Показывать дробные части в сводках</string>
+    <string name="set_change_pin_sub">4-значный код для разблокировки</string>
+    <string name="set_biometric_sub">Разблокировка по отпечатку или лицу</string>
+    <string name="set_auto_biometric_sub">Запрашивать автоматически при запуске</string>
+    <string name="set_clear_data_sub">Удалить все транзакции, категории и т.д.</string>
+    <string name="set_rates_section">Курсы валют</string>
+    <string name="set_api_key_sub">exchangerate-api.com — оставьте пустым для встроенного</string>
+
+    <string name="onb_skip_title">Сохранить и выйти?</string>
+    <string name="onb_skip_msg">Вы ввели данные. Сохранить или отменить?</string>
+    <string name="onb_skip_save">Сохранить</string>
+    <string name="onb_skip_discard">Отменить</string>
+    <string name="dash_empty_cta">Добавить первую транзакцию</string>
+    <string name="dash_empty_reminder">Или добавить напоминание</string>
+    <string name="onb_lang_selected">Выбрано</string>
+    <string name="onb_api_key_toggle">Расширенно: API-ключ</string>
+    <string name="onb_api_key_hint">Необязательно. Задайте позже в настройках, если у вас есть свой ключ exchangerate-api.com.</string>
+    <string name="onb_pin_hint">Ещё %1$d цифра(ы)</string>
+    <string name="onb_biometric_sub">Разблокировка по отпечатку или лицу</string>
+
+    <!-- donations -->
+    <string name="donations_title">Поддержать проект</string>
+    <string name="donations_thank_you">Буду благодарен за любую помощь и рад, если это приложение вам поможет!</string>
+    <string name="donations_usdt_ton">USDT и GRAM</string>
+    <string name="donations_usdt_trc20">USDT</string>
+    <string name="donations_usdt_bep20">USDT</string>
+    <string name="donations_btc">Bitcoin</string>
+    <string name="donations_copied">Адрес скопирован</string>
 </resources>

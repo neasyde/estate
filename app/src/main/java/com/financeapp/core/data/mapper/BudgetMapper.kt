@@ -4,13 +4,14 @@ import com.financeapp.core.data.local.entity.BudgetEntity
 import com.financeapp.core.domain.model.Budget
 import com.financeapp.core.domain.model.BudgetPeriod
 import com.financeapp.core.domain.model.Currency
+import com.financeapp.core.utils.safeValueOf
 
 fun BudgetEntity.toDomain() = Budget(
     id = id,
     categoryId = categoryId,
     limitAmount = limitAmount,
-    currency = Currency.valueOf(currency),
-    period = BudgetPeriod.valueOf(periodType),
+    currency = safeValueOf(currency, Currency.RUB),
+    period = safeValueOf(periodType, BudgetPeriod.MONTHLY),
 )
 
 fun Budget.toEntity() = BudgetEntity(

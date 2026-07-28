@@ -11,6 +11,9 @@ object Routes {
     const val SETTINGS = "settings"
     const val CATEGORIES = "categories"
     const val REMINDERS = "reminders"
+    const val RECURRING = "recurring"
+    const val DONATIONS = "donations"
+    const val MORE_HUB = "more_hub"
 
-    val bottomBarRoutes = setOf(DASHBOARD, TRANSACTIONS, BUDGETS, ANALYTICS, SETTINGS)
+    val bottomBarRoutes = setOf(DASHBOARD, TRANSACTIONS, BUDGETS, ANALYTICS, MORE_HUB)
 }

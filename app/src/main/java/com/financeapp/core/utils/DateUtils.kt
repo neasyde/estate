@@ -13,6 +13,25 @@ object DateUtils {
         data class Other(val text: String) : DayLabel
     }
 
+    @Volatile
+    private var appLocale: Locale = Locale.getDefault()
+
+    fun setLocale(locale: Locale) {
+        appLocale = locale
+        formatterCache.clear()
+    }
+
+    private val formatterCache = mutableMapOf<String, DateTimeFormatter>()
+    private fun fmt(pattern: String): DateTimeFormatter =
+        formatterCache.getOrPut("$pattern:${appLocale.toLanguageTag()}") {
+            DateTimeFormatter.ofPattern(pattern, appLocale)
+        }
+
+    private val MEDIUM_DATE get() = fmt("d MMM yyyy")
+    private val WEEKDAY get() = fmt("EEE")
+    private val MONTH_SHORT get() = fmt("LLL")
+    private val TIME_24 get() = fmt("HH:mm")
+
     private fun date(millis: Long, zone: ZoneId): LocalDate =
         Instant.ofEpochMilli(millis).atZone(zone).toLocalDate()
 
@@ -29,10 +48,6 @@ object DateUtils {
         date(millis, zone).with(java.time.temporal.TemporalAdjusters.previousOrSame(java.time.DayOfWeek.MONDAY))
             .atStartOfDay(zone).toInstant().toEpochMilli()
 
-    fun startOfNextWeek(millis: Long, zone: ZoneId = ZoneId.systemDefault()): Long =
-        date(millis, zone).with(java.time.temporal.TemporalAdjusters.previousOrSame(java.time.DayOfWeek.MONDAY))
-            .plusWeeks(1).atStartOfDay(zone).toInstant().toEpochMilli()
-
     fun startOfYear(millis: Long, zone: ZoneId = ZoneId.systemDefault()): Long =
         date(millis, zone).withDayOfYear(1).atStartOfDay(zone).toInstant().toEpochMilli()
 
@@ -40,14 +55,6 @@ object DateUtils {
         val today = date(nowMillis, zone)
         return (n - 1 downTo 0).map {
             today.minusDays(it.toLong()).atStartOfDay(zone).toInstant().toEpochMilli()
-        }
-    }
-
-    fun lastNWeekStarts(nowMillis: Long, n: Int, zone: ZoneId = ZoneId.systemDefault()): List<Long> {
-        val thisWeek = date(nowMillis, zone)
-            .with(java.time.temporal.TemporalAdjusters.previousOrSame(java.time.DayOfWeek.MONDAY))
-        return (n - 1 downTo 0).map {
-            thisWeek.minusWeeks(it.toLong()).atStartOfDay(zone).toInstant().toEpochMilli()
         }
     }
 
@@ -62,20 +69,19 @@ object DateUtils {
     }
 
     fun monthLabel(monthStart: Long, zone: ZoneId = ZoneId.systemDefault()): String =
-        date(monthStart, zone).format(DateTimeFormatter.ofPattern("LLL", Locale.getDefault()))
+        date(monthStart, zone).format(MONTH_SHORT)
 
     /** Short weekday name (e.g. "Mon"/"Пн") — used for daily trend labels. */
     fun weekdayLabel(millis: Long, zone: ZoneId = ZoneId.systemDefault()): String =
-        date(millis, zone).format(DateTimeFormatter.ofPattern("EEE", Locale.getDefault()))
-
-    /** Day-of-month number (e.g. "5") — used for weekly trend labels. */
-    fun dayOfMonthLabel(millis: Long, zone: ZoneId = ZoneId.systemDefault()): String =
-        date(millis, zone).dayOfMonth.toString()
+        date(millis, zone).format(WEEKDAY)
 
     /** 24-hour clock time (e.g. "09:41") for a transaction timestamp. */
     fun timeLabel(millis: Long, zone: ZoneId = ZoneId.systemDefault()): String =
-        Instant.ofEpochMilli(millis).atZone(zone).toLocalTime()
-            .format(DateTimeFormatter.ofPattern("HH:mm"))
+        Instant.ofEpochMilli(millis).atZone(zone).toLocalTime().format(TIME_24)
+
+    /** "19 июл. 2026" — used for forms, lists, dialogs. Locale-aware. */
+    fun mediumDate(millis: Long, zone: ZoneId = ZoneId.systemDefault()): String =
+        Instant.ofEpochMilli(millis).atZone(zone).format(MEDIUM_DATE)
 
     fun dayLabel(dayStart: Long, nowMillis: Long, zone: ZoneId = ZoneId.systemDefault()): DayLabel {
         val d = date(dayStart, zone)
@@ -83,7 +89,7 @@ object DateUtils {
         return when (d) {
             today -> DayLabel.Today
             today.minusDays(1) -> DayLabel.Yesterday
-            else -> DayLabel.Other(d.format(DateTimeFormatter.ofPattern("d MMM yyyy", Locale.getDefault())))
+            else -> DayLabel.Other(d.format(MEDIUM_DATE))
         }
     }
 }

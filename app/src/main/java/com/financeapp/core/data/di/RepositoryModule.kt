@@ -38,4 +38,5 @@ abstract class RepositoryModule {
 
     @Binds @Singleton
     abstract fun reminders(impl: ReminderRepositoryImpl): ReminderRepository
+
 }

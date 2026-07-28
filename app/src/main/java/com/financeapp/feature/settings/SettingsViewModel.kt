@@ -71,7 +71,7 @@ class SettingsViewModel @Inject constructor(
     fun setScheme(s: ColorScheme) = viewModelScope.launch { settingsRepo.setColorScheme(s) }
     fun setLanguage(l: AppLanguage) = viewModelScope.launch { settingsRepo.setLanguage(l) }
     fun setBaseCurrency(c: Currency) = viewModelScope.launch { settingsRepo.setBaseCurrency(c) }
-    fun setRates(usd: Double, eur: Double) = viewModelScope.launch { settingsRepo.setRates(usd, eur) }
+    fun setRates(usd: Double, eur: Double, cny: Double = 0.0, kzt: Double = 0.0) = viewModelScope.launch { settingsRepo.setRates(usd, eur, cny, kzt) }
     fun setBiometric(b: Boolean) = viewModelScope.launch { settingsRepo.setBiometricEnabled(b) }
     fun changePin(pin: String) = viewModelScope.launch { setPin(pin) }
 
@@ -87,6 +87,11 @@ class SettingsViewModel @Inject constructor(
     fun setAutoLock(a: AutoLock) = viewModelScope.launch { settingsRepo.setAutoLock(a) }
     fun setReminderHour(h: Int) = viewModelScope.launch { settingsRepo.setDefaultReminderHour(h) }
     fun setReminderLeadDays(d: Int) = viewModelScope.launch { settingsRepo.setDefaultReminderLeadDays(d) }
+
+    fun setAmoledMode(b: Boolean) = viewModelScope.launch { settingsRepo.setAmoledMode(b) }
+    fun setAutoSwitchTheme(b: Boolean) = viewModelScope.launch { settingsRepo.setAutoSwitchTheme(b) }
+    fun setAutoSwitchStart(h: Int) = viewModelScope.launch { settingsRepo.setAutoSwitchStart(h) }
+    fun setAutoSwitchEnd(h: Int) = viewModelScope.launch { settingsRepo.setAutoSwitchEnd(h) }
 
     fun clearAllData() = viewModelScope.launch {
         _backupEvent.value = if (backupManager.clearAllData()) BackupEvent.CLEARED else BackupEvent.CLEAR_FAIL
@@ -106,7 +111,7 @@ class SettingsViewModel @Inject constructor(
         _ratesLoading.value = true
         when (val r = exchangeApi.fetchRates(key)) {
             is ExchangeResult.Success -> {
-                settingsRepo.setRates(r.usdRate, r.eurRate)
+                settingsRepo.setRates(r.usdRate, r.eurRate, r.cnyRate, r.kztRate)
                 if (!silent) _ratesEvent.value = RatesEvent.UPDATED
             }
             is ExchangeResult.Failure -> if (!silent) {

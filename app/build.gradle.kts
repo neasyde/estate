@@ -1,5 +1,3 @@
-import java.util.Properties
-
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -9,12 +7,8 @@ plugins {
     alias(libs.plugins.hilt)
 }
 
-// Read the default exchangerate-api key from local.properties (gitignored, never committed).
-val localProps = Properties().apply {
-    val f = rootProject.file("local.properties")
-    if (f.exists()) f.inputStream().use { load(it) }
-}
-val exchangeApiKey: String = localProps.getProperty("EXCHANGE_API_KEY") ?: ""
+// Read the exchangerate-api key from gradle.properties (tracked in git).
+val exchangeApiKey: String = project.findProperty("EXCHANGE_API_KEY") as? String ?: ""
 
 android {
     namespace = "com.financeapp"
@@ -24,8 +18,8 @@ android {
         applicationId = "com.financeapp"
         minSdk = 29
         targetSdk = 35
-        versionCode = 4
-        versionName = "1.2.1"
+        versionCode = 6
+        versionName = "0.0.1"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables { useSupportLibrary = true }
         buildConfigField("String", "EXCHANGE_API_KEY", "\"$exchangeApiKey\"")
@@ -39,14 +33,21 @@ android {
             (this as com.android.build.gradle.internal.api.BaseVariantOutputImpl).outputFileName = name
         }
     }
+    signingConfigs {
+        create("release") {
+            storeFile = rootProject.file("release.jks")
+            storePassword = "estate123"
+            keyAlias = "estate"
+            keyPassword = "estate123"
+        }
+    }
     buildTypes {
         debug { applicationIdSuffix = ".debug" }
         release {
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-            // Per spec: sign the release APK with the debug keystore so it is installable.
-            signingConfig = signingConfigs.getByName("debug")
+            signingConfig = signingConfigs.getByName("release")
         }
     }
     compileOptions {
@@ -85,6 +86,7 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.vico.compose.m3)
     implementation(libs.lottie.compose)
+    implementation("org.apache.poi:poi-ooxml:5.2.5")
     debugImplementation(libs.androidx.ui.tooling)
 
     testImplementation(libs.junit)

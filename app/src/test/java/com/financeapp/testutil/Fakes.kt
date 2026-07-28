@@ -9,11 +9,14 @@ import com.financeapp.core.domain.model.Category
 import com.financeapp.core.domain.model.CategoryType
 import com.financeapp.core.domain.model.ColorScheme
 import com.financeapp.core.domain.model.Currency
+import com.financeapp.core.domain.model.DashboardLayout
 import com.financeapp.core.domain.model.IntervalType
 import com.financeapp.core.domain.model.ThemeMode
 import com.financeapp.core.domain.model.TransactionType
 import com.financeapp.core.domain.model.Transaction
 import com.financeapp.core.domain.model.Budget
+import com.financeapp.core.domain.model.Achievement
+import com.financeapp.core.domain.repository.AchievementRepository
 import com.financeapp.core.domain.repository.BudgetRepository
 import com.financeapp.core.domain.repository.CategoryRepository
 import com.financeapp.core.domain.repository.RecurringRuleRepository
@@ -30,7 +33,7 @@ class FakeSettingsRepository(initial: AppSettings = AppSettings()) : SettingsRep
     override val settings: Flow<AppSettings> = _s
     fun current() = _s.value
     override suspend fun setBaseCurrency(c: Currency) = _s.update { it.copy(baseCurrency = c) }
-    override suspend fun setRates(usd: Double, eur: Double) = _s.update { it.copy(rateUsd = usd, rateEur = eur) }
+    override suspend fun setRates(usd: Double, eur: Double, cny: Double, kzt: Double) = _s.update { it.copy(rateUsd = usd, rateEur = eur, rateCny = cny, rateKzt = kzt) }
     override suspend fun setAutoRefreshRates(enabled: Boolean) = _s.update { it.copy(autoRefreshRates = enabled) }
     override suspend fun setRatesIntervalHours(hours: Int) = _s.update { it.copy(ratesIntervalHours = hours) }
     override suspend fun setExchangeApiKey(key: String?) = _s.update { it.copy(exchangeApiKey = key?.trim()?.takeIf(String::isNotEmpty)) }
@@ -52,6 +55,14 @@ class FakeSettingsRepository(initial: AppSettings = AppSettings()) : SettingsRep
     override suspend fun setAutoLock(a: AutoLock) = _s.update { it.copy(autoLock = a) }
     override suspend fun setDefaultReminderHour(h: Int) = _s.update { it.copy(defaultReminderHour = h) }
     override suspend fun setDefaultReminderLeadDays(d: Int) = _s.update { it.copy(defaultReminderLeadDays = d) }
+    override suspend fun setAmoledMode(b: Boolean) = _s.update { it.copy(amoledMode = b) }
+    override suspend fun setAutoSwitchTheme(b: Boolean) = _s.update { it.copy(autoSwitchTheme = b) }
+    override suspend fun setAutoSwitchStart(h: Int) = _s.update { it.copy(autoSwitchStart = h) }
+    override suspend fun setAutoSwitchEnd(h: Int) = _s.update { it.copy(autoSwitchEnd = h) }
+    override suspend fun setCustomAccentColor(color: Int?) = _s.update { it.copy(customAccentColor = color) }
+    override suspend fun setDashboardLayout(l: DashboardLayout) = _s.update { it.copy(dashboardLayout = l) }
+    override suspend fun setDashboardBlocks(blocks: String) = _s.update { it.copy(dashboardBlocks = blocks) }
+    override suspend fun setDashboardQuickActions(actions: String) = _s.update { it.copy(dashboardQuickActions = actions) }
 }
 
 class FakeTransactionRepository(
@@ -102,4 +113,16 @@ class FakeBudgetRepository(private val budgets: List<Budget> = emptyList()) : Bu
     override fun observeAll(): kotlinx.coroutines.flow.Flow<List<Budget>> = flowOf(budgets)
     override suspend fun upsert(b: Budget): Long = b.id
     override suspend fun delete(id: Long) {}
+}
+
+class FakeAchievementRepository : AchievementRepository {
+    private val items = mutableListOf<Achievement>()
+    override fun observeAll(): Flow<List<Achievement>> = flowOf(items.toList())
+    override suspend fun getByKey(key: String): Achievement? = items.find { it.key == key }
+    override suspend fun upsert(achievement: Achievement): Long {
+        val id = if (achievement.id == 0L) (items.maxOfOrNull { it.id } ?: 0L) + 1 else achievement.id
+        items.removeAll { it.id == id }
+        items.add(achievement.copy(id = id))
+        return id
+    }
 }

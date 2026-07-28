@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools"
+    tools:locale="en"
+    tools:ignore="MissingTranslation">
     <string name="app_name">estate</string>
     <string name="brand_tagline">Personal finance</string>
 
@@ -10,6 +12,11 @@
     <string name="nav_analytics">Analytics</string>
     <string name="nav_settings">Settings</string>
 
+
+    <!-- languages -->
+    <string name="lang_ru">Russian</string>
+    <string name="lang_en">English</string>
+
     <!-- onboarding -->
     <string name="onb_welcome_title">Welcome to estate</string>
     <string name="onb_welcome_subtitle">Track income and expenses, simply.</string>
@@ -19,12 +26,20 @@
     <string name="onb_rates_auto">Rates are fetched from the internet automatically. You can override them by hand below.</string>
     <string name="onb_rate_usd">RUB per 1 USD</string>
     <string name="onb_rate_eur">RUB per 1 EUR</string>
+    <string name="onb_rate_cny">RUB per 1 CNY</string>
+    <string name="onb_rate_kzt">RUB per 1 KZT</string>
     <string name="onb_security_title">Security</string>
     <string name="onb_security_subtitle">Protect the app with a PIN.</string>
     <string name="onb_enable_biometric">Enable biometrics</string>
     <string name="action_skip">Skip</string>
     <string name="action_next">Next</string>
     <string name="action_done">Done</string>
+    <string name="action_search">Search</string>
+    <string name="action_add">Add</string>
+    <string name="action_back">Back</string>
+    <string name="action_toggle_balance">Toggle balance visibility</string>
+    <string name="action_backspace">Backspace</string>
+
 
     <!-- lock -->
     <string name="lock_enter_pin">Enter PIN</string>
@@ -36,9 +51,11 @@
     <string name="dash_balance">Total balance</string>
     <string name="dash_income">Income</string>
     <string name="dash_expense">Expense</string>
-    <string name="dash_last7">Last 7 days</string>
+
     <string name="dash_recent">Recent transactions</string>
     <string name="dash_see_all">All transactions</string>
+    <string name="dash_empty_cta">Add first transaction</string>
+    <string name="dash_empty_reminder">Or add a reminder</string>
     <string name="dash_add_expense">Expense</string>
     <string name="dash_add_income">Income</string>
     <string name="dash_empty">Add your first transaction</string>
@@ -46,8 +63,9 @@
     <string name="dash_rates_updated">updated %1$s</string>
     <string name="dash_rates_never">no data yet</string>
 
+
     <!-- transactions -->
-    <string name="tx_title">Transactions</string>
+
     <string name="tx_search">Search</string>
     <string name="tx_filter_all">All</string>
     <string name="tx_filter_income">Income</string>
@@ -57,30 +75,35 @@
     <string name="tx_empty">No transactions for the selected period</string>
     <string name="tx_deleted">Transaction deleted</string>
     <string name="tx_copied">Transaction copied</string>
-    <string name="tx_all_categories">All categories</string>
+
     <string name="action_undo">Undo</string>
     <string name="action_edit">Edit</string>
     <string name="action_duplicate">Duplicate</string>
     <string name="action_delete">Delete</string>
+
 
     <!-- add/edit -->
     <string name="form_new_tx">New transaction</string>
     <string name="form_edit_tx">Edit transaction</string>
     <string name="form_amount">Amount</string>
     <string name="form_note">Note</string>
+    <string name="tx_amount">Amount</string>
+    <string name="tx_note">Note</string>
+    <string name="dash_add_type">Type</string>
     <string name="form_category">Category</string>
-    <string name="form_date">Date</string>
+
     <string name="form_recurring">Recurring</string>
     <string name="form_interval_daily">Daily</string>
     <string name="form_interval_weekly">Weekly</string>
     <string name="form_interval_monthly">Monthly</string>
     <string name="form_interval_yearly">Yearly</string>
-    <string name="form_auto_add">Add automatically</string>
+
     <string name="action_save">Save</string>
     <string name="action_cancel">Cancel</string>
+    <string name="action_ok">OK</string>
 
     <!-- settings -->
-    <string name="set_appearance">Appearance</string>
+
     <string name="set_theme">Theme</string>
     <string name="set_theme_system">System</string>
     <string name="set_theme_light">Light</string>
@@ -90,7 +113,7 @@
     <string name="set_scheme_orange">Amber</string>
     <string name="set_scheme_indigo">Indigo</string>
     <string name="set_scheme_terracotta">Terracotta</string>
-    <string name="set_typography">Font</string>
+
     <string name="set_font_family">Typeface</string>
     <string name="set_font_branded">Branded</string>
     <string name="set_font_system">System</string>
@@ -101,15 +124,14 @@
     <string name="set_font_size_xl">XL</string>
     <string name="set_font_preview">Aa — Sample text 123</string>
     <string name="set_language">Language</string>
-    <string name="set_finance">Finance</string>
+
     <string name="set_base_currency">Base currency</string>
     <string name="set_api_key">exchangerate-api key</string>
-    <string name="set_api_key_hint">Optional — a default key is built in. Get your own free at exchangerate-api.com</string>
-    <string name="set_refresh_rates">Update rates online</string>
+
     <string name="set_auto_refresh">Auto-update rates</string>
     <string name="set_interval_12h">12 h</string>
     <string name="set_interval_24h">24 h</string>
-    <string name="set_rates_manual">Manual rates</string>
+
     <string name="set_rates_updated">Updated %1$s</string>
     <string name="set_rates_never">Not updated yet</string>
     <string name="rates_updated_ok">Rates updated</string>
@@ -122,7 +144,7 @@
 
     <!-- placeholders -->
     <string name="ph_budgets">Control spending with budgets</string>
-    <string name="ph_analytics">Your statistics will appear here</string>
+
 
     <!-- budgets -->
     <string name="budget_new">New budget</string>
@@ -136,19 +158,20 @@
 
     <!-- categories management -->
     <string name="cat_manage_title">Categories</string>
+    <string name="cat_empty">No categories</string>
     <string name="cat_tab_expense">Expenses</string>
     <string name="cat_tab_income">Income</string>
     <string name="cat_new">New category</string>
     <string name="cat_edit">Edit category</string>
     <string name="cat_field_name">Name</string>
     <string name="cat_field_icon">Icon</string>
-    <string name="cat_field_color">Color</string>
+
     <string name="cat_field_type">Type</string>
     <string name="cat_type_expense">Expense</string>
     <string name="cat_type_income">Income</string>
     <string name="cat_type_both">Both</string>
     <string name="cat_badge_system">System</string>
-    <string name="cat_search_icon">Search icon</string>
+
 
     <!-- categories -->
     <string name="cat_food">Food &amp; groceries</string>
@@ -171,12 +194,18 @@
     <string name="an_period_week">Week</string>
     <string name="an_period_month">Month</string>
     <string name="an_period_year">Year</string>
-    <string name="an_period_all">All</string>
+
     <string name="an_rolling">Rolling</string>
     <string name="an_calendar">Calendar</string>
     <string name="an_net">Net</string>
-    <string name="an_spent">Spent</string>
+
     <string name="an_empty">No data to analyse yet</string>
+    <string name="an_savings_rate">Savings rate</string>
+
+    <string name="an_this_month">This month</string>
+    <string name="an_last_month">Last month</string>
+    <string name="an_income_label">Income %1$s</string>
+
 
     <string name="rem_title">Reminders</string>
     <string name="rem_new">New reminder</string>
@@ -185,7 +214,10 @@
     <string name="rem_due_date">Due date</string>
     <string name="rem_notify_before">Notify before</string>
     <string name="rem_on_day">On day</string>
-    <string name="rem_days_abbrev">%1$d d</string>
+    <plurals name="rem_days">
+        <item quantity="one">%1$d day</item>
+        <item quantity="other">%1$d days</item>
+    </plurals>
     <string name="rem_repeat">Repeat</string>
     <string name="rem_repeat_none">None</string>
     <string name="rem_time">Time</string>
@@ -196,7 +228,7 @@
     <string name="dash_reminders">Reminders</string>
     <string name="dash_reminders_empty">Create your first reminder</string>
 
-    <string name="set_data">Data</string>
+
     <string name="set_backup">Export backup</string>
     <string name="set_restore">Restore from backup</string>
     <string name="restore_confirm_title">Restore data?</string>
@@ -205,16 +237,19 @@
     <string name="backup_fail">Couldn\'t save backup</string>
     <string name="restore_ok">Data restored</string>
     <string name="restore_fail">Couldn\'t read that backup file</string>
-    <string name="action_ok">OK</string>
-    <string name="nav_more">Settings</string>
+    <string name="nav_more">More</string>
 
     <!-- expanded settings -->
     <string name="set_display">Display</string>
     <string name="set_show_decimals">Show decimals</string>
-    <string name="set_default_tx">Default type for “+”</string>
-    <string name="set_feedback">Feedback</string>
+    <string name="set_default_tx">Default type for \u201c+\u201d</string>
+
     <string name="set_animations">Animations</string>
     <string name="set_haptics">Haptics</string>
+    <string name="set_amoled_mode">AMOLED dark</string>
+    <string name="set_auto_switch_theme">Auto switch theme</string>
+    <string name="set_auto_switch_start">Switch to dark at</string>
+    <string name="set_auto_switch_end">Switch to light at</string>
     <string name="set_hide_balance">Hide balance by default</string>
     <string name="set_require_pin">Require PIN on launch</string>
     <string name="set_auto_biometric">Biometric on launch</string>
@@ -222,12 +257,104 @@
     <string name="set_lock_immediate">Immediately</string>
     <string name="set_lock_1min">1 min</string>
     <string name="set_lock_5min">5 min</string>
-    <string name="set_reminder_time">Default time</string>
-    <string name="set_reminder_lead">Remind before, days</string>
+
     <string name="set_clear_data">Clear all data</string>
     <string name="set_clear_title">Clear all data?</string>
     <string name="set_clear_msg">This permanently deletes all transactions, categories, budgets and reminders. Settings are kept. This can\'t be undone.</string>
     <string name="backup_cleared">All data cleared</string>
-    <string name="set_about">About</string>
+
     <string name="set_version">Version %1$s</string>
+
+
+    <string name="recurring_interval">Interval</string>
+
+    <string name="interval_weekly">Weekly</string>
+    <string name="interval_monthly">Monthly</string>
+    <string name="interval_yearly">Yearly</string>
+    <string name="interval_daily">Daily</string>
+
+
+    <!-- recurring -->
+    <string name="recurring_title">Recurring</string>
+    <string name="recurring_new">New recurring</string>
+    <string name="recurring_empty">No recurring transactions</string>
+    <string name="recurring_calendar">Calendar view</string>
+
+    <string name="recurring_edit">Edit recurring</string>
+    <string name="recurring_next_date">Next</string>
+    <string name="recurring_delete_confirm">Delete this recurring rule?</string>
+
+    <string name="recurring_active">Active</string>
+    <string name="recurring_monthly">Monthly total</string>
+
+
+    <string name="more_finance">Finance</string>
+    <string name="more_management">Management</string>
+    <string name="more_app">App</string>
+    <string name="more_support">Support</string>
+
+    <string name="an_show_all">Show all</string>
+    <string name="an_show_less">Show less</string>
+
+    <string name="form_amount_required">Amount required</string>
+
+
+    <string name="day_short_mon">Mon</string>
+    <string name="day_short_tue">Tue</string>
+    <string name="day_short_wed">Wed</string>
+    <string name="day_short_thu">Thu</string>
+    <string name="day_short_fri">Fri</string>
+    <string name="day_short_sat">Sat</string>
+    <string name="day_short_sun">Sun</string>
+
+    <!-- onboarding skip confirmation -->
+    <string name="onb_skip_title">Save and exit?</string>
+    <string name="onb_skip_msg">You\'ve entered some data. Save it or discard?</string>
+    <string name="onb_skip_save">Save &amp; exit</string>
+    <string name="onb_skip_discard">Discard</string>
+
+    <!-- onboarding redesign -->
+    <string name="onb_lang_selected">Selected</string>
+    <string name="onb_api_key_toggle">Advanced: API key</string>
+    <string name="onb_api_key_hint">Optional. Set it later in Settings if you have your own exchangerate-api.com key.</string>
+    <string name="onb_pin_hint">%1$d more digit(s)</string>
+    <string name="onb_biometric_sub">Unlock the app with your fingerprint or face</string>
+
+    <!-- settings redesign -->
+    <string name="set_section_appearance">Look &amp; feel</string>
+    <string name="set_section_finance">Money</string>
+    <string name="set_section_security">Security</string>
+    <string name="set_section_data">Data</string>
+    <string name="set_section_danger">Danger zone</string>
+    <string name="set_section_about">About</string>
+
+    <string name="set_amoled_sub">True black background for OLED</string>
+    <string name="set_auto_switch_sub">Switch to dark at night automatically</string>
+    <string name="set_animations_sub">Smooth transitions and effects</string>
+    <string name="set_haptics_sub">Vibration on key actions</string>
+    <string name="set_hide_balance_sub">Mask numbers on the dashboard</string>
+
+    <string name="set_show_decimals_sub">Show fractional amounts in summaries</string>
+    <string name="set_change_pin_sub">4-digit code that unlocks the app</string>
+    <string name="set_biometric_sub">Unlock with fingerprint or face</string>
+    <string name="set_auto_biometric_sub">Prompt automatically when the app opens</string>
+    <string name="set_clear_data_sub">Wipe all transactions, categories, etc.</string>
+
+    <string name="set_rates_section">Exchange rates</string>
+    <string name="set_api_key_sub">exchangerate-api.com — leave blank to use built-in</string>
+
+
+
+
+
+
+
+    <!-- donations -->
+    <string name="donations_title">Support the project</string>
+    <string name="donations_thank_you">I would be grateful for any help and glad if this application helps you!</string>
+    <string name="donations_usdt_ton">USDT and GRAM</string>
+    <string name="donations_usdt_trc20">USDT</string>
+    <string name="donations_usdt_bep20">USDT</string>
+    <string name="donations_btc">Bitcoin</string>
+    <string name="donations_copied">Address copied</string>
 </resources>

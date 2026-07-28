@@ -4,12 +4,13 @@ import com.financeapp.core.data.local.entity.TransactionEntity
 import com.financeapp.core.domain.model.Currency
 import com.financeapp.core.domain.model.Transaction
 import com.financeapp.core.domain.model.TransactionType
+import com.financeapp.core.utils.safeValueOf
 
 fun TransactionEntity.toDomain() = Transaction(
     id = id,
     amount = amount,
-    currency = Currency.valueOf(currency),
-    type = TransactionType.valueOf(type),
+    currency = safeValueOf(currency, Currency.RUB),
+    type = safeValueOf(type, TransactionType.EXPENSE),
     categoryId = categoryId,
     note = note,
     date = date,

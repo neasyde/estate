@@ -51,33 +51,58 @@ private fun tint(base: Color, accent: Color, fraction: Float) = lerp(base, accen
 // The secondary/tertiary containers, surface tint and inverse primary are set explicitly: left
 // unset they fall back to Material's baseline purple, which leaked into FilterChips (type/currency
 // chips), the time picker and snackbar actions. Tie them all to the accent so nothing reads violet.
+// Note: container colours are kept readable — `on*Container` is set to the *ink* colour (dark on
+// light theme, light on dark) so text/legends on the small chip pills don't disappear.
 private fun lightScheme(a: Accent) = lightColorScheme(
     primary = a.primary, onPrimary = Color.White,
     secondary = a.secondary, onSecondary = Color.White,
     tertiary = a.tertiary, onTertiary = Color.White,
-    primaryContainer = a.containerLight, onPrimaryContainer = a.primary,
-    secondaryContainer = a.containerLight, onSecondaryContainer = a.primary,
-    tertiaryContainer = a.containerLight, onTertiaryContainer = a.primary,
+    primaryContainer = a.containerLight, onPrimaryContainer = InkLight,
+    secondaryContainer = a.containerLight, onSecondaryContainer = InkLight,
+    tertiaryContainer = a.containerLight, onTertiaryContainer = InkLight,
     surfaceTint = a.primary, inversePrimary = a.tertiary,
     background = tint(PaperLight, a.primary, 0.04f), onBackground = InkLight,
-    surface = tint(SurfaceLight, a.primary, 0.03f), onSurface = InkLight,
+    surface = tint(PaperLight, a.primary, 0.04f), onSurface = InkLight,
     surfaceVariant = tint(SurfaceVariantLight, a.primary, 0.11f), onSurfaceVariant = InkMutedLight,
+    surfaceContainerLowest = Color.White,
+    surfaceContainerLow = tint(PaperLight, a.primary, 0.02f),
+    surfaceContainer = tint(PaperLight, a.primary, 0.03f),
+    surfaceContainerHigh = tint(PaperLight, a.primary, 0.05f),
+    surfaceContainerHighest = tint(PaperLight, a.primary, 0.07f),
+    inverseSurface = InkLight, inverseOnSurface = PaperLight,
+    scrim = Color.Black,
     outline = tint(LineLight, a.primary, 0.11f), outlineVariant = tint(LineLight, a.primary, 0.11f),
     error = ExpenseRed, onError = Color.White,
 )
 
-private fun darkScheme(a: Accent) = darkColorScheme(
+private val AmoledBlack = Color(0xFF000000)
+private val AmoledSurface0A = Color(0xFF0A0A0A)
+private val AmoledSurface05 = Color(0xFF050505)
+private val AmoledSurface08 = Color(0xFF080808)
+private val AmoledSurface0C = Color(0xFF0C0C0C)
+private val AmoledSurface10 = Color(0xFF101010)
+private val AmoledSurface14 = Color(0xFF141414)
+private val AmoledOutline1A = Color(0xFF1A1A1A)
+
+private fun darkScheme(a: Accent, amoled: Boolean = false) = darkColorScheme(
     primary = a.tertiary, onPrimary = Color(0xFF14120E),
     secondary = a.secondary, onSecondary = Color.White,
     tertiary = a.tertiary, onTertiary = Color.Black,
-    primaryContainer = a.containerDark, onPrimaryContainer = Color.White,
-    secondaryContainer = a.containerDark, onSecondaryContainer = Color.White,
-    tertiaryContainer = a.containerDark, onTertiaryContainer = Color.White,
+    primaryContainer = if (amoled) AmoledBlack else a.containerDark, onPrimaryContainer = Color.White,
+    secondaryContainer = if (amoled) AmoledBlack else a.containerDark, onSecondaryContainer = Color.White,
+    tertiaryContainer = if (amoled) AmoledBlack else a.containerDark, onTertiaryContainer = Color.White,
     surfaceTint = a.tertiary, inversePrimary = a.primary,
-    background = tint(PaperDark, a.primary, 0.06f), onBackground = InkDark,
-    surface = tint(SurfaceDark, a.primary, 0.07f), onSurface = InkDark,
-    surfaceVariant = tint(SurfaceVariantDark, a.primary, 0.14f), onSurfaceVariant = InkMutedDark,
-    outline = tint(LineDark, a.primary, 0.16f), outlineVariant = tint(LineDark, a.primary, 0.16f),
+    background = if (amoled) AmoledBlack else tint(PaperDark, a.primary, 0.06f), onBackground = InkDark,
+    surface = if (amoled) AmoledBlack else tint(PaperDark, a.primary, 0.06f), onSurface = InkDark,
+    surfaceVariant = if (amoled) AmoledSurface0A else tint(SurfaceVariantDark, a.primary, 0.14f), onSurfaceVariant = InkMutedDark,
+    surfaceContainerLowest = if (amoled) AmoledSurface05 else tint(PaperDark, a.primary, 0.02f),
+    surfaceContainerLow = if (amoled) AmoledSurface08 else tint(PaperDark, a.primary, 0.04f),
+    surfaceContainer = if (amoled) AmoledSurface0C else tint(PaperDark, a.primary, 0.05f),
+    surfaceContainerHigh = if (amoled) AmoledSurface10 else tint(PaperDark, a.primary, 0.07f),
+    surfaceContainerHighest = if (amoled) AmoledSurface14 else tint(PaperDark, a.primary, 0.09f),
+    inverseSurface = InkDark, inverseOnSurface = PaperDark,
+    scrim = Color.Black,
+    outline = if (amoled) AmoledOutline1A else tint(LineDark, a.primary, 0.16f), outlineVariant = if (amoled) AmoledOutline1A else tint(LineDark, a.primary, 0.16f),
     error = ExpenseRed, onError = Color.White,
 )
 
@@ -87,6 +112,7 @@ fun FinanceTheme(
     colorScheme: AppColorScheme,
     appFont: AppFont = AppFont.BRANDED,
     fontSize: AppFontSize = AppFontSize.MEDIUM,
+    amoledMode: Boolean = false,
     content: @Composable () -> Unit,
 ) {
     val dark = when (themeMode) {
@@ -100,7 +126,7 @@ fun FinanceTheme(
         AppColorScheme.INDIGO -> indigo
         AppColorScheme.TERRACOTTA -> terracotta
     }
-    val scheme = if (dark) darkScheme(accent) else lightScheme(accent)
+    val scheme = if (dark) darkScheme(accent, amoledMode) else lightScheme(accent)
 
     val view = LocalView.current
     if (!view.isInEditMode) {
@@ -109,7 +135,9 @@ fun FinanceTheme(
         SideEffect {
             val window = (view.context as? Activity)?.window ?: return@SideEffect
             // Status bar and system navigation bar match the app background in both themes.
+            @Suppress("DEPRECATION")
             window.statusBarColor = barColor
+            @Suppress("DEPRECATION")
             window.navigationBarColor = barColor
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 window.isNavigationBarContrastEnforced = false

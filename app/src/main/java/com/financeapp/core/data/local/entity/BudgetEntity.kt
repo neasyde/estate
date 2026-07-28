@@ -1,11 +1,15 @@
 package com.financeapp.core.data.local.entity
 
 import androidx.room.Entity
+import androidx.room.Index
 import androidx.room.PrimaryKey
 import kotlinx.serialization.Serializable
 
 @Serializable
-@Entity(tableName = "budgets")
+@Entity(
+    tableName = "budgets",
+    indices = [Index("categoryId")],
+)
 data class BudgetEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val categoryId: Long,

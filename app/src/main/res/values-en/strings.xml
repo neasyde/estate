@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools"
+    tools:locale="en"
+    tools:ignore="MissingTranslation">
+    <string name="app_name">estate</string>
+    <string name="brand_tagline">Personal finance</string>
+    <string name="lang_ru">Russian</string>
+    <string name="lang_en">English</string>
+</resources>

@@ -31,5 +31,9 @@ fun Reveal(index: Int = 0, content: @Composable () -> Unit) {
         if (!reduced) delay(index * Motion.StaggerStep.toLong())
         visible = true
     }
-    AnimatedVisibility(visible = visible, enter = revealEnter()) { content() }
+    if (reduced) {
+        if (visible) content()
+    } else {
+        AnimatedVisibility(visible = visible, enter = revealEnter()) { content() }
+    }
 }
