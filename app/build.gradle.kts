@@ -7,6 +7,8 @@ plugins {
     alias(libs.plugins.hilt)
 }
 
+import java.util.Properties
+
 // Read the exchangerate-api key from gradle.properties (tracked in git).
 val exchangeApiKey: String = project.findProperty("EXCHANGE_API_KEY") as? String ?: ""
 
@@ -35,8 +37,8 @@ android {
     }
     signingConfigs {
         val keyPropsFile = rootProject.file("key.properties")
-        val keyProps = java.util.Properties().apply {
-            if (keyPropsFile.exists()) load(keyPropsFile.inputStream())
+        val keyProps = Properties().apply {
+            if (keyPropsFile.exists()) keyPropsFile.inputStream().use { load(it) }
         }
         create("release") {
             storeFile = rootProject.file("release.jks")
