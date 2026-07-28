@@ -22,15 +22,11 @@
 - 📈 **Analytics** — spending by category, income vs expense trend, savings rate, daily velocity
 - 💰 **Budgets** — set weekly/monthly/yearly limits per category with progress bars
 - 🔁 **Recurring transactions** — daily/weekly/monthly/yearly auto-add rules
-- 🎯 **Savings goals** — track progress toward a target amount with deadlines
-- 📁 **Projects** — group transactions by project with budgets and analytics
 - 🔔 **Reminders** — due-date notifications with repeat options
-- 🏆 **Achievements** — unlock badges for milestones (first transaction, 100 transactions, streaks)
 - 💱 **Multi-currency** — RUB, USD, EUR, CNY, KZT with auto-updating exchange rates
 - 🎨 **Themes** — 4 color schemes (Green, Amber, Indigo, Terracotta), AMOLED dark, auto theme switch
 - 🔒 **Security** — PIN code + biometric authentication, auto-lock
-- 💾 **Backup & restore** — export/import all data
-- 📤 **Export** — CSV and Excel export with period selection
+- 💾 **Backup & restore** — export/import all data as JSON
 - 🌐 **2 languages** — Russian and English
 - ✨ **Smooth animations** — Lottie splash, haptic feedback, gesture-based interactions
 
@@ -67,13 +63,7 @@ cd estate
 ./gradlew assembleDebug
 ```
 
-The APK will be at `app/build/outputs/apk/debug/estate.apk`.
-
-### Install on device
-
-```bash
-adb install app/build/outputs/apk/debug/estate.apk
-```
+The debug APK will be produced at `app/build/outputs/apk/debug/estate.apk`.
 
 ## Project Structure
 
@@ -92,9 +82,6 @@ app/src/main/java/com/financeapp/
 │   ├── categories/    # Category management
 │   ├── recurring/     # Recurring transaction rules
 │   ├── reminders/     # Bill reminders
-│   ├── achievements/  # Achievement badges
-│   ├── goals/         # Savings goals
-│   ├── projects/      # Project tracker
 │   ├── settings/      # App settings
 │   ├── onboarding/    # First-run flow
 │   └── lock/          # PIN / biometric lock
