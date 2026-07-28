@@ -14,6 +14,7 @@ import com.financeapp.core.domain.model.AppFont
 import com.financeapp.core.domain.model.AppFontSize
 import com.financeapp.core.domain.model.AutoLock
 import com.financeapp.core.domain.repository.SettingsRepository
+import com.financeapp.core.utils.SecureKeyStore
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
@@ -86,12 +87,73 @@ class BackupManager @Inject constructor(
         }.getOrDefault(false)
     }
 
+    suspend fun exportToEncrypted(uri: Uri): Boolean = withContext(Dispatchers.IO) {
+        runCatching {
+            val s = settingsRepo.settings.first()
+            val data = BackupData(
+                exportedAt = System.currentTimeMillis(),
+                transactions = db.transactionDao().allOnce(),
+                categories = db.categoryDao().allOnce(),
+                budgets = db.budgetDao().allOnce(),
+                reminders = db.reminderDao().allOnce(),
+                recurringRules = db.recurringRuleDao().allOnce(),
+                dashboardQuickActions = s.dashboardQuickActions,
+                baseCurrency = s.baseCurrency.name,
+                rateUsd = s.rateUsd,
+                rateEur = s.rateEur,
+                rateCny = s.rateCny,
+                rateKzt = s.rateKzt,
+                themeMode = s.themeMode.name,
+                colorScheme = s.colorScheme.name,
+                language = s.language.name,
+                ratesUpdatedAt = s.ratesUpdatedAt,
+                autoRefreshRates = s.autoRefreshRates,
+                ratesIntervalHours = s.ratesIntervalHours,
+                appFont = s.appFont.name,
+                fontSize = s.fontSize.name,
+                showDecimals = s.showDecimals,
+                defaultTxType = s.defaultTxType.name,
+                animationsEnabled = s.animationsEnabled,
+                hapticsEnabled = s.hapticsEnabled,
+                hideBalanceByDefault = s.hideBalanceByDefault,
+                defaultReminderHour = s.defaultReminderHour,
+                defaultReminderLeadDays = s.defaultReminderLeadDays,
+                amoledMode = s.amoledMode,
+                autoSwitchTheme = s.autoSwitchTheme,
+                autoSwitchStart = s.autoSwitchStart,
+                autoSwitchEnd = s.autoSwitchEnd,
+                customAccentColor = s.customAccentColor,
+                dashboardLayout = s.dashboardLayout.name,
+                dashboardBlocks = s.dashboardBlocks,
+                biometricEnabled = s.biometricEnabled,
+                requirePinOnLaunch = s.requirePinOnLaunch,
+                autoLock = s.autoLock.name,
+                autoBiometric = s.autoBiometric,
+            )
+            val json = prettyJson.encodeToString(BackupData.serializer(), data)
+            val encrypted = SecureKeyStore.encrypt(json)
+            context.contentResolver.openOutputStream(uri)?.use { os ->
+                os.write(encrypted.toByteArray(Charsets.UTF_8))
+                os.flush()
+            } ?: return@runCatching false
+            true
+        }.getOrDefault(false)
+    }
+
     suspend fun importFrom(uri: Uri): Boolean = withContext(Dispatchers.IO) {
         runCatching {
             val text = context.contentResolver.openInputStream(uri)
                 ?.use { it.readBytes().toString(Charsets.UTF_8) }
                 ?: return@runCatching false
-            val data = defaultJson.decodeFromString(BackupData.serializer(), text)
+
+            val jsonText = try {
+                SecureKeyStore.decrypt(text)
+            } catch (_: Exception) {
+                null
+            }
+
+            val finalText = jsonText ?: text
+            val data = defaultJson.decodeFromString(BackupData.serializer(), finalText)
             if (data.version < 1 || data.version > CURRENT_BACKUP_VERSION) return@runCatching false
 
             db.withTransaction {

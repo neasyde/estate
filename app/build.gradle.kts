@@ -34,11 +34,15 @@ android {
         }
     }
     signingConfigs {
+        val keyPropsFile = rootProject.file("key.properties")
+        val keyProps = java.util.Properties().apply {
+            if (keyPropsFile.exists()) load(keyPropsFile.inputStream())
+        }
         create("release") {
             storeFile = rootProject.file("release.jks")
-            storePassword = "estate123"
-            keyAlias = "estate"
-            keyPassword = "estate123"
+            storePassword = keyProps.getProperty("storePassword", "")
+            keyAlias = keyProps.getProperty("keyAlias", "")
+            keyPassword = keyProps.getProperty("keyPassword", "")
         }
     }
     buildTypes {

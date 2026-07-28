@@ -38,7 +38,7 @@ object DatabaseModule {
     fun defaultJson(): Json = Json {
         prettyPrint = false
         ignoreUnknownKeys = true
-        isLenient = true
+        isLenient = false
         encodeDefaults = true
     }
 
@@ -50,7 +50,7 @@ object DatabaseModule {
         prettyPrint = true
         prettyPrintIndent = "  "
         ignoreUnknownKeys = true
-        isLenient = true
+        isLenient = false
         encodeDefaults = true
     }
 }

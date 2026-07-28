@@ -57,7 +57,9 @@ object SecureKeyStore {
             cipher.init(Cipher.DECRYPT_MODE, getOrCreateKey(), spec)
             String(cipher.doFinal(encrypted), Charsets.UTF_8)
         } catch (e: Exception) {
-            android.util.Log.w("SecureKeyStore", "Decryption failed: ${e.javaClass.simpleName}")
+            if (com.financeapp.BuildConfig.DEBUG) {
+                android.util.Log.w("SecureKeyStore", "Decryption failed: ${e.javaClass.simpleName}")
+            }
             null
         }
     }

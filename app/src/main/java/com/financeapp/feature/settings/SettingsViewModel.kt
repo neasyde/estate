@@ -130,6 +130,10 @@ class SettingsViewModel @Inject constructor(
         _backupEvent.value = if (backupManager.exportTo(uri)) BackupEvent.EXPORT_OK else BackupEvent.EXPORT_FAIL
     }
 
+    fun exportBackupEncrypted(uri: Uri) = viewModelScope.launch {
+        _backupEvent.value = if (backupManager.exportToEncrypted(uri)) BackupEvent.EXPORT_OK else BackupEvent.EXPORT_FAIL
+    }
+
     fun importBackup(uri: Uri) = viewModelScope.launch {
         _backupEvent.value = if (backupManager.importFrom(uri)) BackupEvent.IMPORT_OK else BackupEvent.IMPORT_FAIL
     }
